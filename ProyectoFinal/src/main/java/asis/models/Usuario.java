@@ -16,4 +16,6 @@ public abstract class Usuario {
     private String password;
     private String name;
 
+    @Column(nullable = false)
+    private boolean is_active = false;
 }

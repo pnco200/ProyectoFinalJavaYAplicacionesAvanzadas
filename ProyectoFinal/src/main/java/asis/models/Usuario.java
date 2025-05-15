@@ -1,5 +1,8 @@
 package asis.models;
 
+import java.util.Set;
+import java.util.HashSet;
+
 import javax.persistence.*;
 
 @Entity
@@ -27,7 +30,8 @@ public abstract class Usuario {
     @ManyToOne
     @JoinColumn(name = "barrio_id")
     private Barrio barrio;
-
+    
+    @ManyToMany //Agregado el ManyToMany roles
     @JoinTable(
         name = "usuario_rol",
         joinColumns = @JoinColumn(name = "usuario_id"),

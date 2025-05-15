@@ -2,6 +2,8 @@ package asis.models;
 
 import javax.persistence.*;
 
+import java.util.Set;
+
 @Entity
 public abstract class Rol {
     @Id

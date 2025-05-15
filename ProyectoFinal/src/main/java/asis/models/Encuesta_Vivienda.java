@@ -1,4 +1,6 @@
 package asis.models;
+import java.util.List;
+
 import javax.persistence.*;
 @Entity
 public class Encuesta_Vivienda {
@@ -7,8 +9,9 @@ public class Encuesta_Vivienda {
     private Long id;
 
     @OneToMany(mappedBy = "vivienda")
-    private Renglon renglones;
+    private List<Renglon> renglones;
 
     @OneToMany(mappedBy = "viviendas")
-    private Encuesta_Vivienda personas;
+    private List<Encuesta_Persona> personas;
+
 }

@@ -6,10 +6,10 @@ public class Renglon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = true)
+    @Column(nullable = false) //No tiene sentido crear el renglon si el campo esta vacio directamente no se crea, no es que se crea y lo dejamos nulo
     private String valor;
 
-    @Column(unique = true, nullable = true)
+    @Column(nullable = false)
     private String tipo;
 
     @ManyToOne

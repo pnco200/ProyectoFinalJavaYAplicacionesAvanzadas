@@ -15,5 +15,5 @@ public class Campaña {
     private List<Jornada> jornadas;
     
     @OneToMany(mappedBy = "campaña")
-    private List<Encuesta> encuestas;
+    private List<Encuesta_Vivienda> encuestas;
 }

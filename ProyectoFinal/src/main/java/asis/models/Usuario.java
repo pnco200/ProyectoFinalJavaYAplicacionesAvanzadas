@@ -3,8 +3,6 @@ package asis.models;
 import javax.persistence.*;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "tipo_usuario")
 public abstract class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,4 +16,23 @@ public abstract class Usuario {
 
     @Column(nullable = false)
     private boolean is_active = false;
+
+    @Column(nullable = true)
+    private String domicilio;
+    @Column(nullable = true)
+    private String activity;
+    @Column(nullable = true)
+    private String extra;
+
+    @ManyToOne
+    @JoinColumn(name = "barrio_id")
+    private Barrio barrio;
+
+    @JoinTable(
+        name = "usuario_rol",
+        joinColumns = @JoinColumn(name = "usuario_id"),
+        inverseJoinColumns = @JoinColumn(name = "rol_id")
+    )
+    private Set<Rol> roles = new HashSet<>();
+
 }

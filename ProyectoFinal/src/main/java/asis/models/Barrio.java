@@ -11,7 +11,10 @@ public class Barrio {
     @OneToMany(mappedBy = "barrio")
     private List<Zona> zonas;
     
-    @OneToMany(mappedBy = "zona")
+    @OneToMany(mappedBy = "barrio")
     private List<Coordenadas> coordenadas;
+
+    @OneToMany(mappedBy = "barrio")
+    private List<Usuario> organizaciones;
     
 }

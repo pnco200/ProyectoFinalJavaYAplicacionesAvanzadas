@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+             http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+             version="2.1">
+    <persistence-unit name="miUP">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <!-- List all your entity classes -->
+        <class>asis.models.Barrio</class>
+        <class>asis.models.Campafia</class>
+        <class>asis.models.Coordenadas</class>
+        <class>asis.models.Encuesta_Persona</class>
+        <class>asis.models.Encuesta_Vivienda</class>
+        <class>asis.models.Encuestador</class>
+        <class>asis.models.Jornada</class>
+        <class>asis.models.Renglon</class>
+        <class>asis.models.Rol</class>
+        <class>asis.models.Usuario</class>
+        <class>asis.models.Zona</class>
+
+        <properties>
+            <property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="hibernate.connection.url" value="jdbc:mysql://mysql.java.linti.unlp.edu.ar:3306/jyaa2025_bd10"/>
+            <property name="hibernate.connection.username" value="jyaa2025_usr10"/>
+            <property name="hibernate.connection.password" value="jyaa2025_pwd10"/>
+            <property name="hibernate.default_schema" value="jyaa2025_bd10"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+        </properties>
+    </persistence-unit>
+</persistence>

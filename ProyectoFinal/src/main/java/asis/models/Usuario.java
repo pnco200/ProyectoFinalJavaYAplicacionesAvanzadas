@@ -6,7 +6,7 @@ import java.util.HashSet;
 import javax.persistence.*;
 
 @Entity
-public abstract class Usuario {
+public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

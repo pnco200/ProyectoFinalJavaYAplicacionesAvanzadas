@@ -14,6 +14,9 @@ public class UsuarioDAO implements IUsuarioDAO {
     
     @Override
     public Usuario save(Usuario usuario) {
+    	if (this.existsByEmail(usuario.getMail())) {
+    		return null;
+    	}
         entityManager.persist(usuario);
         return usuario;
     }

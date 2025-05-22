@@ -12,8 +12,7 @@
         <class>asis.models.Barrio</class>
         <class>asis.models.Campafia</class>
         <class>asis.models.Coordenadas</class>
-        <class>asis.models.Encuesta_Persona</class>
-        <class>asis.models.Encuesta_Vivienda</class>
+        <class>asis.models.Encuesta</class>
         <class>asis.models.Encuestador</class>
         <class>asis.models.Jornada</class>
         <class>asis.models.Renglon</class>

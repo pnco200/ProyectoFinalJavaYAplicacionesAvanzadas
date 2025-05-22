@@ -13,10 +13,7 @@ public class Renglon {
     private String tipo;
 
     @ManyToOne
-    @JoinColumn(name = "persona_id")
-    private Encuesta_Persona persona;
+    @JoinColumn(name = "encuesta_id")
+    private Encuesta encuesta;
 
-    @ManyToOne
-    @JoinColumn(name = "vivienda_id")
-    private Encuesta_Vivienda vivienda;
 }

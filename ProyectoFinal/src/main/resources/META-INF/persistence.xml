@@ -5,8 +5,10 @@
              http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
              version="2.1">
     <persistence-unit name="miUP">
-        <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        <!-- List all your entity classes -->
+        <!-- Updated to Hibernate's modern provider -->
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        
+        <!-- Your entity classes -->
         <class>asis.models.Barrio</class>
         <class>asis.models.Campafia</class>
         <class>asis.models.Coordenadas</class>
@@ -20,15 +22,23 @@
         <class>asis.models.Zona</class>
 
         <properties>
+            <!-- MySQL Connection Settings for Docker -->
             <property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver"/>
-            <property name="hibernate.connection.url" value="jdbc:mysql://mysql.java.linti.unlp.edu.ar:3306/jyaa2025_bd10"/>
-            <property name="hibernate.connection.username" value="jyaa2025_usr10"/>
-            <property name="hibernate.connection.password" value="jyaa2025_pwd10"/>
-            <property name="hibernate.default_schema" value="jyaa2025_bd10"/>
+            <property name="hibernate.connection.url" 
+                      value="jdbc:mysql://localhost:3306/jyaa?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC"/>
+            <property name="hibernate.connection.username" value="jyaa"/>
+            <property name="hibernate.connection.password" value="jyaa"/>
+            
+            <!-- Hibernate Settings -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
+            
+            <!-- Optimizations -->
+            <property name="hibernate.connection.pool_size" value="10"/>
+            <property name="hibernate.c3p0.min_size" value="5"/>
+            <property name="hibernate.c3p0.max_size" value="20"/>
         </properties>
     </persistence-unit>
 </persistence>

@@ -10,11 +10,16 @@ public abstract class Rol {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String nombre;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoRol nombre;
 
     @ManyToMany(mappedBy = "roles")
     private Set<Usuario> usuarios;
 
-
+    public enum TipoRol {
+        ADMINISTRADOR,
+        ORGANIZACION_SOCIAL,
+        PERSONAL_SALUD   
+    }
 }

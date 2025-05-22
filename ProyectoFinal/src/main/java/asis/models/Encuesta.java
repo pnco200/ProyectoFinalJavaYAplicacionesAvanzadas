@@ -3,19 +3,31 @@ import java.util.List;
 
 import javax.persistence.*;
 @Entity
-public class Encuesta_Persona {
+public class Encuesta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "vivienda")
+    @OneToMany(mappedBy = "encuesta")
     private List<Renglon> renglones;
 
+    @OneToMany(mappedBy = "vivienda")
+    private List<Encuesta> personas;
+    
     @ManyToOne
     @JoinColumn(name = "vivienda_id")
-    private Encuesta_Vivienda viviendas;
+    private Encuesta vivienda;
 
     @ManyToOne
     @JoinColumn(name = "campaña_id")
     private Campaña campaña;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoEncuesta tipo;
+
+    public enum TipoEncuesta {
+        PERSONA,
+        VIVIENDA,
+    }
 }

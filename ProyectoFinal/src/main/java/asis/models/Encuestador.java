@@ -1,7 +1,7 @@
 package asis.models;
 import java.util.*;
 import java.util.Date;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 public class Encuestador {

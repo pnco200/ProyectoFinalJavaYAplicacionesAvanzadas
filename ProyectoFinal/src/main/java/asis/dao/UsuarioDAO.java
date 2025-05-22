@@ -1,83 +1,144 @@
 package asis.dao;
 
 import asis.models.Usuario;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.persistence.NoResultException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.NoResultException;
 import java.util.List;
+import asis.utils.JPAUtil;
 
 public class UsuarioDAO implements IUsuarioDAO {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-    
     @Override
     public Usuario save(Usuario usuario) {
-    	if (this.existsByEmail(usuario.getMail())) {
-    		return null;
-    	}
-        entityManager.persist(usuario);
-        return usuario;
+        if (this.existsByEmail(usuario.getMail())) {
+            return null;
+        }
+
+        EntityManager em = JPAUtil.getEntityManager();
+        EntityTransaction tx = em.getTransaction();
+
+        try {
+            tx.begin();
+            em.persist(usuario);
+            tx.commit();
+            return usuario;
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            e.printStackTrace();
+            return null;
+        } finally {
+            em.close();
+        }
     }
-    
+
     @Override
     public Usuario findById(Long id) {
-        return entityManager.find(Usuario.class, id);
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            return em.find(Usuario.class, id);
+        } finally {
+            em.close();
+        }
     }
-    
+
     @Override
     public List<Usuario> findAll() {
-        TypedQuery<Usuario> query = entityManager.createQuery(
-            "SELECT u FROM Usuario u", Usuario.class);
-        return query.getResultList();
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Usuario> query = em.createQuery("SELECT u FROM Usuario u", Usuario.class);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
     }
-    
+
     @Override
     public Usuario findByEmail(String email) {
-        TypedQuery<Usuario> query = entityManager.createQuery(
-            "SELECT u FROM Usuario u WHERE u.mail = :email", Usuario.class);
-        query.setParameter("email", email);
-        
+        EntityManager em = JPAUtil.getEntityManager();
         try {
+            TypedQuery<Usuario> query = em.createQuery("SELECT u FROM Usuario u WHERE u.mail = :email", Usuario.class);
+            query.setParameter("email", email);
             return query.getSingleResult();
         } catch (NoResultException e) {
             return null;
+        } finally {
+            em.close();
         }
     }
-    
+
     @Override
     public Usuario update(Usuario usuario) {
-        return entityManager.merge(usuario);
+        EntityManager em = JPAUtil.getEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Usuario merged = em.merge(usuario);
+            tx.commit();
+            return merged;
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            e.printStackTrace();
+            return null;
+        } finally {
+            em.close();
+        }
     }
-    
+
     @Override
     public void delete(Usuario usuario) {
-        if (entityManager.contains(usuario)) {
-            entityManager.remove(usuario);
-        } else {
-            entityManager.remove(entityManager.merge(usuario));
+        EntityManager em = JPAUtil.getEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Usuario managedUsuario = usuario;
+            if (!em.contains(usuario)) {
+                managedUsuario = em.merge(usuario);
+            }
+            em.remove(managedUsuario);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            em.close();
         }
     }
-    
+
     @Override
     public void deleteById(Long id) {
-        Usuario usuario = findById(id);
-        if (usuario != null) {
-            delete(usuario);
+        EntityManager em = JPAUtil.getEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Usuario usuario = em.find(Usuario.class, id);
+            if (usuario != null) {
+                em.remove(usuario);
+            }
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            em.close();
         }
     }
-    
+
     @Override
     public boolean existsById(Long id) {
         return findById(id) != null;
     }
-    
+
     @Override
     public boolean existsByEmail(String email) {
-        TypedQuery<Long> query = entityManager.createQuery(
-            "SELECT COUNT(u) FROM Usuario u WHERE u.mail = :email", Long.class);
-        query.setParameter("email", email);
-        return query.getSingleResult() > 0;
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            TypedQuery<Long> query = em.createQuery("SELECT COUNT(u) FROM Usuario u WHERE u.mail = :email", Long.class);
+            query.setParameter("email", email);
+            return query.getSingleResult() > 0;
+        } finally {
+            em.close();
+        }
     }
 }

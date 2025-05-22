@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
-             http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
-             version="2.1">
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence" version="3.1">
     <persistence-unit name="miUP">
-        <!-- Updated to Hibernate's modern provider -->
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        
-        <!-- Your entity classes -->
+
         <class>asis.models.Barrio</class>
         <class>asis.models.Campafia</class>
         <class>asis.models.Coordenadas</class>
@@ -21,23 +15,15 @@
         <class>asis.models.Zona</class>
 
         <properties>
-            <!-- MySQL Connection Settings for Docker -->
-            <property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver"/>
-            <property name="hibernate.connection.url" 
-                      value="jdbc:mysql://localhost:3306/jyaa?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC"/>
-            <property name="hibernate.connection.username" value="jyaa"/>
-            <property name="hibernate.connection.password" value="jyaa"/>
-            
-            <!-- Hibernate Settings -->
+            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/jyaa?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC"/>
+            <property name="jakarta.persistence.jdbc.user" value="jyaa"/>
+            <property name="jakarta.persistence.jdbc.password" value="jyaa"/>
+
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
             <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
-            
-            <!-- Optimizations -->
-            <property name="hibernate.connection.pool_size" value="10"/>
-            <property name="hibernate.c3p0.min_size" value="5"/>
-            <property name="hibernate.c3p0.max_size" value="20"/>
         </properties>
     </persistence-unit>
 </persistence>

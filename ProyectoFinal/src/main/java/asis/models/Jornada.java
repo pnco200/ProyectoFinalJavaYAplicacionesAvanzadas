@@ -1,6 +1,6 @@
 package asis.models;
 import java.util.*;
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 public class Jornada {

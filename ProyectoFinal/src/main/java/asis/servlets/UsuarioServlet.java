@@ -55,14 +55,18 @@ public class UsuarioServlet extends HttpServlet {
         String mail = request.getParameter("mail");
         String password = request.getParameter("password");
         String name = request.getParameter("name");
+        String domicilio = request.getParameter("name");
+        String opt_extra = request.getParameter("extra");
+        String opt_activity = request.getParameter("activity");
 
+        System.out.println(mail + password + name);
         if (mail == null || password == null || name == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"error\": \"Faltan parámetros\"}");
             return;
         }
 
-        Usuario usuario = new Usuario(mail, password, name, true, null, null, null);
+        Usuario usuario = new Usuario(mail, password, name, true, domicilio, opt_activity, opt_extra);
         Usuario savedUsuario = usuarioDAO.save(usuario);
 
         if (savedUsuario != null) {

@@ -3,7 +3,7 @@ package asis.models;
 import java.util.Set;
 import java.util.HashSet;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 public class Usuario {

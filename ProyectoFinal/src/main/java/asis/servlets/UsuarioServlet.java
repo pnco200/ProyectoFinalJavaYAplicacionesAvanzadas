@@ -55,7 +55,7 @@ public class UsuarioServlet extends HttpServlet {
         String mail = request.getParameter("mail");
         String password = request.getParameter("password");
         String name = request.getParameter("name");
-        String domicilio = request.getParameter("name");
+        String domicilio = request.getParameter("address");
         String opt_extra = request.getParameter("extra");
         String opt_activity = request.getParameter("activity");
 

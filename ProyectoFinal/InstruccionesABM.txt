@@ -1,0 +1,41 @@
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+**ROL**
+Servlet: RolServlet.java
+Ruta: /rol
+Uso: Funcionalidades para CRUD de los roles (igualmente seria raro cambiar el tipo de un rol ya creado o eliminarlo)
+	 	pero igualmente se provee la funcionalidad.
+[TipoRol = ADMINISTRADOR, ORGANIZACION_SOCIAL, PERSONAL_SALUD]
+Métodos:
+
+get(): Listar todos los roles
+get(id): Listar un rol por id
+get(tipo<TipoRol>): Listar un rol por nombre 
+
+post(tipo<TipoRol>): Crear un rol (perteneciente al enum definido en rol.java, no se puede definir un rol nuevo)
+
+put(id, tipo<TipoRol>): Modificar un rol (permite cambiar el tipo de rol a un id de rol dado. No admite el nuevo tipo si
+						el rol ya existe)
+
+delete(id): Eliminar un rol y las asociaciones a los usuarios que lo tengan asignado.
+-----------------------------------------------------------------------------------------------------------------------------
+
+**USUARIO**
+Servlets: UsuarioServlet.java, RolUsuarioServlet.java
+Ruta: /usuario
+
+-TODO-
+
+
+
+Ruta: /rolusuario
+Uso: Funcionalidades para añadir o quitar un rol a un usuario.
+
+action: addRoleToUser (añade el rol), removeRoleFromUser (quita el rol)
+Métodos:
+post(action, idUsuario, idRol): Asignar o quitar un rol a un usuario dependiendo del "action" que se pase.
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+

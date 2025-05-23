@@ -16,4 +16,8 @@ public class Campaña {
     
     @OneToMany(mappedBy = "campaña")
     private List<Encuesta> encuestas;
+    
+    public Long getId() {
+		return id;
+	}
 }

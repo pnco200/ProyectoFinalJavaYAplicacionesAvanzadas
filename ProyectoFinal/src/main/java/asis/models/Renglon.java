@@ -16,4 +16,32 @@ public class Renglon {
     @JoinColumn(name = "encuesta_id")
     private Encuesta encuesta;
 
+    public String getValor() {
+        return valor;
+    }
+    public void setValor(String valor) {
+        this.valor = valor;
+    }
+    
+    public Long getId() {
+		return id;
+	}
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public Encuesta getEncuesta() {
+        return encuesta;
+    }
+
+    public void setEncuesta(Encuesta encuesta) {
+        this.encuesta = encuesta;
+    }
+
+    
 }

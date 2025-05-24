@@ -10,7 +10,7 @@ public interface IUsuarioDAO {
     List<Usuario> findAll();
     Usuario findByEmail(String email);
     
-    Usuario update(Usuario usuario);
+    Usuario update(Usuario usuario) throws Exception;
     
     void delete(Usuario usuario);
     void deleteById(Long id);

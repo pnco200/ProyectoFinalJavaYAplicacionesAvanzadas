@@ -13,8 +13,8 @@ import java.util.List;
 
 @WebServlet("/usuario")
 public class UsuarioServlet extends HttpServlet {
-
-    private UsuarioDAO usuarioDAO;
+	private static final long serialVersionUID = 1L;
+	private UsuarioDAO usuarioDAO;
 
     @Override
     public void init() throws ServletException {
@@ -52,6 +52,8 @@ public class UsuarioServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json");
+
         String mail = request.getParameter("mail");
         String password = request.getParameter("password");
         String name = request.getParameter("name");
@@ -80,35 +82,132 @@ public class UsuarioServlet extends HttpServlet {
 
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String idParam = request.getParameter("id");
-        String mail = request.getParameter("mail");
-        String password = request.getParameter("password");
-        String name = request.getParameter("name");
+        response.setContentType("application/json");
 
-        if (idParam == null || mail == null || password == null || name == null) {
+        String action = request.getParameter("action");
+
+        if (action == null || (!action.equals("update") && !action.equals("activate") && !action.equals("barrio"))) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\": \"Parámetro 'action' inválido (debe ser 'update', 'activate' o 'barrio')\"}");
+            return;
+        }
+
+        if (action.equals("activate")) {
+            doActivate(request, response);
+        } else if (action.equals("update")) {
+            doUpdate(request, response);
+        } else if (action.equals("barrio")) {
+			doAsociarBarrio(request, response);
+        }
+    }
+    
+    
+    private void doAsociarBarrio(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String userIdParam = request.getParameter("id");
+        String barrioIdParam = request.getParameter("barrioId");
+
+        if (userIdParam == null || barrioIdParam == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\": \"Faltan parámetros: 'id' y 'barrioId' son obligatorios\"}");
+            return;
+        }
+
+        try {
+            Long userId = Long.parseLong(userIdParam);
+            Long barrioId = Long.parseLong(barrioIdParam);
+
+            boolean result = usuarioDAO.assignBarrioToUsuario(userId, barrioId);
+
+            if (result) {
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.getWriter().write("{\"message\": \"Barrio asignado correctamente\"}");
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"error\": \"No se pudo asignar el barrio. Verificá que el usuario y el barrio existan, y que el usuario tenga el rol adecuado.\"}");
+            }
+        } catch (NumberFormatException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\": \"Error al asignar el barrio\"}");
+        }
+    }
+
+    private void doActivate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String idParam = request.getParameter("id");
+        String isActiveParam = request.getParameter("is_active");
+
+        if (idParam == null || isActiveParam == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"error\": \"Faltan parámetros\"}");
             return;
         }
 
         Long id = Long.parseLong(idParam);
-        Usuario usuario = usuarioDAO.findById(id);
+        boolean isActive = Boolean.parseBoolean(isActiveParam);
 
-        if (usuario != null) {
-            usuario.setMail(mail);
-            usuario.setPassword(password);
-            usuario.setName(name);
-            Usuario updatedUsuario = usuarioDAO.update(usuario);
-            response.getWriter().write("{\"id\": " + updatedUsuario.getId() + ", \"mail\": \"" + updatedUsuario.getMail() + "\"}");
+        boolean updated = usuarioDAO.updateIsActive(id, isActive);
+
+        if (updated) {
+            response.getWriter().write("{\"message\": \"Estado actualizado correctamente\"}");
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             response.getWriter().write("{\"error\": \"Usuario no encontrado\"}");
         }
     }
+    
+    
+    private void doUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        try {
+            String idParam = request.getParameter("id");
+            if (idParam == null) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"error\": \"Falta el parámetro 'id'\"}");
+                return;
+            }
 
+            Long id = Long.parseLong(idParam);
+            Usuario usuario = usuarioDAO.findById(id);
+
+            if (usuario == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.getWriter().write("{\"error\": \"Usuario no encontrado\"}");
+                return;
+            }
+
+            // Campos opcionales
+            String mail = request.getParameter("mail");
+            String password = request.getParameter("password");
+            String name = request.getParameter("name");
+            String domicilio = request.getParameter("domicilio");
+            String activity = request.getParameter("activity");
+            String extra = request.getParameter("extra");
+
+            if (mail != null) usuario.setMail(mail);
+            if (password != null) usuario.setPassword(password);
+            if (name != null) usuario.setName(name);
+            if (domicilio != null) usuario.setDomicilio(domicilio);
+            if (activity != null) usuario.setActivity(activity);
+            if (extra != null) usuario.setExtra(extra);
+
+            Usuario updatedUsuario = usuarioDAO.update(usuario);
+            if (updatedUsuario != null) {
+                response.setStatus(HttpServletResponse.SC_OK);
+                response.getWriter().write("{\"message\": \"Usuario actualizado\"}");
+            } else {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().write("{\"error\": \"No se pudo actualizar el usuario\"}");
+            }
+
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
+        }
+    }
+
+    
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String idParam = request.getParameter("id");
+        System.out.println("Entro");
+    	String idParam = request.getParameter("id");
 
         if (idParam == null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -127,4 +226,6 @@ public class UsuarioServlet extends HttpServlet {
             response.getWriter().write("{\"error\": \"Usuario no encontrado\"}");
         }
     }
+    
+    
 }

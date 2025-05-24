@@ -43,5 +43,19 @@ Métodos:
 post(action, idUsuario, idRol): Asignar o quitar un rol a un usuario dependiendo del "action" que se pase.
 
 -----------------------------------------------------------------------------------------------------------------------------
+**CAMPAÑA**
+Servlet: CampañiaServlet.java
+Ruta: /campania
+Uso: Funcionalidades para CRUD de las campañas
+Metodos:
+Formato de las fechas: yyyy-MM-dd
+get(): Listar todas las campañas
+get(id): Listar una campaña por id
+get(nombre): Listar una campaña por nombre
+post(name, startDate, endDate): Crear una campaña (no se puede crear una campaña con el mismo nombre)
+put(id, name, startDate, endDate): Modificar una campaña (no se puede modificar el nombre a uno ya existente)
+delete(id): Eliminar una campaña
+-----------------------------------------------------------------------------------------------------------------------------
+
 
 

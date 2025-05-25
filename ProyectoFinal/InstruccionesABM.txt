@@ -56,6 +56,31 @@ post(name, startDate, endDate): Crear una campaña (no se puede crear una campa�
 put(id, name, startDate, endDate): Modificar una campaña (no se puede modificar el nombre a uno ya existente)
 delete(id): Eliminar una campaña
 -----------------------------------------------------------------------------------------------------------------------------
-
+**JORNADA**
+Servlet: JornadaServlet.java
+Ruta: /jornadas
+Uso: Funcionalidades para CRUD de las jornadas y asociacion de encuestadores
+Metodos:
+get(): Listar todas las jornadas
+get(id): Listar una jornada por id
+get(nombre): Listar una jornada por nombre
+post(action, name, startDate, endDate, campañaId): con "action" = create Crear una jornada
+post(action, name, startDate, endDate, campañaId): con "action" = update Actualizar una jornada
+post(action, encuestadorId): con "action" = addEncuestador Asocia un encuestador a una jornada
+post(action, encuestadorId): con "action" = removeEncuestador Asocia un encuestador a una jornada
+delete(id): Eliminar una jornada
+-----------------------------------------------------------------------------------------------------------------------------
+**ENCUESTADOR**
+Servlet: EncuestadorServlet.java
+Ruta: /encuestador
+Uso: Funcionalidades para CRUD de los encuestadores
+Metodos:
+get(): Listar todos los encuestadores
+get(id): Listar un encuestador por id
+get(dni): Listar un encuestador por dni
+post(action, name, dni, birthDate, sex, occupation): con "action" = create crea un encuestador
+post(action, id, name, dni, birthDate, sex, occupation): con "action" = update actualiza un encuestador 
+post(action, id): con "action" = delete elimina un encuestador
+-----------------------------------------------------------------------------------------------------------------------------
 
 

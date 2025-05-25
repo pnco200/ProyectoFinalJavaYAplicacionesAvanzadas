@@ -14,7 +14,6 @@ public class CampañaDAO implements ICampañaDAO {
 
     @Override
     public Campaña save(Campaña campaña) throws CampañaException {
-        // Valida que inicio no puede ser despues del fin
         if (campaña.getStartDate() != null && campaña.getEndDate() != null) {
             if (campaña.getStartDate().after(campaña.getEndDate())) {
                 throw new CampañaException("La fecha de inicio es posterior a la fecha de fin.");
@@ -29,7 +28,6 @@ public class CampañaDAO implements ICampañaDAO {
                           "(c.endDate BETWEEN :startDate AND :endDate) OR " +
                           "(:startDate BETWEEN c.startDate AND c.endDate))";
 
-            // Si la campaña ya tiene id (update), excluir esa campaña de la busqueda
             if (campaña.getId() != null) {
                 jpql += " AND c.id <> :id";
             }

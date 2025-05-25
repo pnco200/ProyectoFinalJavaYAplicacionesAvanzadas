@@ -1,6 +1,6 @@
 package asis.models;
 import java.util.*;
-import java.util.Date;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -22,5 +22,68 @@ public class Encuestador {
     @ManyToMany(mappedBy = "encuestadores")
     private Set<Jornada> jornadas = new HashSet<>();
     
+    public Encuestador() {
+	}
+
+    public Encuestador(Long id) { //Usado para pasarle al DAO el id direcatamente
+        this.id = id;
+    }
+
+	public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDni() {
+        return dni;
+    }
+
+    public void setDni(String dni) {
+        this.dni = dni;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(Date birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
+    }
+
+    public String getOccupation() {
+        return occupation;
+    }
+
+    public void setOccupation(String occupation) {
+        this.occupation = occupation;
+    }
+
+    public Set<Jornada> getJornadas() {
+        return jornadas;
+    }
+
+    public void setJornadas(Set<Jornada> jornadas) {
+        this.jornadas = jornadas;
+    }
+
 }
 

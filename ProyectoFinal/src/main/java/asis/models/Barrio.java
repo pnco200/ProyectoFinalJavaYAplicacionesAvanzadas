@@ -7,14 +7,57 @@ public class Barrio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-
-    @OneToMany(mappedBy = "barrio")
+    @OneToMany(mappedBy = "barrio", fetch = FetchType.LAZY)
     private List<Zona> zonas;
-    
-    @OneToMany(mappedBy = "barrio")
+    @OneToMany(mappedBy = "barrio", fetch = FetchType.LAZY)
     private List<Coordenadas> coordenadas;
-
-    @OneToMany(mappedBy = "barrio")
+    @OneToMany(mappedBy = "barrio", fetch = FetchType.LAZY)
     private List<Usuario> organizaciones;
     
+    public Barrio() {
+    }
+    
+    public Barrio(String name) {
+        this.name = name;
+    }
+    
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public List<Zona> getZonas() {
+        return zonas;
+    }
+    
+    public void setZonas(List<Zona> zonas) {
+        this.zonas = zonas;
+    }
+    
+    public List<Coordenadas> getCoordenadas() {
+        return coordenadas;
+    }
+    
+    public void setCoordenadas(List<Coordenadas> coordenadas) {
+        this.coordenadas = coordenadas;
+    }
+    
+    public List<Usuario> getOrganizaciones() {
+        return organizaciones;
+    }
+    
+    public void setOrganizaciones(List<Usuario> organizaciones) {
+        this.organizaciones = organizaciones;
+    }
 }

@@ -53,7 +53,6 @@ public class ZonaServlet extends HttpServlet {
         
         try {
             if (idParam != null) {
-                // Get zona by ID
                 Long id = Long.parseLong(idParam);
                 Zona zona = zonaDAO.findById(id);
                 
@@ -61,17 +60,17 @@ public class ZonaServlet extends HttpServlet {
                     response.sendError(HttpServletResponse.SC_NOT_FOUND, "Zona no encontrada");
                     return;
                 }
-                
-                out.print(gson.toJson(zona));
+                List<Zona> singleZona = new ArrayList<>();
+                singleZona.add(zona);
+                String json = serializeZonasToJson(singleZona);
+                out.print(json);
             } else if (barrioIdParam != null) {
-                // Get zonas by barrio ID
                 Long barrioId = Long.parseLong(barrioIdParam);
                 List<Zona> zonas = zonaDAO.findByBarrioId(barrioId);
-                out.print(gson.toJson(zonas));
+                out.print(serializeZonasToJson(zonas));
             } else {
-                // Get all zonas
                 List<Zona> zonas = zonaDAO.findAll();
-                out.print(gson.toJson(zonas));
+                out.print(serializeZonasToJson(zonas));
             }
         } catch (NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID inválido");
@@ -176,7 +175,6 @@ public class ZonaServlet extends HttpServlet {
             
             savedZona.setId(id);
             
-            // Verify that the barrio exists if it's being updated
             if (savedZona.getBarrio() != null && savedZona.getBarrio().getId() != null) {
                 Long barrioId = savedZona.getBarrio().getId();
                 Barrio barrio = barrioDAO.findById(barrioId);
@@ -185,6 +183,18 @@ public class ZonaServlet extends HttpServlet {
                     return;
                 }
                 savedZona.setBarrio(barrio);
+            }
+            List<Coordenadas> savedCoordenadas = new ArrayList<>();
+            if(zonaDTO.getCoordenadas() != null && zonaDTO.getCoordenadas().size() > 2) {
+                coordenadasDAO.deleteByZonaId(id);
+                for (CoordenadasDTO coordDTO : zonaDTO.getCoordenadas()) {
+                    Coordenadas coordenada = new Coordenadas(coordDTO.getLatitud(), coordDTO.getLongitud(), savedZona);
+                    Coordenadas savedCoordenada = coordenadasDAO.save(coordenada);
+                    
+                    if (savedCoordenada != null) {
+                        savedCoordenadas.add(savedCoordenada);
+                    }
+                }
             }
             
             zonaDAO.update(savedZona);
@@ -236,4 +246,51 @@ public class ZonaServlet extends HttpServlet {
             e.printStackTrace();
         }
     }
+private String serializeZonasToJson(List<Zona> zonas) {
+    StringBuilder json = new StringBuilder();
+    json.append("[");
+    
+    for (int i = 0; i < zonas.size(); i++) {
+        Zona b = zonas.get(i);
+        json.append("{")
+            .append("\"id\":").append(b.getId()).append(",")
+            .append("\"color\":\"").append(b.getColor()).append("\",");
+        
+        // Add barrio information
+        if (b.getBarrio() != null) {
+            json.append("\"barrio\":{")
+                .append("\"id\":").append(b.getBarrio().getId()).append(",")
+                .append("\"name\":\"").append(b.getBarrio().getName()).append("\"")
+                .append("},");
+        }
+        
+        json.append("\"coordenadas\":[");
+        
+        List<Coordenadas> coordenadasList = b.getCoordenadas();
+        if (coordenadasList != null) {
+            for (int j = 0; j < coordenadasList.size(); j++) {
+                Coordenadas c = coordenadasList.get(j);
+                json.append("{")
+                    .append("\"latitud\":").append(c.getLatitud()).append(",")
+                    .append("\"longitud\":").append(c.getLongitud())
+                    .append("}");
+                
+                if (j < coordenadasList.size() - 1) {
+                    json.append(",");
+                }
+            }
+        }
+        
+        json.append("]")
+            .append("}");
+        
+        if (i < zonas.size() - 1) {
+            json.append(",");
+        }
+    }
+    
+    json.append("]");
+    return json.toString();
+}
+    
 }

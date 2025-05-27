@@ -24,43 +24,29 @@ public class ZonaDAO implements IZonaDAO {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
             return null;
-        } finally {
-            em.close();
-        }
+        } 
     }
 
     @Override
     public Zona findById(Long id) {
         EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return em.find(Zona.class, id);
-        } finally {
-            em.close();
-        }
+        return em.find(Zona.class, id);
     }
 
     @Override
     public List<Zona> findAll() {
         EntityManager em = JPAUtil.getEntityManager();
-        try {
-            TypedQuery<Zona> query = em.createQuery("SELECT z FROM Zona z", Zona.class);
-            return query.getResultList();
-        } finally {
-            em.close();
-        }
+        TypedQuery<Zona> query = em.createQuery("SELECT z FROM Zona z", Zona.class);
+        return query.getResultList();
     }
 
     @Override
     public List<Zona> findByBarrioId(Long barrioId) {
         EntityManager em = JPAUtil.getEntityManager();
-        try {
-            TypedQuery<Zona> query = em.createQuery(
-                    "SELECT z FROM Zona z WHERE z.barrio.id = :barrioId", Zona.class);
-            query.setParameter("barrioId", barrioId);
-            return query.getResultList();
-        } finally {
-            em.close();
-        }
+        TypedQuery<Zona> query = em.createQuery(
+            "SELECT z FROM Zona z WHERE z.barrio.id = :barrioId", Zona.class);
+        query.setParameter("barrioId", barrioId);
+        return query.getResultList();
     }
 
     @Override
@@ -81,9 +67,7 @@ public class ZonaDAO implements IZonaDAO {
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             throw e;
-        } finally {
-            em.close();
-        }
+        } 
     }
 
     @Override
@@ -101,9 +85,7 @@ public class ZonaDAO implements IZonaDAO {
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
-        } finally {
-            em.close();
-        }
+        } 
     }
 
     @Override
@@ -120,9 +102,7 @@ public class ZonaDAO implements IZonaDAO {
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
-        } finally {
-            em.close();
-        }
+        } 
     }
 
     @Override

@@ -101,25 +101,21 @@ public class BarrioServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         
         try {
-            // Read and parse the request body directly into a BarrioDTO
             BufferedReader reader = request.getReader();
             BarrioDTO barrioDTO = gson.fromJson(reader, BarrioDTO.class);
             
-            // Validate the request
             if (barrioDTO == null || !barrioDTO.isValid()) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
                     "Se requiere un barrio válido y al menos 3 coordenadas");
                 return;
             }
             
-            // Save the barrio first
             Barrio savedBarrio = barrioDAO.save(barrioDTO.getBarrio());
             if (savedBarrio == null) {
                 response.sendError(HttpServletResponse.SC_CONFLICT, "Ya existe un barrio con ese nombre");
                 return;
             }
             
-            // Create and save each coordenada
             List<Coordenadas> savedCoordenadas = new ArrayList<>();
             for (CoordenadasDTO coordDTO : barrioDTO.getCoordenadas()) {
                 Coordenadas coordenada = new Coordenadas(coordDTO.getLatitud(), coordDTO.getLongitud(), savedBarrio);
@@ -130,11 +126,9 @@ public class BarrioServlet extends HttpServlet {
                 }
             }
             
-            // Create a response DTO
             BarrioDTO responseDTO = new BarrioDTO();
             responseDTO.setBarrio(savedBarrio);
             
-            // Convert coordenadas to DTOs for response
             List<CoordenadasDTO> coordenadasDTOs = new ArrayList<>();
             for (Coordenadas coord : savedCoordenadas) {
                 CoordenadasDTO dto = new CoordenadasDTO(coord.getLatitud(), coord.getLongitud());
@@ -173,15 +167,15 @@ public class BarrioServlet extends HttpServlet {
 
             savedBarrio.setId(id);
             List<Coordenadas> savedCoordenadas = new ArrayList<>();
-            if(barrioDTO.getCoordenadas().size() > 0) {
+            if(barrioDTO.getCoordenadas() != null && barrioDTO.getCoordenadas().size() > 2) {
                 coordenadasDAO.deleteByBarrioId(id);
-            }
-            for (CoordenadasDTO coordDTO : barrioDTO.getCoordenadas()) {
-                Coordenadas coordenada = new Coordenadas(coordDTO.getLatitud(), coordDTO.getLongitud(), savedBarrio);
-                Coordenadas savedCoordenada = coordenadasDAO.save(coordenada);
-                
-                if (savedCoordenada != null) {
-                    savedCoordenadas.add(savedCoordenada);
+                for (CoordenadasDTO coordDTO : barrioDTO.getCoordenadas()) {
+                    Coordenadas coordenada = new Coordenadas(coordDTO.getLatitud(), coordDTO.getLongitud(), savedBarrio);
+                    Coordenadas savedCoordenada = coordenadasDAO.save(coordenada);
+                    
+                    if (savedCoordenada != null) {
+                        savedCoordenadas.add(savedCoordenada);
+                    }
                 }
             }
             
@@ -223,10 +217,8 @@ public class BarrioServlet extends HttpServlet {
                 return;
             }
             
-            // Delete associated coordenadas first
             coordenadasDAO.deleteByBarrioId(id);
             
-            // Then delete the barrio
             barrioDAO.deleteById(id);
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             

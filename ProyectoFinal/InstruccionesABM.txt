@@ -82,5 +82,59 @@ post(action, name, dni, birthDate, sex, occupation): con "action" = create crea 
 post(action, id, name, dni, birthDate, sex, occupation): con "action" = update actualiza un encuestador 
 post(action, id): con "action" = delete elimina un encuestador
 -----------------------------------------------------------------------------------------------------------------------------
-
-
+**BARRIO**
+Servlet: BarrioServlet.java
+Ruta: /barrios
+Uso: Funcionalidades para CRUD de los barrios
+Metodos:
+get(): Listar todos los barrios
+get(id): Listar un barrio por id
+post(): En el body recibe un BarrioDTO, y crea el barrio junto a las coordenadas que se les asigna (almenos 3)
+put (id): En el body recibe un BarrioDTO, y actualiza el barrio obtenido por parametro con los valores del body
+	-> Si recibe 3 coordenadas o +, elimina las persistidas y crea las nuevas coordenadas
+	-> Si no, deja las persistidas
+delete (id): Elimina un barrio
+-----------------------------------------------------------------------------------------------------------------------------
+**Zona**
+Servlet: ZonaServlet.java
+Ruta: /zonas
+Uso: Funcionalidades para CRUD de las zonas
+Metodos:
+get(): Listar todas las zonas
+get(id): Listar una zona por id
+get(barrioId): Listar las zonas de un barrio
+post(): En el body recibe una ZonaDTO, y crea la zona junto a las coordenadas que se les asigna
+put (id): En el body recibe una ZonaDto, y actualiza el id de la zona obtenida por parametro con los valores del body
+	-> Si recibe 3 coordenadas o +, elimina las persistidas y crea las nuevas coordenadas
+	-> Si no, deja las persistidas
+	-> Si recibe un barrioId, asigna la zona a ese barrioId
+delete (id): Elimina una zona
+-----------------------------------------------------------------------------------------------------------------------------
+**Encuestas**
+Servlet: EncuestaServlet.java
+Ruta: /encuesta
+Uso: Funcionalidades para CRUD de las encuestas
+Metodos:
+get(): Listar todas las encuestas
+get(id): Listar una encuesta por id
+get(tipo): Listar las encuestas por tipo indicado
+get(viviendaId): Listar las encuestas asignadas a una encuesta de vivienda id
+get(campañaId): Listar las encuestas tipo vivienda asignadas a una campaña
+post(tipo, viviendaId?, campañaId?): Crea una encuesta con el tipo indicado. En caso de ser PERSONA, se debe asignar una encuesta del tipo
+	vivienda relacionada, y en caso de ser una encuesta de tipo VIVIENDA, se le debe asignar una campaña
+put (encuestaId, renglonId): Asigna un renglon a una encuesta
+delete (id): Elimina una encuesta. Si es vivienda, no puede tener personas asignadas.
+-----------------------------------------------------------------------------------------------------------------------------
+**Renglon**
+Servlet: RenglonServlet.java
+Ruta: /renglon
+Uso: Funcionalidades para CRUD de los renglones
+Metodos:
+get(): Listar todas los renglones
+get(id): Listar un renglon por id
+get(encuestaId): Listar los renglones de una encuesta
+get(tipo): Lista los renglones con mismo tipo 
+post(tipo, valor, encuestaId): Crea un renglon y lo asocia a una encuesta
+put (id,tipo, valor, encuestaId): Actualiza el valor de un renglon
+delete (id): Elimina un renglon
+-----------------------------------------------------------------------------------------------------------------------------

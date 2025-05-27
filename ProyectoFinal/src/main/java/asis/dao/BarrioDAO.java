@@ -47,8 +47,14 @@ public class BarrioDAO implements IBarrioDAO {
     public List<Barrio> findAll() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            TypedQuery<Barrio> query = em.createQuery("SELECT b FROM Barrio b", Barrio.class);
-            return query.getResultList();
+            TypedQuery<Barrio> query = em.createQuery("SELECT b FROM Barrio b ", Barrio.class);
+            List<Barrio> barrios = query.getResultList();       
+            for (Barrio barrio : barrios) {
+                barrio.getZonas().size();
+                barrio.getCoordenadas().size();
+                barrio.getOrganizaciones().size();
+            }
+            return barrios;
         } finally {
             em.close();
         }

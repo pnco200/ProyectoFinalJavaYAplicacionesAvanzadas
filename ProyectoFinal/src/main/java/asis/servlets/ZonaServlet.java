@@ -1,10 +1,15 @@
 package asis.servlets;
 
 import asis.dao.BarrioDAO;
+import asis.dao.CoordenadasDAO;
 import asis.dao.IBarrioDAO;
+import asis.dao.ICoordenadasDAO;
 import asis.dao.IZonaDAO;
 import asis.dao.ZonaDAO;
+import asis.dto.CoordenadasDTO;
+import asis.dto.ZonaDTO;
 import asis.models.Barrio;
+import asis.models.Coordenadas;
 import asis.models.Zona;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -16,13 +21,17 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet("/zonas")
 public class ZonaServlet extends HttpServlet {
     
     private IZonaDAO zonaDAO;
     private IBarrioDAO barrioDAO;
+    private ICoordenadasDAO coordenadasDAO;
     private Gson gson;
     
     @Override
@@ -30,13 +39,13 @@ public class ZonaServlet extends HttpServlet {
         super.init();
         zonaDAO = new ZonaDAO();
         barrioDAO = new BarrioDAO();
+        coordenadasDAO = new CoordenadasDAO();
         gson = new GsonBuilder().create();
     }
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
         String idParam = request.getParameter("id");
@@ -80,35 +89,60 @@ public class ZonaServlet extends HttpServlet {
         PrintWriter out = response.getWriter();
         
         try {
+
             BufferedReader reader = request.getReader();
-            Zona zona = gson.fromJson(reader, Zona.class);
-            
-            if (zona == null || zona.getColor() == null || zona.getColor().trim().isEmpty() 
-                    || zona.getBarrio() == null || zona.getBarrio().getId() == null) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Datos de zona inválidos");
+            ZonaDTO zonaDTO = gson.fromJson(reader, ZonaDTO.class);
+            if (zonaDTO == null || !zonaDTO.isValid()) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, 
+                    "Se requiere una zona válida y al menos 3 coordenadas");
                 return;
             }
             
-            // Verify that the barrio exists
-            Long barrioId = zona.getBarrio().getId();
+            Long barrioId = zonaDTO.getZona().getBarrio().getId();
             Barrio barrio = barrioDAO.findById(barrioId);
             if (barrio == null) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "El barrio especificado no existe");
                 return;
             }
             
-            // Set the complete barrio object
-            zona.setBarrio(barrio);
+            zonaDTO.getZona().setBarrio(barrio);
             
-            Zona savedZona = zonaDAO.save(zona);
-            
+            Zona savedZona = zonaDAO.save(zonaDTO.getZona());
             if (savedZona == null) {
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error al guardar la zona");
                 return;
             }
+
+            List<Coordenadas> savedCoordenadas = new ArrayList<>();
+            for (CoordenadasDTO coordDTO : zonaDTO.getCoordenadas()) {
+                Coordenadas coordenada = new Coordenadas(coordDTO.getLatitud(), coordDTO.getLongitud(), savedZona);
+                Coordenadas savedCoordenada = coordenadasDAO.save(coordenada);
+                
+                if (savedCoordenada != null) {
+                    savedCoordenadas.add(savedCoordenada);
+                }
+            }
+
+            ZonaDTO responseDTO = new ZonaDTO();
+            responseDTO.setZona(savedZona);
+
+            List<CoordenadasDTO> coordenadasDTOs = new ArrayList<>();
+            for (Coordenadas coord : savedCoordenadas) {
+                CoordenadasDTO dto = new CoordenadasDTO(coord.getLatitud(), coord.getLongitud());
+                coordenadasDTOs.add(dto);
+            }
+
+            responseDTO.setCoordenadas(coordenadasDTOs);
+
+            Map<String, Object> responseMap = new HashMap<>();
+            responseMap.put("zonaId", savedZona.getId());
+            responseMap.put("color", savedZona.getColor());
+            responseMap.put("barrioId", savedZona.getBarrio().getId());
+            responseMap.put("barrioName", savedZona.getBarrio().getName());
+            responseMap.put("coordenadas", coordenadasDTOs);
             
             response.setStatus(HttpServletResponse.SC_CREATED);
-            out.print(gson.toJson(savedZona));
+            out.print(gson.toJson(responseMap));
             
         } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
@@ -119,7 +153,6 @@ public class ZonaServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
         String idParam = request.getParameter("id");
@@ -132,29 +165,37 @@ public class ZonaServlet extends HttpServlet {
             
             Long id = Long.parseLong(idParam);
             BufferedReader reader = request.getReader();
-            Zona zona = gson.fromJson(reader, Zona.class);
+            ZonaDTO zonaDTO = gson.fromJson(reader, ZonaDTO.class);
             
-            if (zona == null) {
+            Zona savedZona = zonaDTO.getZona();
+
+            if (savedZona == null) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Datos de zona inválidos");
                 return;
             }
             
-            zona.setId(id);
+            savedZona.setId(id);
             
             // Verify that the barrio exists if it's being updated
-            if (zona.getBarrio() != null && zona.getBarrio().getId() != null) {
-                Long barrioId = zona.getBarrio().getId();
+            if (savedZona.getBarrio() != null && savedZona.getBarrio().getId() != null) {
+                Long barrioId = savedZona.getBarrio().getId();
                 Barrio barrio = barrioDAO.findById(barrioId);
                 if (barrio == null) {
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "El barrio especificado no existe");
                     return;
                 }
-                zona.setBarrio(barrio);
+                savedZona.setBarrio(barrio);
             }
             
-            Zona updatedZona = zonaDAO.update(zona);
-            out.print(gson.toJson(updatedZona));
+            zonaDAO.update(savedZona);
+            Map<String, Object> responseMap = new HashMap<>();
+            responseMap.put("zonaId", savedZona.getId());
+            responseMap.put("color", savedZona.getColor());
+            responseMap.put("barrioId", savedZona.getBarrio().getId());
+            responseMap.put("barrioName", savedZona.getBarrio().getName());
             
+            response.setStatus(HttpServletResponse.SC_CREATED);
+            out.print(gson.toJson(responseMap));
         } catch (NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID inválido");
         } catch (Exception e) {
@@ -166,7 +207,6 @@ public class ZonaServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        
         String idParam = request.getParameter("id");
         
         try {
@@ -182,6 +222,10 @@ public class ZonaServlet extends HttpServlet {
                 return;
             }
             
+            // Delete associated coordenadas first
+            coordenadasDAO.deleteByZonaId(id);
+            
+            // Then delete the zona
             zonaDAO.deleteById(id);
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             

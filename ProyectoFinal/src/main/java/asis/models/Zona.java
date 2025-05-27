@@ -12,7 +12,7 @@ public class Zona {
     @JoinColumn(name = "barrio_id")
     private Barrio barrio;
 
-    @OneToMany(mappedBy = "zona")
+    @OneToMany(mappedBy = "zona", fetch = FetchType.LAZY)
     private List<Coordenadas> coordenadas;
     
     public Zona() {

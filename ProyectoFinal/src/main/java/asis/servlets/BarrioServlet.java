@@ -8,6 +8,8 @@ import asis.dto.BarrioDTO;
 import asis.dto.CoordenadasDTO;
 import asis.models.Barrio;
 import asis.models.Coordenadas;
+import asis.models.Zona;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import jakarta.servlet.ServletException;
@@ -46,24 +48,9 @@ public class BarrioServlet extends HttpServlet {
         
         try {
             if (idParam == null) {
-            	System.out.println("hola1");
                 List<Barrio> barrios = barrioDAO.findAll();
                 StringBuilder json = new StringBuilder();
-                json.append("[");
-
-                for (int i = 0; i < barrios.size(); i++) {
-                    Barrio b = barrios.get(i);
-                    json.append("{")
-                        .append("\"id\":").append(b.getId()).append(",")
-                        .append("\"name\":\"").append(b.getName()).append("\"")
-                        .append("}");
-                    if (i < barrios.size() - 1) {
-                        json.append(",");
-                    }
-                }
-
-                json.append("]");
-                out.print(json.toString());
+                out.print(serializeBarriosToJson(barrios));
             } else {
                 Long id = Long.parseLong(idParam);
                 Barrio b = barrioDAO.findById(id);
@@ -73,16 +60,10 @@ public class BarrioServlet extends HttpServlet {
                     return;
                 }
                 
-                StringBuilder json = new StringBuilder();
-                json.append("[");
-
-                    json.append("{")
-                        .append("\"id\":").append(b.getId()).append(",")
-                        .append("\"name\":\"").append(b.getName()).append("\"")
-                        .append("}");
-
-                json.append("]");
-                out.print(json.toString());
+                List<Barrio> singleBarrio = new ArrayList<>();
+                singleBarrio.add(b);
+                String json = serializeBarriosToJson(singleBarrio);
+                out.print(json);
 
             }
         } catch (NumberFormatException e) {
@@ -228,5 +209,43 @@ public class BarrioServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             e.printStackTrace();
         }
+    }
+    private String serializeBarriosToJson(List<Barrio> barrios) {
+        StringBuilder json = new StringBuilder();
+        json.append("[");
+        
+        for (int i = 0; i < barrios.size(); i++) {
+            Barrio b = barrios.get(i);
+            json.append("{")
+                .append("\"id\":").append(b.getId()).append(",")
+                .append("\"name\":\"").append(b.getName()).append("\",");
+            
+            json.append("\"coordenadas\":[");
+            
+            List<Coordenadas> coordenadasList = b.getCoordenadas();
+            if (coordenadasList != null) {
+                for (int j = 0; j < coordenadasList.size(); j++) {
+                    Coordenadas c = coordenadasList.get(j);
+                    json.append("{")
+                        .append("\"latitud\":").append(c.getLatitud()).append(",")
+                        .append("\"longitud\":").append(c.getLongitud())
+                        .append("}");
+                    
+                    if (j < coordenadasList.size() - 1) {
+                        json.append(",");
+                    }
+                }
+            }
+            
+            json.append("]")
+                .append("}");
+            
+            if (i < barrios.size() - 1) {
+                json.append(",");
+            }
+        }
+        
+        json.append("]");
+        return json.toString();
     }
 }

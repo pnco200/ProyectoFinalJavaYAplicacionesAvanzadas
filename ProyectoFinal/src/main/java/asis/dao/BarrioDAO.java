@@ -36,28 +36,20 @@ public class BarrioDAO implements IBarrioDAO {
     @Override
     public Barrio findById(Long id) {
         EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return em.find(Barrio.class, id);
-        } finally {
-            em.close();
-        }
+        return em.find(Barrio.class, id);
     }
 
     @Override
     public List<Barrio> findAll() {
         EntityManager em = JPAUtil.getEntityManager();
-        try {
-            TypedQuery<Barrio> query = em.createQuery("SELECT b FROM Barrio b ", Barrio.class);
-            List<Barrio> barrios = query.getResultList();       
-            for (Barrio barrio : barrios) {
-                barrio.getZonas().size();
-                barrio.getCoordenadas().size();
-                barrio.getOrganizaciones().size();
-            }
-            return barrios;
-        } finally {
-            em.close();
+        TypedQuery<Barrio> query = em.createQuery("SELECT b FROM Barrio b ", Barrio.class);
+        List<Barrio> barrios = query.getResultList();       
+        for (Barrio barrio : barrios) {
+            barrio.getZonas().size();
+            barrio.getCoordenadas().size();
+            barrio.getOrganizaciones().size();
         }
+        return barrios;
     }
 
     @Override

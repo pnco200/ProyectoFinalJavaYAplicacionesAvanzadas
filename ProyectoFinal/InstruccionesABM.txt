@@ -74,8 +74,8 @@ get(id): Listar una jornada por id
 get(nombre): Listar una jornada por nombre
 post(action, name, startDate, endDate, campañaId): con "action" = create Crear una jornada
 post(action, name, startDate, endDate, campañaId): con "action" = update Actualizar una jornada
-post(action, encuestadorId): con "action" = addEncuestador Asocia un encuestador a una jornada
-post(action, encuestadorId): con "action" = removeEncuestador Asocia un encuestador a una jornada
+post(action, encuestadorId, jornadaId): con "action" = addEncuestador Asocia un encuestador a una jornada
+post(action, encuestadorId, jornadaId): con "action" = removeEncuestador Asocia un encuestador a una jornada
 delete(id): Eliminar una jornada
 -----------------------------------------------------------------------------------------------------------------------------
 **ENCUESTADOR**

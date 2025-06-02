@@ -2,6 +2,7 @@ package asis.dao;
 
 import asis.exceptions.CampañaException;
 import asis.models.Campaña;
+import asis.models.Jornada;
 import asis.utils.JPAUtil; 
 
 import jakarta.persistence.EntityManager;
@@ -89,15 +90,30 @@ public class CampañaDAO implements ICampañaDAO {
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(Long id) { //Esto esta mas o menos, me gustaria llamar el DAO de jornada pero maneja su propio EM
         EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
+
         try {
             tx.begin();
             Campaña campaña = em.find(Campaña.class, id);
             if (campaña != null) {
+                // Forzar carga de jornadas si la colección es LAZY
+                campaña.getJornadas().size();
+
+                for (Jornada jornada : campaña.getJornadas()) {
+                    // Eliminar asociaciones con encuestadores
+                    jornada.getEncuestadores().clear();
+                    em.merge(jornada); // Persistir el cambio
+
+                    // Eliminar la jornada
+                    em.remove(em.contains(jornada) ? jornada : em.merge(jornada));
+                }
+
+                // Finalmente eliminar la campaña
                 em.remove(campaña);
             }
+
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
@@ -106,6 +122,7 @@ public class CampañaDAO implements ICampañaDAO {
             em.close();
         }
     }
+
 
     @Override
     public List<Campaña> findByName(String name) {

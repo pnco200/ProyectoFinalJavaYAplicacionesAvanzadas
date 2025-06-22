@@ -3,22 +3,24 @@ package asis.dao;
 import asis.exceptions.EncuestadorException;
 import asis.models.Encuestador;
 import asis.utils.JPAUtil;
-
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 
+@ApplicationScoped
 public class EncuestadorDAO implements IEncuestadorDAO {
-
+	@Inject
+	private EntityManager em;
+	
 	@Override
 	public Encuestador save(Encuestador encuestador) throws EncuestadorException {
 	    if (encuestador.getDni() == null || encuestador.getDni().trim().isEmpty()) {
 	        throw new EncuestadorException("El DNI del encuestador no puede estar vacio.");
 	    }
-
-	    EntityManager em = JPAUtil.getEntityManager();
 	    EntityTransaction tx = em.getTransaction();
 
 	    try {
@@ -57,7 +59,6 @@ public class EncuestadorDAO implements IEncuestadorDAO {
 
     @Override
     public Encuestador findById(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
         try {
             return em.find(Encuestador.class, id);
         } finally {
@@ -67,7 +68,6 @@ public class EncuestadorDAO implements IEncuestadorDAO {
 
     @Override
     public List<Encuestador> findAll() {
-        EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Encuestador> query = em.createQuery(
                 "SELECT e FROM Encuestador e", Encuestador.class);
@@ -79,7 +79,6 @@ public class EncuestadorDAO implements IEncuestadorDAO {
 
     @Override
     public void deleteById(Long id) throws EncuestadorException {
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
 
         try {
@@ -101,7 +100,6 @@ public class EncuestadorDAO implements IEncuestadorDAO {
 
     /*@Override
     public List<Encuestador> findByName(String name) {
-        EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Encuestador> query = em.createQuery(
                 "SELECT e FROM Encuestador e WHERE e.name LIKE :name", Encuestador.class);
@@ -114,7 +112,6 @@ public class EncuestadorDAO implements IEncuestadorDAO {
 
     @Override
     public Encuestador findByDni(String dni) {
-        EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Encuestador> query = em.createQuery(
                 "SELECT e FROM Encuestador e WHERE e.dni = :dni", Encuestador.class);

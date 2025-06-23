@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-@WebServlet("/coordenadas")
+@WebServlet("/coordenadasOLD")
 public class CoordenadasServlet extends HttpServlet {
     
     private ICoordenadasDAO coordenadasDAO;

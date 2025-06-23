@@ -1,24 +1,28 @@
 package asis.dao;
 
 import asis.models.Barrio;
-import asis.utils.JPAUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
+
 import java.util.List;
 
+@ApplicationScoped
 public class BarrioDAO implements IBarrioDAO {
+
+    @Inject
+    private EntityManager em;
 
     @Override
     public Barrio save(Barrio barrio) {
-        if (this.existsByName(barrio.getName())) {
+        if (existsByName(barrio.getName())) {
             return null;
         }
 
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
-
         try {
             tx.begin();
             em.persist(barrio);
@@ -28,22 +32,19 @@ public class BarrioDAO implements IBarrioDAO {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
             return null;
-        } finally {
-            em.close();
         }
     }
 
     @Override
     public Barrio findById(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
         return em.find(Barrio.class, id);
     }
 
     @Override
     public List<Barrio> findAll() {
-        EntityManager em = JPAUtil.getEntityManager();
-        TypedQuery<Barrio> query = em.createQuery("SELECT b FROM Barrio b ", Barrio.class);
-        List<Barrio> barrios = query.getResultList();       
+        TypedQuery<Barrio> query = em.createQuery("SELECT b FROM Barrio b", Barrio.class);
+        List<Barrio> barrios = query.getResultList();
+        // Inicializar colecciones para evitar LazyInitializationException si es necesario
         for (Barrio barrio : barrios) {
             barrio.getZonas().size();
             barrio.getCoordenadas().size();
@@ -54,36 +55,29 @@ public class BarrioDAO implements IBarrioDAO {
 
     @Override
     public Barrio update(Barrio barrio) throws Exception {
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
-        Barrio merged = null;
         try {
             Barrio existente = em.find(Barrio.class, barrio.getId());
             if (existente == null) {
                 throw new Exception("Barrio no encontrado.");
             }
-
             if (barrio.getName() != null && !barrio.getName().equals(existente.getName())) {
                 if (isNameUsedByAnother(barrio.getId(), barrio.getName())) {
                     throw new Exception("El nombre ya está en uso por otro barrio.");
                 }
             }
-
             tx.begin();
-            merged = em.merge(barrio);
+            Barrio merged = em.merge(barrio);
             tx.commit();
             return merged;
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             throw e;
-        } finally {
-            em.close();
         }
     }
 
     @Override
     public void delete(Barrio barrio) {
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
@@ -96,14 +90,11 @@ public class BarrioDAO implements IBarrioDAO {
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
-        } finally {
-            em.close();
         }
     }
 
     @Override
     public void deleteById(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
@@ -115,8 +106,6 @@ public class BarrioDAO implements IBarrioDAO {
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
-        } finally {
-            em.close();
         }
     }
 
@@ -127,26 +116,17 @@ public class BarrioDAO implements IBarrioDAO {
 
     @Override
     public boolean existsByName(String name) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            TypedQuery<Long> query = em.createQuery("SELECT COUNT(b) FROM Barrio b WHERE b.name = :name", Long.class);
-            query.setParameter("name", name);
-            return query.getSingleResult() > 0;
-        } finally {
-            em.close();
-        }
+        TypedQuery<Long> query = em.createQuery(
+            "SELECT COUNT(b) FROM Barrio b WHERE b.name = :name", Long.class);
+        query.setParameter("name", name);
+        return query.getSingleResult() > 0;
     }
 
     private boolean isNameUsedByAnother(Long barrioId, String name) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            TypedQuery<Long> query = em.createQuery(
-                "SELECT COUNT(b) FROM Barrio b WHERE b.name = :name AND b.id != :id", Long.class);
-            query.setParameter("name", name);
-            query.setParameter("id", barrioId);
-            return query.getSingleResult() > 0;
-        } finally {
-            em.close();
-        }
+        TypedQuery<Long> query = em.createQuery(
+            "SELECT COUNT(b) FROM Barrio b WHERE b.name = :name AND b.id != :id", Long.class);
+        query.setParameter("name", name);
+        query.setParameter("id", barrioId);
+        return query.getSingleResult() > 0;
     }
 }

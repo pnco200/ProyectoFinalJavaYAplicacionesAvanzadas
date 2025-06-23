@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/encuesta")
+@WebServlet("/encuestaOLD")
 public class EncuestaServlet extends HttpServlet {
 
     private EncuestaDAO encuestaDAO;

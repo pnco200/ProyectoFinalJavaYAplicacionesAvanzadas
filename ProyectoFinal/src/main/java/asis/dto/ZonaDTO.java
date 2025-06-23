@@ -1,21 +1,26 @@
 package asis.dto;
 
-import asis.models.Zona;
 import java.util.List;
 
 public class ZonaDTO {
-    private Zona zona;
+    private String color;
+    private Long barrioId;
     private List<CoordenadasDTO> coordenadas;
     
     public ZonaDTO() {
     }
     
-    public Zona getZona() {
-        return zona;
+    public String getColor() {
+        return color;
     }
-    
-    public void setZona(Zona zona) {
-        this.zona = zona;
+    public void setColor(String color) {
+        this.color = color;
+    }
+public Long getBarrioId() {
+        return barrioId;
+    }
+public void setBarrioId(Long barrioId) {
+        this.barrioId = barrioId;
     }
     
     public List<CoordenadasDTO> getCoordenadas() {
@@ -27,8 +32,8 @@ public class ZonaDTO {
     }
     
     public boolean isValid() {
-        return zona != null && zona.getColor() != null && !zona.getColor().trim().isEmpty() 
-            && zona.getBarrio() != null && zona.getBarrio().getId() != null
+        return color != null && color.trim().isEmpty() 
+            && barrioId != null
             && coordenadas != null && coordenadas.size() >= 3;
     }
 }

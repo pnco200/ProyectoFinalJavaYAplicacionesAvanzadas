@@ -3,134 +3,105 @@ package asis.dao;
 import asis.models.Encuesta;
 import asis.models.Encuesta.TipoEncuesta;
 import asis.models.Renglon;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
-import java.util.List;
-import asis.utils.JPAUtil;
 
+import java.util.List;
+
+@ApplicationScoped
 public class EncuestaDAO implements IEncuestaDAO {
+
+    @Inject
+    private EntityManager em;
 
     @Override
     public Encuesta save(Encuesta encuesta) {
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
-
         try {
             tx.begin();
-            em.persist(encuesta);
+            if (encuesta.getId() == null) {
+                em.persist(encuesta);
+            } else {
+                encuesta = em.merge(encuesta);
+            }
             tx.commit();
             return encuesta;
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
             return null;
-        } finally {
-            em.close();
-        }
-    }
-
-    @Override
-    public Encuesta findById(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            return em.find(Encuesta.class, id);
-        } finally {
-            em.close();
-        }
-    }
-
-    @Override
-    public List<Encuesta> findAll() {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            TypedQuery<Encuesta> query = em.createQuery("SELECT e FROM Encuesta e", Encuesta.class);
-            return query.getResultList();
-        } finally {
-            em.close();
-        }
-    }
-
-    @Override
-    public List<Encuesta> findByTipo(TipoEncuesta tipo) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            TypedQuery<Encuesta> query = em.createQuery(
-                "SELECT e FROM Encuesta e WHERE e.tipo = :tipo", Encuesta.class);
-            query.setParameter("tipo", tipo);
-            return query.getResultList();
-        } finally {
-            em.close();
-        }
-    }
-
-    @Override
-    public List<Encuesta> findByViviendaId(Long viviendaId) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            TypedQuery<Encuesta> query = em.createQuery(
-                "SELECT e FROM Encuesta e WHERE e.vivienda.id = :viviendaId", Encuesta.class);
-            query.setParameter("viviendaId", viviendaId);
-            return query.getResultList();
-        } finally {
-            em.close();
-        }
-    }
-
-    @Override
-    public List<Encuesta> findByCampañaId(Long campañaId) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            TypedQuery<Encuesta> query = em.createQuery(
-                "SELECT e FROM Encuesta e WHERE e.campaña.id = :campañaId", Encuesta.class);
-            query.setParameter("campañaId", campañaId);
-            return query.getResultList();
-        } finally {
-            em.close();
         }
     }
 
     @Override
     public Encuesta update(Encuesta encuesta) {
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            Encuesta merged = em.merge(encuesta);
+            Encuesta updated = em.merge(encuesta);
             tx.commit();
-            return merged;
+            return updated;
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
             return null;
-        } finally {
-            em.close();
         }
     }
 
     @Override
+    public Encuesta findById(Long id) {
+        return em.find(Encuesta.class, id);
+    }
+
+    @Override
+    public List<Encuesta> findAll() {
+        TypedQuery<Encuesta> query = em.createQuery("SELECT e FROM Encuesta e", Encuesta.class);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Encuesta> findByTipo(TipoEncuesta tipo) {
+        TypedQuery<Encuesta> query = em.createQuery("SELECT e FROM Encuesta e WHERE e.tipo = :tipo", Encuesta.class);
+        query.setParameter("tipo", tipo);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Encuesta> findByViviendaId(Long viviendaId) {
+        TypedQuery<Encuesta> query = em.createQuery("SELECT e FROM Encuesta e WHERE e.vivienda.id = :viviendaId", Encuesta.class);
+        query.setParameter("viviendaId", viviendaId);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<Encuesta> findByCampañaId(Long campañaId) {
+        TypedQuery<Encuesta> query = em.createQuery("SELECT e FROM Encuesta e WHERE e.campaña.id = :campañaId", Encuesta.class);
+        System.out.println(query);
+        query.setParameter("campañaId", campañaId);
+        return query.getResultList();
+    }
+
+    @Override
     public void delete(Encuesta encuesta) {
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            Encuesta managedEncuesta = encuesta;
             if (!em.contains(encuesta)) {
-                managedEncuesta = em.merge(encuesta);
+                encuesta = em.merge(encuesta);
             }
-            em.remove(managedEncuesta);
+            em.remove(encuesta);
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
-        } finally {
-            em.close();
         }
     }
 
     @Override
     public void deleteById(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
@@ -142,40 +113,35 @@ public class EncuestaDAO implements IEncuestaDAO {
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
-        } finally {
-            em.close();
-        }
-    }
-
-    public Encuesta addRenglonToEncuesta(int encuestaId, int renglonId) {
-        EntityManager em = JPAUtil.getEntityManager();
-        EntityTransaction tx = em.getTransaction();
-        
-        try {
-            tx.begin();
-            Encuesta encuesta = em.find(Encuesta.class, encuestaId);
-            Renglon renglon = em.find(Renglon.class, renglonId);
-
-            if (encuesta == null || renglon == null) {
-                return null;
-            }
-            
-            renglon.setEncuesta(encuesta);
-            encuesta.getRenglones().add(renglon);
-            
-            tx.commit();
-            return encuesta;
-        } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            e.printStackTrace();
-            return null;
-        } finally {
-            em.close();
         }
     }
 
     @Override
     public boolean existsById(Long id) {
         return findById(id) != null;
+    }
+
+    public Encuesta addRenglonToEncuesta(int encuestaId, int renglonId) {
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Encuesta encuesta = em.find(Encuesta.class, encuestaId);
+            Renglon renglon = em.find(Renglon.class, renglonId);
+
+            if (encuesta == null || renglon == null) {
+                tx.rollback();
+                return null;
+            }
+
+            renglon.setEncuesta(encuesta);
+            encuesta.getRenglones().add(renglon);
+
+            tx.commit();
+            return encuesta;
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            e.printStackTrace();
+            return null;
+        }
     }
 }

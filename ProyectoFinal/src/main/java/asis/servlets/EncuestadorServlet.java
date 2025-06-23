@@ -12,7 +12,7 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-@WebServlet("/encuestadora")
+@WebServlet("/encuestadorOLD")
 public class EncuestadorServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;

@@ -1,21 +1,20 @@
 package asis.dto;
 
-import asis.models.Barrio;
 import java.util.List;
 
 public class BarrioDTO {
-    private Barrio barrio;
+    private String nombre;
     private List<CoordenadasDTO> coordenadas;
     
     public BarrioDTO() {
     }
     
-    public Barrio getBarrio() {
-        return barrio;
+    public String getNombre() {
+        return nombre;
     }
     
-    public void setBarrio(Barrio barrio) {
-        this.barrio = barrio;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
     
     public List<CoordenadasDTO> getCoordenadas() {
@@ -27,7 +26,7 @@ public class BarrioDTO {
     }
     
     public boolean isValid() {
-        return barrio != null && barrio.getName() != null && !barrio.getName().trim().isEmpty() 
+        return nombre != null && !nombre.trim().isEmpty() 
             && coordenadas != null && coordenadas.size() >= 3;
     }
 }

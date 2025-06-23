@@ -23,7 +23,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet("/barrios")
+@WebServlet("/barriosOLD")
 public class BarrioServlet extends HttpServlet {
     
     private IBarrioDAO barrioDAO;

@@ -1,20 +1,22 @@
 package asis.dao;
 
 import asis.models.Zona;
-import asis.models.Barrio;
-import asis.utils.JPAUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 
+@ApplicationScoped
 public class ZonaDAO implements IZonaDAO {
+
+    @Inject
+    private EntityManager em;
 
     @Override
     public Zona save(Zona zona) {
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
-
         try {
             tx.begin();
             em.persist(zona);
@@ -24,25 +26,22 @@ public class ZonaDAO implements IZonaDAO {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
             return null;
-        } 
+        }
     }
 
     @Override
     public Zona findById(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
         return em.find(Zona.class, id);
     }
 
     @Override
     public List<Zona> findAll() {
-        EntityManager em = JPAUtil.getEntityManager();
         TypedQuery<Zona> query = em.createQuery("SELECT z FROM Zona z", Zona.class);
         return query.getResultList();
     }
 
     @Override
     public List<Zona> findByBarrioId(Long barrioId) {
-        EntityManager em = JPAUtil.getEntityManager();
         TypedQuery<Zona> query = em.createQuery(
             "SELECT z FROM Zona z WHERE z.barrio.id = :barrioId", Zona.class);
         query.setParameter("barrioId", barrioId);
@@ -51,9 +50,7 @@ public class ZonaDAO implements IZonaDAO {
 
     @Override
     public Zona update(Zona zona) throws Exception {
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
-        Zona merged = null;
         try {
             Zona existente = em.find(Zona.class, zona.getId());
             if (existente == null) {
@@ -61,36 +58,34 @@ public class ZonaDAO implements IZonaDAO {
             }
 
             tx.begin();
-            merged = em.merge(zona);
+            Zona merged = em.merge(zona);
             tx.commit();
             return merged;
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             throw e;
-        } 
+        }
     }
 
     @Override
     public void delete(Zona zona) {
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            Zona managedZona = zona;
+            Zona managed = zona;
             if (!em.contains(zona)) {
-                managedZona = em.merge(zona);
+                managed = em.merge(zona);
             }
-            em.remove(managedZona);
+            em.remove(managed);
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
-        } 
+        }
     }
 
     @Override
     public void deleteById(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
@@ -102,7 +97,7 @@ public class ZonaDAO implements IZonaDAO {
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
-        } 
+        }
     }
 
     @Override

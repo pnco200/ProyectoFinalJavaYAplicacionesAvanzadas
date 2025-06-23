@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Path("/usuarios")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Tag(name = "Usuario", description = "Operaciones CRUD sobre usuarios")
+@Tag(name = "Usuario", description = "Operaciones sobre usuarios")
 public class UsuarioController {
 
     @Inject

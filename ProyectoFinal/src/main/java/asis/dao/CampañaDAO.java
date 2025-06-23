@@ -3,16 +3,20 @@ package asis.dao;
 import asis.exceptions.CampañaException;
 import asis.models.Campaña;
 import asis.models.Jornada;
-import asis.utils.JPAUtil; 
-
+import asis.utils.JPAUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import java.util.Date;
 import java.util.List;
 
+@ApplicationScoped
 public class CampañaDAO implements ICampañaDAO {
-
+	
+	@Inject
+	private EntityManager em;
     @Override
     public Campaña save(Campaña campaña) throws CampañaException {
         if (campaña.getStartDate() != null && campaña.getEndDate() != null) {
@@ -21,7 +25,7 @@ public class CampañaDAO implements ICampañaDAO {
             }
         }
 
-        EntityManager em = JPAUtil.getEntityManager();
+
         EntityTransaction tx = em.getTransaction();
         try {
             String jpql = "SELECT c FROM Campaña c WHERE c.name = :name AND " +
@@ -62,36 +66,35 @@ public class CampañaDAO implements ICampañaDAO {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
             throw new CampañaException("Error interno al guardar la campaña.");
-        } finally {
-            em.close();
-        }
+        } 
     }
 
 
     @Override
     public Campaña findById(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
+
         try {
             return em.find(Campaña.class, id);
-        } finally {
-            em.close();
+        } catch (Exception e) {
+        	e.printStackTrace();
+        	return null; // Retorna null en caso de error
         }
     }
-
     @Override
     public List<Campaña> findAll() {
-        EntityManager em = JPAUtil.getEntityManager();
+
         try {
             TypedQuery<Campaña> query = em.createQuery("SELECT c FROM Campaña c", Campaña.class);
             return query.getResultList();
-        } finally {
-            em.close();
-        }
+        } catch (Exception e) {
+			e.printStackTrace();
+			return List.of(); // Retorna una lista vacía en caso de error
+		} 
     }
 
     @Override
     public void deleteById(Long id) { //Esto esta mas o menos, me gustaria llamar el DAO de jornada pero maneja su propio EM
-        EntityManager em = JPAUtil.getEntityManager();
+
         EntityTransaction tx = em.getTransaction();
 
         try {
@@ -118,36 +121,36 @@ public class CampañaDAO implements ICampañaDAO {
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
-        } finally {
-            em.close();
-        }
+        } 
     }
 
 
     @Override
     public List<Campaña> findByName(String name) {
-        EntityManager em = JPAUtil.getEntityManager();
+
         try {
             TypedQuery<Campaña> query = em.createQuery(
                 "SELECT c FROM Campaña c WHERE c.name LIKE :name", Campaña.class);
             query.setParameter("name", "%" + name + "%");
             return query.getResultList();
-        } finally {
-            em.close();
+        } catch (Exception e) {
+        	e.printStackTrace();
+        	return List.of(); // Retorna una lista vacía en caso de error
         }
     }
 
     @Override
     public List<Campaña> findByStartDateBetween(Date startDate, Date endDate) {
-        EntityManager em = JPAUtil.getEntityManager();
+
         try {
             TypedQuery<Campaña> query = em.createQuery(
                 "SELECT c FROM Campaña c WHERE c.startDate BETWEEN :startDate AND :endDate", Campaña.class);
             query.setParameter("startDate", startDate);
             query.setParameter("endDate", endDate);
             return query.getResultList();
-        } finally {
-            em.close();
-        }
+        } catch (Exception e) {
+			e.printStackTrace();
+			return List.of(); // Retorna una lista vacía en caso de error
+		} 
     }
 }

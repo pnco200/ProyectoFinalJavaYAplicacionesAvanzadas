@@ -3,16 +3,18 @@ package asis.dao;
 import asis.models.Rol;
 import asis.models.Usuario;
 import asis.utils.JPAUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
-
+@ApplicationScoped
 public class RolDAO implements IRolDAO {
-
+	@Inject
+	private EntityManager em;
     @Override
     public Rol save(Rol rol) {
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             // Validar duplicados por nombre
@@ -32,35 +34,32 @@ public class RolDAO implements IRolDAO {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
             return null;
-        } finally {
-            em.close();
-        }
+        } 
     }
 
     @Override
     public Rol findById(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
         try {
             return em.find(Rol.class, id);
-        } finally {
-            em.close();
-        }
+        } catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} 
     }
 
     @Override
     public List<Rol> findAll() {
-        EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Rol> query = em.createQuery("SELECT r FROM Rol r", Rol.class);
             return query.getResultList();
-        } finally {
-            em.close();
-        }
+        } catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} 
     }
 
     @Override
     public Rol update(Rol rol) {
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
@@ -71,14 +70,11 @@ public class RolDAO implements IRolDAO {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
             return null;
-        } finally {
-            em.close();
-        }
+        } 
     }
 
     @Override
     public void delete(Rol rol) {
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
@@ -93,14 +89,11 @@ public class RolDAO implements IRolDAO {
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
-        } finally {
-            em.close();
-        }
+        } 
     }
 
     @Override
     public void deleteById(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
@@ -116,9 +109,7 @@ public class RolDAO implements IRolDAO {
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
-        } finally {
-            em.close();
-        }
+        } 
     }
 
     @Override
@@ -128,33 +119,32 @@ public class RolDAO implements IRolDAO {
 
     @Override
     public List<Rol> findByTipoRol(Rol.TipoRol tipoRol) {
-        EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Rol> query = em.createQuery(
                 "SELECT r FROM Rol r WHERE r.nombre = :rolTipo", Rol.class);
             query.setParameter("rolTipo", tipoRol);
             return query.getResultList();
-        } finally {
-            em.close();
-        }
+        } catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} 
     }
 
     @Override
     public List<Usuario> findUsersByRolId(Long rolId) {
-        EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Usuario> query = em.createQuery(
                 "SELECT u FROM Usuario u JOIN u.roles r WHERE r.id = :rolId", Usuario.class);
             query.setParameter("rolId", rolId);
             return query.getResultList();
-        } finally {
-            em.close();
+        } catch (Exception e) {
+        	e.printStackTrace();
+        	return null;
         }
     }
 
     @Override
     public void addUsuario(Long rolId, Usuario usuario) {
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
@@ -179,14 +169,11 @@ public class RolDAO implements IRolDAO {
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             throw e; 
-        } finally {
-            em.close();
-        }
+        } 
     }
 
     @Override
     public void removeUsuario(Long rolId, Usuario usuario) {
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
@@ -211,9 +198,7 @@ public class RolDAO implements IRolDAO {
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             throw e; 
-        } finally {
-            em.close();
-        }
+        } 
     }
 
 }

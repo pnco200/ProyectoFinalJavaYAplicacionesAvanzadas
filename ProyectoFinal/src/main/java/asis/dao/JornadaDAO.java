@@ -3,8 +3,8 @@ package asis.dao;
 import asis.exceptions.JornadaException;
 import asis.models.Encuestador;
 import asis.models.Jornada;
-import asis.utils.JPAUtil;
-
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.TypedQuery;
@@ -12,8 +12,12 @@ import jakarta.persistence.TypedQuery;
 import java.util.Date;
 import java.util.List;
 
+@ApplicationScoped
 public class JornadaDAO implements IJornadaDAO {
-
+	
+	@Inject
+	private EntityManager em;
+	
     @Override
     public Jornada save(Jornada jornada) throws JornadaException {
         if (jornada.getStartDate() != null && jornada.getEndDate() != null) {
@@ -22,7 +26,6 @@ public class JornadaDAO implements IJornadaDAO {
             }
         }
 
-        EntityManager em = JPAUtil.getEntityManager();
         EntityTransaction tx = em.getTransaction();
 
         try {
@@ -69,35 +72,36 @@ public class JornadaDAO implements IJornadaDAO {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
             throw new JornadaException("Error interno al guardar la jornada.");
-        } finally {
-            em.close();
         }
+        
     }
 
     @Override
     public Jornada findById(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
+        
         try {
             return em.find(Jornada.class, id);
-        } finally {
-            em.close();
-        }
+        } catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} 
     }
 
     @Override
     public List<Jornada> findAll() {
-        EntityManager em = JPAUtil.getEntityManager();
+        
         try {
             TypedQuery<Jornada> query = em.createQuery("SELECT j FROM Jornada j", Jornada.class);
             return query.getResultList();
-        } finally {
-            em.close();
-        }
+        } catch (Exception e) {
+			e.printStackTrace();
+			return List.of(); // Retorna una lista vacía en caso de error
+		} 
     }
 
     @Override
     public void deleteById(Long id) {
-        EntityManager em = JPAUtil.getEntityManager();
+        
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
@@ -111,41 +115,41 @@ public class JornadaDAO implements IJornadaDAO {
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
-        } finally {
-            em.close();
-        }
+        } 
     }
 
     @Override
     public List<Jornada> findByName(String name) {
-        EntityManager em = JPAUtil.getEntityManager();
+        
         try {
             TypedQuery<Jornada> query = em.createQuery(
                 "SELECT j FROM Jornada j WHERE j.name LIKE :name", Jornada.class);
             query.setParameter("name", "%" + name + "%");
             return query.getResultList();
-        } finally {
-            em.close();
-        }
+        } catch (Exception e) {
+			e.printStackTrace();
+			return List.of(); // Retorna una lista vacía en caso de error
+		} 
     }
 
     @Override
     public List<Jornada> findByStartDateBetween(Date startDate, Date endDate) {
-        EntityManager em = JPAUtil.getEntityManager();
+        
         try {
             TypedQuery<Jornada> query = em.createQuery(
                 "SELECT j FROM Jornada j WHERE j.startDate BETWEEN :startDate AND :endDate", Jornada.class);
             query.setParameter("startDate", startDate);
             query.setParameter("endDate", endDate);
             return query.getResultList();
-        } finally {
-            em.close();
+        } catch (Exception e) {
+        		e.printStackTrace();
+        		return List.of(); // Retorna una lista vacía en caso de error			
         }
     }
     
     @Override
     public void addEncuestador(Long jornadaId, Encuestador encuestador) throws JornadaException {
-        EntityManager em = JPAUtil.getEntityManager();
+        
         EntityTransaction tx = em.getTransaction();
 
         try {
@@ -171,14 +175,12 @@ public class JornadaDAO implements IJornadaDAO {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
             throw new JornadaException("Error al asignar el encuestador a la jornada.");
-        } finally {
-            em.close();
-        }
+        } 
     }
 
     @Override
     public void removeEncuestador(Long jornadaId, Encuestador encuestador) throws JornadaException {
-        EntityManager em = JPAUtil.getEntityManager();
+        
         EntityTransaction tx = em.getTransaction();
 
         try {
@@ -204,14 +206,12 @@ public class JornadaDAO implements IJornadaDAO {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
             throw new JornadaException("Error al remover el encuestador de la jornada.");
-        } finally {
-            em.close();
-        }
+        } 
     }
 
     @Override
     public List<Encuestador> getEncuestadoresByJornada(Long jornadaId) throws JornadaException {
-        EntityManager em = JPAUtil.getEntityManager();
+        
 
         try {
             Jornada jornada = em.find(Jornada.class, jornadaId);
@@ -222,9 +222,7 @@ public class JornadaDAO implements IJornadaDAO {
         } catch (Exception e) {
             e.printStackTrace();
             throw new JornadaException("Error al obtener los encuestadores de la jornada.");
-        } finally {
-            em.close();
-        }
+        } 
     }
 
 }

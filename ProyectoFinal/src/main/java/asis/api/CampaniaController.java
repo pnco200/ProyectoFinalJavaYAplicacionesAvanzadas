@@ -23,7 +23,7 @@ import java.util.List;
 @Path("/campanias")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Tag(name = "Campañas", description = "Operaciones relacionadas con campañas")
+@Tag(name = "Campañas", description = "Operaciones sobre campañas")
 public class CampaniaController {
 
     @Inject

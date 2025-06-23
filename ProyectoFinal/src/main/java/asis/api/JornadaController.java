@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Path("/jornadas")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-@Tag(name = "Jornadas")
+@Tag(name = "Jornadas", description="Operaciones sobre Jornadas")
 public class JornadaController {
 
     @Inject

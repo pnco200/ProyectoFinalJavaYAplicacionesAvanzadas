@@ -12,4 +12,5 @@ public interface IEncuestadorDAO {
     void deleteById(Long id) throws EncuestadorException;
     //List<Encuestador> findByName(String name);
     Encuestador findByDni(String dni);
+    Encuestador update(Encuestador encuestador) throws EncuestadorException;
 }

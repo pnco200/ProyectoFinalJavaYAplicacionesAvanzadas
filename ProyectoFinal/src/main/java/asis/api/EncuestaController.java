@@ -132,7 +132,7 @@ public class EncuestaController {
             return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\": \"Tipo de encuesta inválido\"}").build();
         }
     }
-
+/* Tecnicamente inusable
     @PUT
     @Path("/addRenglon")
     @Operation(summary = "Agregar renglón a encuesta")
@@ -153,7 +153,7 @@ public class EncuestaController {
             return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\": \"No se pudo agregar el renglón\"}").build();
         }
     }
-
+*/
     @DELETE
     @Path("/delete/{id}")
     @Operation(summary = "Eliminar encuesta por ID")

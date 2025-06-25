@@ -109,6 +109,43 @@ public class EncuestadorDAO implements IEncuestadorDAO {
             em.close();
         }
     }*/
+    
+    @Override
+    public Encuestador update(Encuestador encuestador) throws EncuestadorException {
+        EntityTransaction tx = em.getTransaction();
+        Encuestador merged = null;
+
+        try {
+            Encuestador existente = em.find(Encuestador.class, encuestador.getId());
+            if (existente == null) {
+                throw new EncuestadorException("Encuestador no encontrado.");
+            }
+            if (encuestador.getDni() != null && !encuestador.getDni().equals(existente.getDni())) {
+                TypedQuery<Encuestador> query = em.createQuery(
+                    "SELECT e FROM Encuestador e WHERE e.dni = :dni", Encuestador.class);
+                query.setParameter("dni", encuestador.getDni());
+                List<Encuestador> encontrados = query.getResultList();
+
+                if (!encontrados.isEmpty() && !encontrados.get(0).getId().equals(encuestador.getId())) {
+                    throw new EncuestadorException("Ya existe un encuestador con ese DNI.");
+                }
+            }
+
+            tx.begin();
+            merged = em.merge(encuestador);
+            tx.commit();
+            return merged;
+
+        } catch (EncuestadorException e) {
+            if (tx.isActive()) tx.rollback();
+            throw e;
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            e.printStackTrace();
+            throw new EncuestadorException("Error al actualizar el encuestador.");
+        }
+    }
+
 
     @Override
     public Encuestador findByDni(String dni) {

@@ -3,6 +3,7 @@ package asis.api;
 import asis.dao.EncuestadorDAO;
 import asis.dao.IEncuestadorDAO;
 import asis.dto.EncuestadorDTO;
+import asis.dto.EncuestadorPUTDTO;
 import asis.exceptions.EncuestadorException;
 import asis.models.Encuestador;
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,26 +68,43 @@ public class EncuestadorController {
     public Response create(@RequestBody(description = "Encuestador a crear", required = true,
             content = @Content(schema = @Schema(implementation = EncuestadorDTO.class))) Encuestador encuestador) {
         try {
+        	System.out.println("TRY");
             Encuestador creado = encuestadorDAO.save(encuestador);
+        	System.out.println("Sed");
             return Response.ok(encuestadorToJson(creado)).build();
         } catch (EncuestadorException e) {
             return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\":\"" + e.getMessage() + "\"}").build();
         }
     }
-/* TO DO
+
     @PUT
     @Path("/update")
     @Operation(summary = "Actualizar encuestador existente")
     public Response update(@RequestBody(description = "Encuestador a actualizar", required = true,
-            content = @Content(schema = @Schema(implementation = Encuestador.class))) Encuestador encuestador) {
+            content = @Content(schema = @Schema(implementation = EncuestadorPUTDTO.class))) EncuestadorPUTDTO dto) {
         try {
-            Encuestador actualizado = encuestadorDAO.(encuestador);
+            Encuestador encuestador = new Encuestador();
+            encuestador.setId(dto.getId());
+            encuestador.setName(dto.getName());
+            encuestador.setDni(dto.getDni());
+            encuestador.setSex(dto.getSex());
+            encuestador.setOccupation(dto.getOccupation());
+
+            if (dto.getBirthDate() != null && !dto.getBirthDate().isEmpty()) {
+                encuestador.setBirthDate(sdf.parse(dto.getBirthDate()));
+            }
+
+            Encuestador actualizado = encuestadorDAO.update(encuestador);
             return Response.ok(encuestadorToJson(actualizado)).build();
         } catch (EncuestadorException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\":\"" + e.getMessage() + "\"}").build();
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"error\":\"" + e.getMessage() + "\"}").build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\":\"Error al actualizar el encuestador\"}").build();
         }
     }
-    */
+
 
     @DELETE
     @Path("/delete/{id}")

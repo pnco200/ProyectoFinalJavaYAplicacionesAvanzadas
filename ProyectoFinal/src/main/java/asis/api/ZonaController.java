@@ -84,6 +84,8 @@ public class ZonaController {
                 Coordenadas savedCoord = coordenadasDAO.save(coord);
                 savedCoords.add(savedCoord);
             }
+        } else {
+        	return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\":\"Requiere al menos 3 coordenadas\"}").build();
         }
         savedZona.setCoordenadas(savedCoords);
         List<Zona> singleZona = new ArrayList<>();
@@ -109,7 +111,9 @@ public class ZonaController {
                 }
                 zona.setBarrio(barrio);
             }	
-
+            if(zonaDTO.getColor() != null) {
+            	zona.setColor(zonaDTO.getColor());
+            }
 
             if (zonaDTO.getCoordenadas() != null && zonaDTO.getCoordenadas().size() > 2) {
                 coordenadasDAO.deleteByZonaId(id);
@@ -119,8 +123,11 @@ public class ZonaController {
                 }
             }
 
-            zonaDAO.update(zona);
-            return Response.ok("{\"message\":\"Zona actualizada\"}").build();
+            Zona z = zonaDAO.update(zona);
+            List<Zona> singleZona = new ArrayList<>();
+            singleZona.add(z);
+            String json = serializeZonasToJson(singleZona);
+            return Response.status(Response.Status.OK).entity(json).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("{\"error\":\"" + e.getMessage() + "\"}").build();
         }

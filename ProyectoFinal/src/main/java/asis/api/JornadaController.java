@@ -97,6 +97,10 @@ public class JornadaController {
             if (campaña == null)
                 throw new JornadaException("Campaña no encontrada.");
 
+            if (dto.startDate.before(campaña.getStartDate()) || dto.endDate.after(campaña.getEndDate())) {
+                throw new JornadaException("Las fechas de la jornada deben estar dentro del rango de fechas de la campaña.");
+            }
+
             Jornada j = toEntity(dto);
             j.setCampaña(campaña);
             Jornada creada = jornadaDAO.save(j);
@@ -106,6 +110,7 @@ public class JornadaController {
         }
     }
 
+
     @PUT
     @Operation(summary = "Actualizar jornada existente")
     public Response update(JornadaDTO dto) {
@@ -113,6 +118,10 @@ public class JornadaController {
             Campaña campaña = campañaDAO.findById(dto.campañaId);
             if (campaña == null)
                 throw new JornadaException("Campaña no encontrada.");
+
+            if (dto.startDate.before(campaña.getStartDate()) || dto.endDate.after(campaña.getEndDate())) {
+                throw new JornadaException("Las fechas de la jornada deben estar dentro del rango de fechas de la campaña.");
+            }
 
             Jornada j = toEntity(dto);
             j.setCampaña(campaña);
@@ -122,6 +131,7 @@ public class JornadaController {
             return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\":\"" + e.getMessage() + "\"}").build();
         }
     }
+
 
     @DELETE
     @Path("/{id}")

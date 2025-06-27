@@ -1,0 +1,33 @@
+<div class="user-list-container">
+  <h2>Listado de Usuarios</h2>
+  <button (click)="goToNewUser()">Nuevo Usuario</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>DNI</th>
+        <th>Apellido y Nombres</th>
+        <th>Email</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.dni }}</td>
+        <td>{{ user.apellido }}, {{ user.nombres }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.activo ? 'Habilitado' : 'Deshabilitado' }}</td>
+        <td>
+          <button (click)="viewUserDetail(user.id)">Ver</button>
+          <button (click)="editUser(user.id)">Editar</button>
+          <button (click)="deleteUser(user.id)">Eliminar</button>
+          <button (click)="toggleUserStatus(user)">
+            {{ user.activo ? 'Deshabilitar' : 'Habilitar' }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div *ngIf="users.length === 0">No hay usuarios registrados.</div>
+</div>

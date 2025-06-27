@@ -1,0 +1,25 @@
+<div class="user-detail-container" *ngIf="user">
+  <h2>Detalle del Usuario</h2>
+  <div>
+    <strong>DNI:</strong> {{ user.dni }}
+  </div>
+  <div>
+    <strong>Apellido y Nombres:</strong> {{ user.apellido }}, {{ user.nombres }}
+  </div>
+  <div>
+    <strong>Domicilio:</strong> {{ user.domicilio }}
+  </div>
+  <div>
+    <strong>Género:</strong> {{ user.genero }}
+  </div>
+  <div>
+    <strong>Email:</strong> {{ user.email }}
+  </div>
+  <div>
+    <strong>Estado:</strong> {{ user.activo ? 'Habilitado' : 'Deshabilitado' }}
+  </div>
+  <button (click)="goBack()">Volver</button>
+</div>
+<div *ngIf="!user">
+  Cargando detalle del usuario o usuario no encontrado.
+</div>

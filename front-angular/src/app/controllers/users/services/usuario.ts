@@ -6,7 +6,7 @@ import { User } from '../models/user.model';
 @Injectable({
   providedIn: 'root'
 })
-export class UsuarioService {
+export class MockUsuarioService {
   // private apiUrl = 'YOUR_API_BASE_URL/users'; // Descomenta esto cuando uses la API real
 
   // --- DATOS SIMULADOS (HARDCODEADOS) ---

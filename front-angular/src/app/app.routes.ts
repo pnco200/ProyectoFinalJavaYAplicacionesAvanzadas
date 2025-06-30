@@ -13,6 +13,10 @@ export const routes: Routes = [
   {
     path: 'users',
     loadChildren: () => import('./users/users-routing-module').then(m => m.USERS_ROUTES)
-  }, // { path: 'campaigns', loadChildren: () => import('./campaigns/campaigns.routes').then(m => m.CAMPAIGNS_ROUTES) },
+  },
+  {
+    path: 'campanias',
+    loadChildren: () => import('./campanias/campanias-routing.module').then(m => m.CampaniasRoutingModule)
+  },
   //{ path: 'journeys', loadChildren: () => import('./journeys/journeys.routes').then(m => m.JOURNEYS_ROUTES) },
 ];

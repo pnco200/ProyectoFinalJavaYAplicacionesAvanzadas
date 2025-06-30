@@ -1,0 +1,19 @@
+<div class="container">
+  <h1>{{ isEditMode ? 'Editar Campaña' : 'Crear Campaña' }}</h1>
+  <form [formGroup]="campaniaForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="name" class="form-label">Nombre</label>
+      <input type="text" id="name" formControlName="name" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label for="startDate" class="form-label">Fecha de Inicio</label>
+      <input type="date" id="startDate" formControlName="startDate" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label for="endDate" class="form-label">Fecha de Fin</label>
+      <input type="date" id="endDate" formControlName="endDate" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="!campaniaForm.valid">{{ isEditMode ? 'Actualizar' : 'Crear' }}</button>
+    <a routerLink="/campanias" class="btn btn-secondary ms-2">Cancelar</a>
+  </form>
+</div>

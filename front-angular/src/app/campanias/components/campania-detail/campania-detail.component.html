@@ -1,0 +1,12 @@
+<div class="container" *ngIf="campania">
+  <h1>Detalles de la Campaña</h1>
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">{{ campania.name }}</h5>
+      <p class="card-text"><strong>ID:</strong> {{ campania.id }}</p>
+      <p class="card-text"><strong>Fecha de Inicio:</strong> {{ campania.startDate | date:'dd/MM/yyyy' }}</p>
+      <p class="card-text"><strong>Fecha de Fin:</strong> {{ campania.endDate | date:'dd/MM/yyyy' }}</p>
+      <a routerLink="/campanias" class="btn btn-primary">Volver a la Lista</a>
+    </div>
+  </div>
+</div>

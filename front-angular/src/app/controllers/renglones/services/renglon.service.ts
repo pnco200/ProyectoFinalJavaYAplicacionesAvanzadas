@@ -8,7 +8,7 @@ import { Renglon } from '../models/renglon.model';
 })
 export class RenglonService {
 
-  private apiUrl = 'http://localhost:8080/api/renglon';
+  private apiUrl = 'http://localhost:8080/ProyectoFinal/api/renglon';
 
   constructor(private http: HttpClient) { }
 

@@ -1,0 +1,22 @@
+
+<div class="container">
+  <h2>{{ isEditMode ? 'Edit' : 'Create' }} Encuesta</h2>
+  <form [formGroup]="encuestaForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="tipo" class="form-label">Tipo</label>
+      <select id="tipo" class="form-control" formControlName="tipo">
+        <option *ngFor="let tipo of tiposEncuesta" [value]="tipo">{{ tipo }}</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label for="campaniaId" class="form-label">Campana ID</label>
+      <input type="number" id="campaniaId" class="form-control" formControlName="campaniaId">
+    </div>
+    <div class="mb-3">
+      <label for="viviendaId" class="form-label">Vivienda ID</label>
+      <input type="number" id="viviendaId" class="form-control" formControlName="viviendaId">
+    </div>
+    <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update' : 'Create' }}</button>
+    <button type="button" class="btn btn-secondary" [routerLink]="['/encuestas']">Cancel</button>
+  </form>
+</div>

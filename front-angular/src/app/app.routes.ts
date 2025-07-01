@@ -30,5 +30,9 @@ export const routes: Routes = [
     path: 'renglones',
     loadChildren: () => import('./controllers/renglones/renglones-routing.module').then(m => m.RENGLONES_ROUTES)
   },
+  {
+    path: 'encuestas',
+    loadChildren: () => import('./controllers/encuestas/encuestas.routes').then(m => m.ENCUESTAS_ROUTES)
+  },
   //{ path: 'journeys', loadChildren: () => import('./journeys/journeys.routes').then(m => m.JOURNEYS_ROUTES) },
 ];

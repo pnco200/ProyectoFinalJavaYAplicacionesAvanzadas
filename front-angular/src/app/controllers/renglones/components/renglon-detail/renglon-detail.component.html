@@ -1,0 +1,15 @@
+
+<div class="container" *ngIf="renglon">
+  <h2>Renglon Details</h2>
+  <dl>
+    <dt>ID</dt>
+    <dd>{{ renglon.id }}</dd>
+    <dt>Valor</dt>
+    <dd>{{ renglon.valor }}</dd>
+    <dt>Tipo</dt>
+    <dd>{{ renglon.tipo }}</dd>
+    <dt>Encuesta ID</dt>
+    <dd>{{ renglon.encuestaId }}</dd>
+  </dl>
+  <button class="btn btn-secondary" [routerLink]="['/renglones']">Back to list</button>
+</div>

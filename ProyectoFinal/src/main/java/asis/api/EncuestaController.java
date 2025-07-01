@@ -178,6 +178,9 @@ public class EncuestaController {
         if (encuesta.getVivienda() != null) {
             json.append(", \"viviendaId\": ").append(encuesta.getVivienda().getId());
         }
+        if (encuesta.getCampaña() != null) {
+            json.append(", \"campaniaId\": ").append(encuesta.getCampaña().getId());
+        }
         json.append("}");
         return json.toString();
     }

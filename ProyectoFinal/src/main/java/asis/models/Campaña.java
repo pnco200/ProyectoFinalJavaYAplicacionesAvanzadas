@@ -19,6 +19,10 @@ public class Campaña {
     @OneToMany(mappedBy = "campaña")
     private List<Encuesta> encuestas;
 
+    @ManyToOne
+    @JoinColumn(name = "barrio_id")
+    private Barrio barrio;
+
     public Long getId() {
         return id;
     }
@@ -65,5 +69,13 @@ public class Campaña {
 
     public void setEncuestas(List<Encuesta> encuestas) {
         this.encuestas = encuestas;
+    }
+
+    public Barrio getBarrio() {
+        return barrio;
+    }
+
+    public void setBarrio(Barrio barrio) {
+        this.barrio = barrio;
     }
 }

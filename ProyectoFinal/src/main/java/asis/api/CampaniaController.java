@@ -72,11 +72,15 @@ public class CampaniaController {
     public Response crearCampaña(
             @Parameter(description = "Campaña a crear", required = true)
             CampaniaDTO dto) {
-
-        if (dto.getName() == null || dto.getStartDate() == null || dto.getEndDate() == null) {
+    	try {
+        if (dto.getName() == null || dto.getStartDate() == null || dto.getEndDate() == null || dto.getBarrioId() == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("{\"error\": \"Faltan campos obligatorios\"}").build();
         }
+    	} catch (Exception e) {
+    					return Response.status(Response.Status.BAD_REQUEST)
+					.entity("{\"error\": \"Error al procesar los datos de la campaña\"}").build();
+    	}
 
         try {
             Campaña campaña = CampaniaMapper.toEntity(dto);
@@ -97,11 +101,15 @@ public class CampaniaController {
     public Response actualizarCampaña(
             @Parameter(description = "Campaña con datos actualizados", required = true)
             CampaniaDTO dto) {
-
-        if (dto.getId() == null || dto.getName() == null || dto.getStartDate() == null || dto.getEndDate() == null) {
+    	try {
+        if (dto.getId() == null || dto.getName() == null || dto.getStartDate() == null || dto.getEndDate() == null || dto.getBarrioId() == null) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("{\"error\": \"Faltan campos obligatorios\"}").build();
         }
+    	} catch (Exception e) {
+						return Response.status(Response.Status.BAD_REQUEST)
+								.entity("{\"error\": \"Error al procesar los datos de la campaña\"}").build();
+		}
 
         Campaña existente = campañaDAO.findById(dto.getId());
         if (existente == null) {

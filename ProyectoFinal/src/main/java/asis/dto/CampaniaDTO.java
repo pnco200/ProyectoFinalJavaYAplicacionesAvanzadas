@@ -5,15 +5,17 @@ public class CampaniaDTO {
     private String name;
     private String startDate;
     private String endDate;
+    private Long barrioId;
 
     public CampaniaDTO() {
     }
 
-    public CampaniaDTO(Long id, String name, String startDate, String endDate) {
+    public CampaniaDTO(Long id, String name, String startDate, String endDate, Long barrioId) {
         this.id = id;
         this.name = name;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.barrioId = barrioId;
     }
 
     public Long getId() {
@@ -46,5 +48,13 @@ public class CampaniaDTO {
 
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    public Long getBarrioId() {
+        return barrioId;
+    }
+
+    public void setBarrioId(Long barrioId) {
+        this.barrioId = barrioId;
     }
 }

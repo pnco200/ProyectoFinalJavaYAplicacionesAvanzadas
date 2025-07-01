@@ -1,0 +1,29 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Zonas</h2>
+    <button class="btn btn-primary" [routerLink]="['/zonas/new']">Crear Zona</button>
+  </div>
+
+  <table class="table table-striped table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Color</th>
+        <th scope="col">Barrio ID</th>
+        <th scope="col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let zona of zonas">
+        <th scope="row">{{ zona.id }}</th>
+        <td>{{ zona.color }}</td>
+        <td>{{ zona.barrioId }}</td>
+        <td>
+          <button class="btn btn-sm btn-info me-2" (click)="viewZona(zona.id)">Ver</button>
+          <button class="btn btn-sm btn-warning me-2" (click)="editZona(zona.id)">Editar</button>
+          <button class="btn btn-sm btn-danger" (click)="deleteZona(zona.id)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,11 +1,12 @@
 package asis.dto;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 public class EncuestadorDTO {
     private String name;
     private String dni;
-    private Date birthDate;
+    private LocalDate birthDate;
     private String sex;
     private String occupation;
 
@@ -18,8 +19,8 @@ public class EncuestadorDTO {
     public String getDni() { return dni; }
     public void setDni(String dni) { this.dni = dni; }
 
-    public Date getBirthDate() { return birthDate; }
-    public void setBirthDate(Date birthDate) { this.birthDate = birthDate; }
+    public LocalDate getBirthDate() { return birthDate; }
+    public void setBirthDate(LocalDate birthDate) { this.birthDate = birthDate; }
 
     public String getSex() { return sex; }
     public void setSex(String sex) { this.sex = sex; }

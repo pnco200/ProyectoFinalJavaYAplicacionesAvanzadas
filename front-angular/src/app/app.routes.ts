@@ -31,5 +31,13 @@ export const routes: Routes = [
     path: 'encuestas',
     loadChildren: () => import('./controllers/encuestas/encuestas.routes').then(m => m.ENCUESTAS_ROUTES)
   },
+  {
+    path: 'jornadas',
+    loadChildren: () => import('./controllers/jornadas/jornadas.routes').then(m => m.JORNADAS_ROUTES)
+  },
+  {
+    path: 'encuestadores',
+    loadChildren: () => import('./controllers/encuestadores/encuestadores.routes').then(m => m.ENCUESTADORES_ROUTES)
+  },
   { path: '**', redirectTo: '', pathMatch: 'full' } // Wildcard route for any unmatched paths
-];
+];;

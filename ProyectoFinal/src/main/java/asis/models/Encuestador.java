@@ -1,4 +1,5 @@
 package asis.models;
+import java.time.LocalDate;
 import java.util.*;
 
 import jakarta.persistence.*;
@@ -14,7 +15,7 @@ public class Encuestador {
     @Column(unique = true)
     private String dni;
 
-    private Date birthDate;
+    private LocalDate birthDate;
     private String sex;
     private String occupation;
 
@@ -53,11 +54,11 @@ public class Encuestador {
         this.dni = dni;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 

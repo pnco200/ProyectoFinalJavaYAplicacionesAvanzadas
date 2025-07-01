@@ -18,6 +18,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Path("/encuestador")
@@ -30,7 +32,7 @@ public class EncuestadorController {
     @Inject
     private IEncuestadorDAO encuestadorDAO;
     
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     @GET
     @Path("/")
@@ -91,8 +93,9 @@ public class EncuestadorController {
             encuestador.setOccupation(dto.getOccupation());
 
             if (dto.getBirthDate() != null && !dto.getBirthDate().isEmpty()) {
-                encuestador.setBirthDate(sdf.parse(dto.getBirthDate()));
+                encuestador.setBirthDate(LocalDate.parse(dto.getBirthDate(), formatter));
             }
+
 
             Encuestador actualizado = encuestadorDAO.update(encuestador);
             return Response.ok(encuestadorToJson(actualizado)).build();
@@ -119,7 +122,7 @@ public class EncuestadorController {
     }
     
     private String encuestadorToJson(Encuestador e) {
-        String birthDate = e.getBirthDate() != null ? sdf.format(e.getBirthDate()) : null;
+    	String birthDate = e.getBirthDate() != null ? e.getBirthDate().format(formatter) : null;
 
         return String.format(
             "{" +

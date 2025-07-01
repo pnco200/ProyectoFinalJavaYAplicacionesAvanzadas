@@ -18,8 +18,10 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.time.ZoneId;
 
 @Path("/jornadas")
 @Produces(MediaType.APPLICATION_JSON)
@@ -97,7 +99,11 @@ public class JornadaController {
             if (campaña == null)
                 throw new JornadaException("Campaña no encontrada.");
 
-            if (dto.startDate.before(campaña.getStartDate()) || dto.endDate.after(campaña.getEndDate())) {
+            // Convertir java.util.Date a LocalDate
+            var campañaStart = campaña.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            var campañaEnd = campaña.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            if (dto.startDate.isBefore(campañaStart) || dto.endDate.isAfter(campañaEnd)) {
                 throw new JornadaException("Las fechas de la jornada deben estar dentro del rango de fechas de la campaña.");
             }
 
@@ -110,7 +116,6 @@ public class JornadaController {
         }
     }
 
-
     @PUT
     @Operation(summary = "Actualizar jornada existente")
     public Response update(JornadaDTO dto) {
@@ -119,7 +124,11 @@ public class JornadaController {
             if (campaña == null)
                 throw new JornadaException("Campaña no encontrada.");
 
-            if (dto.startDate.before(campaña.getStartDate()) || dto.endDate.after(campaña.getEndDate())) {
+            // Convertir java.util.Date a LocalDate
+            var campañaStart = campaña.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            var campañaEnd = campaña.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            if (dto.startDate.isBefore(campañaStart) || dto.endDate.isAfter(campañaEnd)) {
                 throw new JornadaException("Las fechas de la jornada deben estar dentro del rango de fechas de la campaña.");
             }
 
@@ -171,8 +180,8 @@ public class JornadaController {
         JornadaDTO dto = new JornadaDTO();
         dto.id = j.getId();
         dto.name = j.getName();
-        dto.startDate = j.getStartDate();
-        dto.endDate = j.getEndDate();
+        dto.startDate = j.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        dto.endDate = j.getEndDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         dto.campañaId = (j.getCampaña() != null) ? j.getCampaña().getId() : null;
         return dto;
     }
@@ -181,8 +190,8 @@ public class JornadaController {
         Jornada j = new Jornada();
         j.setId(dto.id);
         j.setName(dto.name);
-        j.setStartDate(dto.startDate);
-        j.setEndDate(dto.endDate);
+        j.setStartDate(Date.from(dto.startDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        j.setEndDate(Date.from(dto.endDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
         return j;
     }
 }

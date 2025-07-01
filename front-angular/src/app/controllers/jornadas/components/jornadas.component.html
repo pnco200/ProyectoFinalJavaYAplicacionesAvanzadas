@@ -1,0 +1,94 @@
+<div class="container">
+  <h1>Jornadas</h1>
+  <button class="btn" (click)="newJornada()">Nueva Jornada</button>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Fecha de Inicio</th>
+        <th>Fecha de Fin</th>
+        <th>Campania ID</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let jornada of jornadas">
+        <td>{{ jornada.id }}</td>
+        <td>{{ jornada.name }}</td>
+        <td>{{ jornada.startDate }}</td>
+        <td>{{ jornada.endDate }}</td>
+        <td>{{ jornada.campaniaId }}</td>
+        <td>
+          <button class="btn btn-warning" (click)="viewJornada(jornada)">Ver</button>
+          <button class="btn" (click)="selectJornada(jornada)">Editar</button>
+          <button class="btn btn-danger" (click)="deleteJornada(jornada.id)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="viewingJornada" class="detail-card">
+    <h2>Detalles de la Jornada</h2>
+    <p><strong>ID:</strong> {{ viewingJornada.id }}</p>
+    <p><strong>Nombre:</strong> {{ viewingJornada.name }}</p>
+    <p><strong>Fecha de Inicio:</strong> {{ viewingJornada.startDate }}</p>
+    <p><strong>Fecha de Fin:</strong> {{ viewingJornada.endDate }}</p>
+    <h3>Campaña</h3>
+    <p><strong>ID:</strong> {{ viewingJornada.campania.id }}</p>
+    <p><strong>Nombre:</strong> {{ viewingJornada.campania.name }}</p>
+    <p><strong>Fecha de Inicio:</strong> {{ viewingJornada.campania.startDate }}</p>
+    <p><strong>Fecha de Fin:</strong> {{ viewingJornada.campania.endDate }}</p>
+    <h3>Encuestadores</h3>
+    <ul>
+      <li *ngFor="let encuestador of viewingJornada.encuestadores">
+        <strong>Nombre:</strong> {{ encuestador.name }} | <strong>DNI:</strong> {{ encuestador.dni }}
+      </li>
+    </ul>
+    <button class="btn" (click)="cancel()">Cerrar</button>
+  </div>
+
+  <div *ngIf="selectedJornada">
+    <h2>{{ isNewJornada ? 'Nueva Jornada' : 'Editar Jornada' }}</h2>
+    <form (ngSubmit)="saveJornada()">
+      <div>
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" [(ngModel)]="selectedJornada.name" name="name" required>
+      </div>
+      <div>
+        <label for="startDate">Fecha de Inicio:</label>
+        <input type="date" id="startDate" [(ngModel)]="selectedJornada.startDate" name="startDate" required>
+      </div>
+      <div>
+        <label for="endDate">Fecha de Fin:</label>
+        <input type="date" id="endDate" [(ngModel)]="selectedJornada.endDate" name="endDate" required>
+      </div>
+      <div>
+        <label for="campaniaId">Campaña:</label>
+        <select id="campaniaId" [(ngModel)]="selectedJornada.campaniaId" name="campaniaId" required>
+          <option *ngFor="let campania of campanias" [value]="campania.id">{{ campania.name }}</option>
+        </select>
+      </div>
+      <button type="submit">{{ isNewJornada ? 'Crear' : 'Guardar' }}</button>
+      <button type="button" class="btn btn-danger" (click)="cancel()">Cancelar</button>
+    </form>
+
+    <div *ngIf="!isNewJornada">
+      <h3>Encuestadores Asignados</h3>
+      <ul>
+        <li *ngFor="let encuestador of jornadaEncuestadores">
+          {{ encuestador.name }}
+          <button class="btn btn-danger" (click)="removeEncuestador(encuestador.id)">Eliminar</button>
+        </li>
+      </ul>
+
+      <h3>Agregar Encuestador</h3>
+      <select #encuestadorToAddSelect>
+        <option *ngFor="let encuestador of encuestadoresToAdd" [value]="encuestador.id">
+          {{ encuestador.name }}
+        </option>
+      </select>
+      <button class="btn" (click)="addEncuestador(+encuestadorToAddSelect.value)">Agregar</button>
+    </div>
+  </div>
+</div>

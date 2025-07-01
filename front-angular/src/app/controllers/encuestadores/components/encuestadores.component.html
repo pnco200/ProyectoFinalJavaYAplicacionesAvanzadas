@@ -1,0 +1,59 @@
+<div class="container">
+  <h1>Encuestadores</h1>
+  <button class="btn" (click)="newEncuestador()">Nuevo Encuestador</button>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>DNI</th>
+        <th>Fecha de Nacimiento</th>
+        <th>Sexo</th>
+        <th>Ocupación</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let encuestador of encuestadores">
+        <td>{{ encuestador.id }}</td>
+        <td>{{ encuestador.name }}</td>
+        <td>{{ encuestador.dni }}</td>
+        <td>{{ encuestador.birthDate }}</td>
+        <td>{{ encuestador.sex }}</td>
+        <td>{{ encuestador.occupation }}</td>
+        <td>
+          <button class="btn" (click)="selectEncuestador(encuestador)">Editar</button>
+          <button class="btn btn-danger" (click)="deleteEncuestador(encuestador.id)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="selectedEncuestador">
+    <h2>{{ isNewEncuestador ? 'Nuevo Encuestador' : 'Editar Encuestador' }}</h2>
+    <form (ngSubmit)="saveEncuestador()">
+      <div>
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" [(ngModel)]="selectedEncuestador.name" name="name" required>
+      </div>
+      <div>
+        <label for="dni">DNI:</label>
+        <input type="text" id="dni" [(ngModel)]="selectedEncuestador.dni" name="dni" required>
+      </div>
+      <div>
+        <label for="birthDate">Fecha de Nacimiento:</label>
+        <input type="date" id="birthDate" [(ngModel)]="selectedEncuestador.birthDate" name="birthDate" required>
+      </div>
+      <div>
+        <label for="sex">Sexo:</label>
+        <input type="text" id="sex" [(ngModel)]="selectedEncuestador.sex" name="sex" required>
+      </div>
+      <div>
+        <label for="occupation">Ocupación:</label>
+        <input type="text" id="occupation" [(ngModel)]="selectedEncuestador.occupation" name="occupation" required>
+      </div>
+      <button type="submit">{{ isNewEncuestador ? 'Crear' : 'Guardar' }}</button>
+      <button type="button" class="btn btn-danger" (click)="cancel()">Cancelar</button>
+    </form>
+  </div>
+</div>

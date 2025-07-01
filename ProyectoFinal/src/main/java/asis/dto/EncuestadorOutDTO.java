@@ -1,5 +1,6 @@
 package asis.dto;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 
@@ -7,7 +8,7 @@ import java.util.Date;
 public class EncuestadorOutDTO {
 	public String name;
 	public String dni;
-    public Date birthDate;
+    public LocalDate birthDate;
     public String sex;
     public String occupation;
     public Long id;
@@ -21,8 +22,8 @@ public class EncuestadorOutDTO {
     public String getDni() { return dni; }
     public void setDni(String dni) { this.dni = dni; }
 
-    public Date getBirthDate() { return birthDate; }
-    public void setBirthDate(Date birthDate) { this.birthDate = birthDate; }
+    public LocalDate getBirthDate() { return birthDate; }
+    public void setBirthDate(LocalDate birthDate) { this.birthDate = birthDate; }
 
     public String getSex() { return sex; }
     public void setSex(String sex) { this.sex = sex; }

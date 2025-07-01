@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { UsuarioService } from '../../services/usuario';
 import { User } from '../../models/user.model';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { UsuarioService } from '../../services/usuario.api';
 @Component({
   selector: 'app-user-list',
   imports: [
@@ -23,7 +23,7 @@ users: User[] = [];
   }
 
   loadUsers(): void {
-    this.usuarioService.getUsers().subscribe(
+    this.usuarioService.getAll().subscribe(
       (data:any) => {
         this.users = data;
       },
@@ -48,7 +48,7 @@ users: User[] = [];
   deleteUser(id: number | undefined): void {
     if (confirm('¿Estás seguro de que quieres eliminar este usuario?')) {
       if (id) {
-        this.usuarioService.deleteUser(id).subscribe(
+        this.usuarioService.delete(id).subscribe(
           () => {
             console.log('User deleted successfully');
             this.loadUsers(); // Refresh the list
@@ -64,7 +64,7 @@ users: User[] = [];
   toggleUserStatus(user: User): void {
     if (user.id) {
       const newStatus = !user.activo; // Toggle the status
-      this.usuarioService.toggleUserStatus(user.id, newStatus).subscribe(
+      this.usuarioService.toggleHabilitado(user.id).subscribe(
         () => {
           user.activo = newStatus; // Update the local user object
           console.log(`User ${user.id} status toggled to ${newStatus}`);

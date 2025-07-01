@@ -1,0 +1,19 @@
+<div class="container mt-4" *ngIf="coordenada">
+  <h2>Detalle de Coordenada</h2>
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">ID: {{ coordenada.id }}</h5>
+      <p class="card-text"><strong>Latitud:</strong> {{ coordenada.latitud }}</p>
+      <p class="card-text"><strong>Longitud:</strong> {{ coordenada.longitud }}</p>
+      <p class="card-text"><strong>Barrio ID:</strong> {{ coordenada.barrioId || 'N/A' }}</p>
+      <p class="card-text"><strong>Zona ID:</strong> {{ coordenada.zonaId || 'N/A' }}</p>
+    </div>
+  </div>
+
+  <a [routerLink]="['/coordenadas/list']" class="btn btn-primary mt-3">Volver a la lista</a>
+</div>
+
+<div class="container mt-4" *ngIf="!coordenada">
+  <p>Cargando...</p>
+</div>

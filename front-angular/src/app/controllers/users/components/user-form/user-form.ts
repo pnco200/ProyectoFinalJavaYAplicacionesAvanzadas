@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { UsuarioService } from '../../services/usuario';
 import { User } from '../../models/user.model';
 import { map, switchMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { UsuarioService } from '../../services/usuario.api';
 
 @Component({
   selector: 'app-user-form',
@@ -48,7 +48,7 @@ export class UserForm implements OnInit {
         if (id) {
           this.isEditMode = true;
           this.userId = +id;
-          return this.usuarioService.getUserById(this.userId);
+          return this.usuarioService.getById(this.userId);
         } else {
           return of(null);
         }
@@ -64,11 +64,11 @@ export class UserForm implements OnInit {
     if (this.userForm.valid) {
       const user: User = this.userForm.value;
       if (this.isEditMode && this.userId) {
-        this.usuarioService.updateUser(this.userId, user).subscribe(() => {
+        this.usuarioService.update(user).subscribe(() => {
           this.router.navigate(['/users/list']);
         });
       } else {
-        this.usuarioService.createUser(user).subscribe(() => {
+        this.usuarioService.add(user).subscribe(() => {
           this.router.navigate(['/users/list']);
         });
       }

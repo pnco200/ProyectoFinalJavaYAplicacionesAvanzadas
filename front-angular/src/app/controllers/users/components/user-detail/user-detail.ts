@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { UsuarioService } from '../../services/usuario';
 import { User } from '../../models/user.model';
 import { CommonModule } from '@angular/common';
+import { UsuarioService } from '../../services/usuario.api';
 @Component({
   selector: 'app-user-detail',
   standalone: true,
@@ -25,7 +25,7 @@ export class UserDetail implements OnInit {
   ngOnInit(): void {
     const userId = this.route.snapshot.paramMap.get('id');
     if (userId) {
-      this.usuarioService.getUserById(+userId).subscribe(
+      this.usuarioService.getById(+userId).subscribe(
         (data) => {
           this.user = data;
         },

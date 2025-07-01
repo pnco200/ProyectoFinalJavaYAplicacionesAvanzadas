@@ -14,5 +14,9 @@ export const routes: Routes = [
     path: 'campanias',
     loadChildren: () => import('./campanias/campanias-routing.module').then(m => m.CampaniasRoutingModule)
   },
+  {
+    path: 'coordenadas',
+    loadChildren: () => import('./controllers/coordenadas/coordenadas-routing.module').then(m => m.COORDENADAS_ROUTES)
+  },
   //{ path: 'journeys', loadChildren: () => import('./journeys/journeys.routes').then(m => m.JOURNEYS_ROUTES) },
 ];

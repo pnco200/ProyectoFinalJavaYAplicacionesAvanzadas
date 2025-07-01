@@ -48,16 +48,25 @@ export class EncuestaFormComponent implements OnInit {
       const { tipo, viviendaId, campaniaId } = this.encuestaForm.value;
       if (this.isEditMode && this.encuestaId) {
         // Update logic not implemented as per backend controller
-        // this.encuestaService.update(this.encuestaId, this.encuestaForm.value).subscribe(() => {
-        //   this.router.navigate(['/encuestas']);
-        // });
-        console.error('Update not supported by the backend API');
-        this.router.navigate(['/encuestas']);
-
+        //this.encuestaService.update(this.encuestaId, this.encuestaForm.value).subscribe(
+        //  response => {
+        //    alert('Encuesta updated successfully: ' + JSON.stringify(response));
+        //    this.router.navigate(['/encuestas']);
+        //  },
+        //  error => {
+        //    alert('Error updating encuesta: ' + JSON.stringify(error));
+        //  }
+        //);
       } else {
-        this.encuestaService.create(tipo, viviendaId, campaniaId).subscribe(() => {
-          this.router.navigate(['/encuestas']);
-        });
+        this.encuestaService.create(tipo, viviendaId, campaniaId).subscribe(
+          response => {
+            alert('Encuesta created successfully: ' + JSON.stringify(response));
+            this.router.navigate(['/encuestas']);
+          },
+          error => {
+            alert('Error creating encuesta: ' + JSON.stringify(error));
+          }
+        );
       }
     }
   }

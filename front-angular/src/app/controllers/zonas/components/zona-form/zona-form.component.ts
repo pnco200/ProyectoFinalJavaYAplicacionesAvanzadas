@@ -78,13 +78,25 @@ export class ZonaFormComponent implements OnInit {
     if (this.zonaForm.valid) {
       const formData: Zona = this.zonaForm.value;
       if (this.isEditMode && this.zonaId) {
-        this.zonaService.update(this.zonaId, formData).subscribe(() => {
-          this.router.navigate(['/zonas/list']);
-        });
+        this.zonaService.update(this.zonaId, formData).subscribe(
+          response => {
+            alert('Zona updated successfully: ' + JSON.stringify(response));
+            this.router.navigate(['/zonas/list']);
+          },
+          error => {
+            alert('Error updating zona: ' + JSON.stringify(error));
+          }
+        );
       } else {
-        this.zonaService.create(formData).subscribe(() => {
-          this.router.navigate(['/zonas/list']);
-        });
+        this.zonaService.create(formData).subscribe(
+          response => {
+            alert('Zona created successfully: ' + JSON.stringify(response));
+            this.router.navigate(['/zonas/list']);
+          },
+          error => {
+            alert('Error creating zona: ' + JSON.stringify(error));
+          }
+        );
       }
     }
   }

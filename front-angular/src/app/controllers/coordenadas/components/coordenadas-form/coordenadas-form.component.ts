@@ -47,13 +47,25 @@ export class CoordenadasFormComponent implements OnInit {
     if (this.coordenadaForm.valid) {
       const formData: Coordenadas = this.coordenadaForm.value;
       if (this.isEditMode && this.coordenadaId) {
-        this.coordenadasService.update(this.coordenadaId, formData).subscribe(() => {
-          this.router.navigate(['/coordenadas/list']);
-        });
+        this.coordenadasService.update(this.coordenadaId, formData).subscribe(
+          response => {
+            alert('Coordenada updated successfully: ' + JSON.stringify(response));
+            this.router.navigate(['/coordenadas/list']);
+          },
+          error => {
+            alert('Error updating coordenada: ' + JSON.stringify(error));
+          }
+        );
       } else {
-        this.coordenadasService.create(formData).subscribe(() => {
-          this.router.navigate(['/coordenadas/list']);
-        });
+        this.coordenadasService.create(formData).subscribe(
+          response => {
+            alert('Coordenada created successfully: ' + JSON.stringify(response));
+            this.router.navigate(['/coordenadas/list']);
+          },
+          error => {
+            alert('Error creating coordenada: ' + JSON.stringify(error));
+          }
+        );
       }
     }
   }

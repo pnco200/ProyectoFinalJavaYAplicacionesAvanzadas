@@ -6,9 +6,9 @@
     <div class="card-body">
       <form [formGroup]="barrioForm" (ngSubmit)="onSubmit()">
         <div class="mb-3">
-          <label for="name" class="form-label">Nombre del Barrio</label>
-          <input type="text" id="name" class="form-control" formControlName="name">
-          <div *ngIf="barrioForm.get('name')?.invalid && barrioForm.get('name')?.touched" class="text-danger">
+          <label for="nombre" class="form-label">Nombre del Barrio</label>
+          <input type="text" id="nombre" class="form-control" formControlName="nombre">
+          <div *ngIf="barrioForm.get('nombre')?.invalid && barrioForm.get('nombre')?.touched" class="text-danger">
             Nombre es requerido.
           </div>
         </div>

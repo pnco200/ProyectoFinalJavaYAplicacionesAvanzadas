@@ -8,7 +8,7 @@ import { Coordenadas } from '../../../coordenadas/models/coordenadas.model';
 @Component({
   selector: 'app-barrio-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule ],
   templateUrl: './barrio-form.component.html',
 })
 export class BarrioFormComponent implements OnInit {
@@ -24,7 +24,7 @@ export class BarrioFormComponent implements OnInit {
     private route: ActivatedRoute
   ) {
     this.barrioForm = this.fb.group({
-      name: ['', Validators.required],
+      nombre: ['', Validators.required],
       coordenadas: this.fb.array([])
     });
   }
@@ -37,7 +37,7 @@ export class BarrioFormComponent implements OnInit {
         if (data.length > 0) {
           const barrio = data[0];
           this.barrioForm.patchValue({
-            name: barrio.name
+            nombre: barrio.nombre
           });
           barrio.coordenadas.forEach(coord => {
             this.coordenadas.push(this.createCoordenadaGroup(coord));
@@ -75,13 +75,25 @@ export class BarrioFormComponent implements OnInit {
     if (this.barrioForm.valid) {
       const formData: Barrio = this.barrioForm.value;
       if (this.isEditMode && this.barrioId) {
-        this.barrioService.update(this.barrioId, formData).subscribe(() => {
-          this.router.navigate(['/barrios/list']);
-        });
+        this.barrioService.update(this.barrioId, formData).subscribe(
+          response => {
+            alert('Barrio updated successfully: ' + JSON.stringify(response));
+            this.router.navigate(['/barrios/list']);
+          },
+          error => {
+            alert('Error updating barrio: ' + JSON.stringify(error));
+          }
+        );
       } else {
-        this.barrioService.create(formData).subscribe(() => {
-          this.router.navigate(['/barrios/list']);
-        });
+        this.barrioService.create(formData).subscribe(
+          response => {
+            alert('Barrio created successfully: ' + JSON.stringify(response));
+            this.router.navigate(['/barrios/list']);
+          },
+          error => {
+            alert('Error creating barrio: ' + JSON.stringify(error));
+          }
+        );
       }
     }
   }

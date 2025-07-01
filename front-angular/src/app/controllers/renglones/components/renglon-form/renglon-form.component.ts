@@ -45,13 +45,25 @@ export class RenglonFormComponent implements OnInit {
   onSubmit(): void {
     if (this.renglonForm.valid) {
       if (this.isEditMode && this.renglonId) {
-        this.renglonService.update({ id: this.renglonId, ...this.renglonForm.value }).subscribe(() => {
-          this.router.navigate(['/renglones']);
-        });
+        this.renglonService.update({ id: this.renglonId, ...this.renglonForm.value }).subscribe(
+          response => {
+            alert('Renglon updated successfully: ' + JSON.stringify(response));
+            this.router.navigate(['/renglones']);
+          },
+          error => {
+            alert('Error updating renglon: ' + JSON.stringify(error));
+          }
+        );
       } else {
-        this.renglonService.create(this.renglonForm.value).subscribe(() => {
-          this.router.navigate(['/renglones']);
-        });
+        this.renglonService.create(this.renglonForm.value).subscribe(
+          response => {
+            alert('Renglon created successfully: ' + JSON.stringify(response));
+            this.router.navigate(['/renglones']);
+          },
+          error => {
+            alert('Error creating renglon: ' + JSON.stringify(error));
+          }
+        );
       }
     }
   }

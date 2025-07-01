@@ -89,7 +89,7 @@ public class EncuestaController {
             @Parameter(description = "En caso de ser de tipo PERSONA, vivienda asociada (opcional)")
             @QueryParam("viviendaId") Long viviendaId,
             @Parameter(description = "En caso de ser de tipo VIVIENDA, campaña asociada (opcional)")
-            @QueryParam("campañaId") Long campañaId) {
+            @QueryParam("campaniaId") Long campañaId) {
 
         if (tipoParam == null) {
             return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\": \"Falta el parámetro tipo\"}").build();

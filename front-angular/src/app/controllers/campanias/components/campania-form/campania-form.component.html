@@ -21,7 +21,7 @@
           <label for="barrio" class="form-label">Barrio</label>
           <select id="barrio" formControlName="barrioId" class="form-select">
             <option [ngValue]="null" disabled>Seleccione un barrio</option>
-            <option *ngFor="let barrio of barrios" [ngValue]="barrio.id">{{ barrio.name }}</option>
+            <option *ngFor="let barrio of barrios" [ngValue]="barrio.id">{{ barrio.name || barrio.nombre }}</option>
           </select>
         </div>
         <div class="d-flex justify-content-between">

@@ -9,26 +9,23 @@
         <table class="table table-striped table-hover">
           <thead>
             <tr>
-              <th>DNI</th>
-              <th>Apellido y Nombres</th>
-              <th>Email</th>
-              <th>Estado</th>
+              <th>ID</th>
+              <th>Mail</th>
+              <th>Nombre</th>
+              <th>Activo</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let user of users">
-              <td>{{ user.dni }}</td>
-              <td>{{ user.apellido }}, {{ user.nombres }}</td>
-              <td>{{ user.email }}</td>
-              <td>{{ user.activo ? 'Habilitado' : 'Deshabilitado' }}</td>
+              <td>{{ user.id }}</td>
+              <td>{{ user.mail }}</td>
+              <td>{{ user.name }}</td>
+              <td>{{ user.is_active ? 'Sí' : 'No' }}</td>
               <td>
                 <button class="btn btn-info btn-sm me-2" (click)="viewUserDetail(user.id)">Ver</button>
                 <button class="btn btn-warning btn-sm me-2" (click)="editUser(user.id)">Editar</button>
                 <button class="btn btn-danger btn-sm me-2" (click)="deleteUser(user.id)">Eliminar</button>
-                <button class="btn btn-secondary btn-sm" (click)="toggleUserStatus(user)">
-                  {{ user.activo ? 'Deshabilitar' : 'Habilitar' }}
-                </button>
               </td>
             </tr>
           </tbody>

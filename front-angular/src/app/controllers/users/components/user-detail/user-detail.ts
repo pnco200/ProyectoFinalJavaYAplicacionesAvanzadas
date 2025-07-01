@@ -10,8 +10,7 @@ import { UsuarioService } from '../../services/usuario.api';
         CommonModule,    // <-- Ensure CommonModule is here for *ngFor and *ngIf
     RouterModule     // For routerLink if used
   ],
-  templateUrl: './user-detail.html',
-  styleUrl: './user-detail.css'
+  templateUrl: './user-detail.html'
 })
 export class UserDetail implements OnInit {
   user: User | undefined;

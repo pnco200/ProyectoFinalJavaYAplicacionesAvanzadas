@@ -61,20 +61,7 @@ users: User[] = [];
     }
   }
 
-  toggleUserStatus(user: User): void {
-    if (user.id) {
-      const newStatus = !user.activo; // Toggle the status
-      this.usuarioService.toggleHabilitado(user.id).subscribe(
-        () => {
-          user.activo = newStatus; // Update the local user object
-          console.log(`User ${user.id} status toggled to ${newStatus}`);
-        },
-        (error : any) => {
-          console.error('Error toggling user status:', error);
-        }
-      );
-    }
-  }
+  
 
   goToNewUser(): void {
     this.router.navigate(['/users/new']);

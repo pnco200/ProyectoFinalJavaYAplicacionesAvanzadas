@@ -1,25 +1,37 @@
-<div class="user-detail-container" *ngIf="user">
-  <h2>Detalle del Usuario</h2>
-  <div>
-    <strong>DNI:</strong> {{ user.dni }}
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Detalle del Usuario</h2>
+    </div>
+    <div class="card-body" *ngIf="user">
+      <div class="mb-2">
+        <strong>Mail:</strong> {{ user.mail }}
+      </div>
+      <div class="mb-2">
+        <strong>Nombre:</strong> {{ user.name }}
+      </div>
+      <div class="mb-2">
+        <strong>Domicilio:</strong> {{ user.domicilio }}
+      </div>
+      <div class="mb-2">
+        <strong>Actividad:</strong> {{ user.activity }}
+      </div>
+      <div class="mb-2">
+        <strong>Extra:</strong> {{ user.extra }}
+      </div>
+      <div class="mb-2">
+        <strong>Barrio:</strong> {{ user.barrio }}
+      </div>
+      <div class="mb-2">
+        <strong>Roles:</strong> {{ user.roles?.join(', ') }}
+      </div>
+      <div class="mb-2">
+        <strong>Activo:</strong> {{ user.is_active ? 'Sí' : 'No' }}
+      </div>
+      <button class="btn btn-secondary mt-3" (click)="goBack()">Volver</button>
+    </div>
+    <div class="card-body" *ngIf="!user">
+      Cargando detalle del usuario o usuario no encontrado.
+    </div>
   </div>
-  <div>
-    <strong>Apellido y Nombres:</strong> {{ user.apellido }}, {{ user.nombres }}
-  </div>
-  <div>
-    <strong>Domicilio:</strong> {{ user.domicilio }}
-  </div>
-  <div>
-    <strong>Género:</strong> {{ user.genero }}
-  </div>
-  <div>
-    <strong>Email:</strong> {{ user.email }}
-  </div>
-  <div>
-    <strong>Estado:</strong> {{ user.activo ? 'Habilitado' : 'Deshabilitado' }}
-  </div>
-  <button (click)="goBack()">Volver</button>
-</div>
-<div *ngIf="!user">
-  Cargando detalle del usuario o usuario no encontrado.
 </div>

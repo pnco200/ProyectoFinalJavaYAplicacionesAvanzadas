@@ -1,0 +1,64 @@
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Nuevo Usuario</h2>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="mail" class="form-label">Mail:</label>
+          <input type="email" id="mail" formControlName="mail" class="form-control">
+          <div *ngIf="userForm.controls['mail'].invalid && (userForm.controls['mail'].dirty || userForm.controls['mail'].touched)" class="text-danger">
+            <div *ngIf="userForm.controls['mail'].errors?.['required']">Mail es requerido.</div>
+            <div *ngIf="userForm.controls['mail'].errors?.['email']">Mail no válido.</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Contraseña:</label>
+          <input type="password" id="password" formControlName="password" class="form-control">
+          <div *ngIf="userForm.controls['password'].invalid && (userForm.controls['password'].dirty || userForm.controls['password'].touched)" class="text-danger">
+            <div *ngIf="userForm.controls['password'].errors?.['required']">Contraseña es requerida.</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="name" class="form-label">Nombre:</label>
+          <input type="text" id="name" formControlName="name" class="form-control">
+          <div *ngIf="userForm.controls['name'].invalid && (userForm.controls['name'].dirty || userForm.controls['name'].touched)" class="text-danger">
+            <div *ngIf="userForm.controls['name'].errors?.['required']">Nombre es requerido.</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="domicilio" class="form-label">Domicilio:</label>
+          <input type="text" id="domicilio" formControlName="domicilio" class="form-control">
+          <div *ngIf="userForm.controls['domicilio'].invalid && (userForm.controls['domicilio'].dirty || userForm.controls['domicilio'].touched)" class="text-danger">
+            <div *ngIf="userForm.controls['domicilio'].errors?.['required']">Domicilio es requerido.</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="activity" class="form-label">Actividad:</label>
+          <input type="text" id="activity" formControlName="activity" class="form-control">
+          <div *ngIf="userForm.controls['activity'].invalid && (userForm.controls['activity'].dirty || userForm.controls['activity'].touched)" class="text-danger">
+            <div *ngIf="userForm.controls['activity'].errors?.['required']">Actividad es requerida.</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="extra" class="form-label">Extra:</label>
+          <input type="text" id="extra" formControlName="extra" class="form-control">
+          <div *ngIf="userForm.controls['extra'].invalid && (userForm.controls['extra'].dirty || userForm.controls['extra'].touched)" class="text-danger">
+            <div *ngIf="userForm.controls['extra'].errors?.['required']">Extra es requerido.</div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <button type="submit" class="btn btn-success" [disabled]="userForm.invalid">Registrar</button>
+          <button type="button" class="btn btn-secondary" (click)="cancel()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

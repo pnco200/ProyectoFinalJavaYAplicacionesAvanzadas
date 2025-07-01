@@ -5,6 +5,7 @@ import asis.models.Campaña;
 import asis.models.Jornada;
 import asis.utils.JPAUtil;
 import jakarta.enterprise.context.ApplicationScoped;
+import asis.models.Barrio;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
@@ -16,7 +17,9 @@ import java.util.List;
 public class CampañaDAO implements ICampañaDAO {
 	
 	@Inject
-	private EntityManager em;
+    private EntityManager em;
+    @Inject
+    private BarrioDAO barrioDAO;
     @Override
     public Campaña save(Campaña campaña) throws CampañaException {
         if (campaña.getStartDate() != null && campaña.getEndDate() != null) {
@@ -52,6 +55,14 @@ public class CampañaDAO implements ICampañaDAO {
             }
 
             tx.begin();
+            if (campaña.getBarrio() != null && campaña.getBarrio().getId() != null) {
+                Barrio barrio = barrioDAO.findById(campaña.getBarrio().getId());
+                if (barrio == null) {
+                    throw new CampañaException("Barrio no encontrado con ID: " + campaña.getBarrio().getId());
+                }
+                campaña.setBarrio(barrio);
+            }
+
             if (campaña.getId() == null) {
                 em.persist(campaña);
             } else {

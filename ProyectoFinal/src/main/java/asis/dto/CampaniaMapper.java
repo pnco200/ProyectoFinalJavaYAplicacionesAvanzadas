@@ -1,6 +1,6 @@
 package asis.dto;
 
-import asis.dto.CampaniaDTO;
+import asis.models.Barrio;
 import asis.models.Campaña;
 
 import java.text.SimpleDateFormat;
@@ -16,7 +16,8 @@ public class CampaniaMapper {
                 campaña.getId(),
                 campaña.getName(),
                 sdf.format(campaña.getStartDate()),
-                sdf.format(campaña.getEndDate())
+                sdf.format(campaña.getEndDate()),
+                campaña.getBarrio() != null ? campaña.getBarrio().getId() : null
         );
     }
 
@@ -30,6 +31,11 @@ public class CampaniaMapper {
         campaña.setName(dto.getName());
         campaña.setStartDate(sdf.parse(dto.getStartDate()));
         campaña.setEndDate(sdf.parse(dto.getEndDate()));
+        if (dto.getBarrioId() != null) {
+            Barrio barrio = new Barrio();
+            barrio.setId(dto.getBarrioId());
+            campaña.setBarrio(barrio);
+        }
         return campaña;
     }
 }

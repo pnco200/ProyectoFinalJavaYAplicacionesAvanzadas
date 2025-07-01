@@ -1,0 +1,43 @@
+<div class="container mt-4">
+  <h2>{{ isEditMode ? 'Editar' : 'Crear' }} Barrio</h2>
+
+  <form [formGroup]="barrioForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="name" class="form-label">Nombre del Barrio</label>
+      <input type="text" id="name" class="form-control" formControlName="name">
+      <div *ngIf="barrioForm.get('name')?.invalid && barrioForm.get('name')?.touched" class="text-danger">
+        Nombre es requerido.
+      </div>
+    </div>
+
+    <h3>Coordenadas</h3>
+    <div formArrayName="coordenadas">
+      <div *ngFor="let coordGroup of coordenadas.controls; let i = index" [formGroupName]="i" class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Coordenada {{ i + 1 }}</h5>
+          <div class="mb-3">
+            <label for="latitud-{{i}}" class="form-label">Latitud</label>
+            <input type="text" id="latitud-{{i}}" class="form-control" formControlName="latitud">
+            <div *ngIf="coordGroup.get('latitud')?.invalid && coordGroup.get('latitud')?.touched" class="text-danger">
+              Latitud es requerida y debe ser un número.
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="longitud-{{i}}" class="form-label">Longitud</label>
+            <input type="text" id="longitud-{{i}}" class="form-control" formControlName="longitud">
+            <div *ngIf="coordGroup.get('longitud')?.invalid && coordGroup.get('longitud')?.touched" class="text-danger">
+              Longitud es requerida y debe ser un número.
+            </div>
+          </div>
+          <button type="button" class="btn btn-danger btn-sm" (click)="removeCoordenada(i)">Eliminar Coordenada</button>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="btn btn-secondary mb-3" (click)="addCoordenada()">Agregar Coordenada</button>
+
+    <p class="text-muted">Se requieren al menos 3 coordenadas para definir un barrio.</p>
+
+    <button type="submit" class="btn btn-primary" [disabled]="barrioForm.invalid || coordenadas.length < 3">{{ isEditMode ? 'Actualizar' : 'Crear' }}</button>
+    <a [routerLink]="['/barrios/list']" class="btn btn-secondary ms-2">Cancelar</a>
+  </form>
+</div>

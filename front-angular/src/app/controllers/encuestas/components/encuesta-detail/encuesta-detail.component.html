@@ -1,0 +1,15 @@
+
+<div class="container" *ngIf="encuesta">
+  <h2>Encuesta Details</h2>
+  <dl>
+    <dt>ID</dt>
+    <dd>{{ encuesta.id }}</dd>
+    <dt>Tipo</dt>
+    <dd>{{ encuesta.tipo }}</dd>
+    <dt>Campana ID</dt>
+    <dd>{{ encuesta.campaniaId }}</dd>
+    <dt>Vivienda ID</dt>
+    <dd>{{ encuesta.viviendaId }}</dd>
+  </dl>
+  <button class="btn btn-secondary" [routerLink]="['/encuestas']">Back to list</button>
+</div>

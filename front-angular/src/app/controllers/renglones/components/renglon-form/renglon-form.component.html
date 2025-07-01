@@ -1,0 +1,20 @@
+
+<div class="container">
+  <h2>{{ isEditMode ? 'Edit' : 'Create' }} Renglon</h2>
+  <form [formGroup]="renglonForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="valor" class="form-label">Valor</label>
+      <input type="text" id="valor" class="form-control" formControlName="valor">
+    </div>
+    <div class="mb-3">
+      <label for="tipo" class="form-label">Tipo</label>
+      <input type="text" id="tipo" class="form-control" formControlName="tipo">
+    </div>
+    <div class="mb-3">
+      <label for="encuestaId" class="form-label">Encuesta ID</label>
+      <input type="number" id="encuestaId" class="form-control" formControlName="encuestaId">
+    </div>
+    <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update' : 'Create' }}</button>
+    <button type="button" class="btn btn-secondary" [routerLink]="['/renglones']">Cancel</button>
+  </form>
+</div>

@@ -1,0 +1,51 @@
+<div class="container mt-4">
+  <h2>{{ isEditMode ? 'Editar' : 'Crear' }} Zona</h2>
+
+  <form [formGroup]="zonaForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label for="color" class="form-label">Color</label>
+      <input type="text" id="color" class="form-control" formControlName="color">
+      <div *ngIf="zonaForm.get('color')?.invalid && zonaForm.get('color')?.touched" class="text-danger">
+        Color es requerido.
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="barrioId" class="form-label">Barrio ID</label>
+      <input type="number" id="barrioId" class="form-control" formControlName="barrioId">
+      <div *ngIf="zonaForm.get('barrioId')?.invalid && zonaForm.get('barrioId')?.touched" class="text-danger">
+        Barrio ID es requerido y debe ser un número.
+      </div>
+    </div>
+
+    <h3>Coordenadas</h3>
+    <div formArrayName="coordenadas">
+      <div *ngFor="let coordGroup of coordenadas.controls; let i = index" [formGroupName]="i" class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Coordenada {{ i + 1 }}</h5>
+          <div class="mb-3">
+            <label for="latitud-{{i}}" class="form-label">Latitud</label>
+            <input type="text" id="latitud-{{i}}" class="form-control" formControlName="latitud">
+            <div *ngIf="coordGroup.get('latitud')?.invalid && coordGroup.get('latitud')?.touched" class="text-danger">
+              Latitud es requerida y debe ser un número.
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="longitud-{{i}}" class="form-label">Longitud</label>
+            <input type="text" id="longitud-{{i}}" class="form-control" formControlName="longitud">
+            <div *ngIf="coordGroup.get('longitud')?.invalid && coordGroup.get('longitud')?.touched" class="text-danger">
+              Longitud es requerida y debe ser un número.
+            </div>
+          </div>
+          <button type="button" class="btn btn-danger btn-sm" (click)="removeCoordenada(i)">Eliminar Coordenada</button>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="btn btn-secondary mb-3" (click)="addCoordenada()">Agregar Coordenada</button>
+
+    <p class="text-muted">Se requieren al menos 3 coordenadas para definir una zona.</p>
+
+    <button type="submit" class="btn btn-primary" [disabled]="zonaForm.invalid || coordenadas.length < 3">{{ isEditMode ? 'Actualizar' : 'Crear' }}</button>
+    <a [routerLink]="['/zonas/list']" class="btn btn-secondary ms-2">Cancelar</a>
+  </form>
+</div>

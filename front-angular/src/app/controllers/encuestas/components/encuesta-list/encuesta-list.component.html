@@ -1,0 +1,29 @@
+
+<div class="container">
+  <h2>Encuestas</h2>
+  <button class="btn btn-primary mb-3" [routerLink]="['/encuestas/create']">Create Encuesta</button>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tipo</th>
+        <th>Campana ID</th>
+        <th>Vivienda ID</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let encuesta of encuestas">
+        <td>{{ encuesta.id }}</td>
+        <td>{{ encuesta.tipo }}</td>
+        <td>{{ encuesta.campaniaId }}</td>
+        <td>{{ encuesta.viviendaId }}</td>
+        <td>
+          <button class="btn btn-info btn-sm" (click)="viewEncuesta(encuesta.id)">View</button>
+          <button class="btn btn-warning btn-sm" (click)="editEncuesta(encuesta.id)">Edit</button>
+          <button class="btn btn-danger btn-sm" (click)="deleteEncuesta(encuesta.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

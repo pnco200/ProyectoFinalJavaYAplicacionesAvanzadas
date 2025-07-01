@@ -1,0 +1,24 @@
+<div class="container mt-4" *ngIf="zona">
+  <h2>Detalle de Zona</h2>
+
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">ID: {{ zona.id }}</h5>
+      <p class="card-text"><strong>Color:</strong> {{ zona.color }}</p>
+      <p class="card-text"><strong>Barrio ID:</strong> {{ zona.barrioId }}</p>
+
+      <h6 class="card-subtitle mb-2 text-muted">Coordenadas:</h6>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item" *ngFor="let coord of zona.coordenadas">
+          Latitud: {{ coord.latitud }}, Longitud: {{ coord.longitud }}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <a [routerLink]="['/zonas/list']" class="btn btn-primary mt-3">Volver a la lista</a>
+</div>
+
+<div class="container mt-4" *ngIf="!zona">
+  <p>Cargando...</p>
+</div>

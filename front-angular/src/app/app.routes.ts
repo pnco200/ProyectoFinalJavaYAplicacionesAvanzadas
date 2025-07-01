@@ -10,10 +10,10 @@ export const routes: Routes = [
     path: 'users',
     loadChildren: () => import('./controllers/users/users-routing-module').then(m => m.USERS_ROUTES)
   },
-  {
-    path: 'campanias',
-    loadChildren: () => import('./campanias/campanias-routing.module').then(m => m.CampaniasRoutingModule)
-  },
+{
+  path: 'campanias',
+  loadChildren: () => import('./controllers/campanias/campanias.routes').then(m => m.CAMPANIAS_ROUTES)
+},
   {
     path: 'coordenadas',
     loadChildren: () => import('./controllers/coordenadas/coordenadas-routing.module').then(m => m.COORDENADAS_ROUTES)

@@ -4,4 +4,5 @@ export interface Campania {
   name: string;
   startDate: Date;
   endDate: Date;
+  barrioId: number;
 }

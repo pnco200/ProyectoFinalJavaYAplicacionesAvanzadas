@@ -4,6 +4,8 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Campania } from '../../models/campania.model';
 import { CampaniaService } from '../../services/campania.service';
+import { BarrioService } from '../../../barrios/services/barrio.service';
+import { Barrio } from '../../../barrios/models/barrio.model';
 
 @Component({
   selector: 'app-campania-form',
@@ -16,10 +18,12 @@ export class CampaniaFormComponent implements OnInit {
   campaniaForm: FormGroup;
   isEditMode = false;
   campaniaId: number | null = null;
+  barrios: Barrio[] = [];
 
   constructor(
     private fb: FormBuilder,
     private campaniaService: CampaniaService,
+    private barrioService: BarrioService,
     private router: Router,
     private route: ActivatedRoute
   ) {
@@ -27,11 +31,16 @@ export class CampaniaFormComponent implements OnInit {
       id: [null],
       name: ['', Validators.required],
       startDate: ['', Validators.required],
-      endDate: ['', Validators.required]
+      endDate: ['', Validators.required],
+      barrioId: [null, Validators.required]
     });
   }
 
   ngOnInit(): void {
+    this.barrioService.getAll().subscribe(data => {
+      this.barrios = data;
+    });
+
     this.campaniaId = this.route.snapshot.params['id'];
     if (this.campaniaId) {
       this.isEditMode = true;

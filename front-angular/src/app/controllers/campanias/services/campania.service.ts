@@ -24,7 +24,7 @@ export class CampaniaService {
     return this.http.post<Campania>(this.apiUrl, campania).pipe(
       tap(() => alert('Campaña creada con éxito')),
       catchError(error => {
-        alert('Error al crear la campaña');
+        alert(this.getErrorMessage(error));
         return throwError(error);
       })
     );
@@ -34,7 +34,7 @@ export class CampaniaService {
     return this.http.put<Campania>(this.apiUrl, campania).pipe(
       tap(() => alert('Campaña actualizada con éxito')),
       catchError(error => {
-        alert('Error al actualizar la campaña');
+        alert(this.getErrorMessage(error));
         return throwError(error);
       })
     );
@@ -44,9 +44,13 @@ export class CampaniaService {
     return this.http.delete(`${this.apiUrl}/${id}`).pipe(
       tap(() => alert('Campaña eliminada con éxito')),
       catchError(error => {
-        alert('Error al eliminar la campaña');
+        alert(this.getErrorMessage(error));
         return throwError(error);
       })
     );
+  }
+
+  private getErrorMessage(error: any): string {
+    return error?.error?.error || 'Ocurrió un error inesperado.';
   }
 }

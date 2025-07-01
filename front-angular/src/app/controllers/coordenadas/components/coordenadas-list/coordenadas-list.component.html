@@ -1,33 +1,38 @@
 <div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Coordenadas</h2>
-    <button class="btn btn-primary" [routerLink]="['/coordenadas/new']">Crear Coordenada</button>
+  <div class="card">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h2 class="mb-0">Coordenadas</h2>
+      <button class="btn btn-light" [routerLink]="['/coordenadas/new']">Crear Coordenada</button>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Latitud</th>
+              <th>Longitud</th>
+              <th>Barrio ID</th>
+              <th>Zona ID</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let coordenada of coordenadas">
+              <td>{{ coordenada.id }}</td>
+              <td>{{ coordenada.latitud }}</td>
+              <td>{{ coordenada.longitud }}</td>
+              <td>{{ coordenada.barrioId || 'N/A' }}</td>
+              <td>{{ coordenada.zonaId || 'N/A' }}</td>
+              <td>
+                <button class="btn btn-info btn-sm me-2" (click)="viewCoordenada(coordenada.id)">Ver</button>
+                <button class="btn btn-warning btn-sm me-2" (click)="editCoordenada(coordenada.id)">Editar</button>
+                <button class="btn btn-danger btn-sm" (click)="deleteCoordenada(coordenada.id)">Eliminar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
-
-  <table class="table table-striped table-hover">
-    <thead class="table-dark">
-      <tr>
-        <th scope="col">ID</th>
-        <th scope="col">Latitud</th>
-        <th scope="col">Longitud</th>
-        <th scope="col">Barrio ID</th>
-        <th scope="col">Zona ID</th>
-        <th scope="col">Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let coordenada of coordenadas">
-        <th scope="row">{{ coordenada.id }}</th>
-        <td>{{ coordenada.latitud }}</td>
-        <td>{{ coordenada.longitud }}</td>
-        <td>{{ coordenada.barrioId || 'N/A' }}</td>
-        <td>{{ coordenada.zonaId || 'N/A' }}</td>
-        <td>
-          <button class="btn btn-sm btn-info me-2" (click)="viewCoordenada(coordenada.id)">Ver</button>
-          <button class="btn btn-sm btn-warning me-2" (click)="editCoordenada(coordenada.id)">Editar</button>
-          <button class="btn btn-sm btn-danger" (click)="deleteCoordenada(coordenada.id)">Eliminar</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
 </div>

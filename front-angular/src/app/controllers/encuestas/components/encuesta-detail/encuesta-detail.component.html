@@ -1,15 +1,24 @@
 
-<div class="container" *ngIf="encuesta">
-  <h2>Encuesta Details</h2>
-  <dl>
-    <dt>ID</dt>
-    <dd>{{ encuesta.id }}</dd>
-    <dt>Tipo</dt>
-    <dd>{{ encuesta.tipo }}</dd>
-    <dt>Campana ID</dt>
-    <dd>{{ encuesta.campaniaId }}</dd>
-    <dt>Vivienda ID</dt>
-    <dd>{{ encuesta.viviendaId }}</dd>
-  </dl>
-  <button class="btn btn-secondary" [routerLink]="['/encuestas']">Back to list</button>
+<div class="container mt-4" *ngIf="encuesta">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Detalles de Encuesta</h2>
+    </div>
+    <div class="card-body">
+      <dl class="row">
+        <dt class="col-sm-3">ID:</dt>
+        <dd class="col-sm-9">{{ encuesta.id }}</dd>
+
+        <dt class="col-sm-3">Tipo:</dt>
+        <dd class="col-sm-9">{{ encuesta.tipo }}</dd>
+
+        <dt class="col-sm-3">Campaña ID:</dt>
+        <dd class="col-sm-9">{{ encuesta.campaniaId }}</dd>
+
+        <dt class="col-sm-3">Vivienda ID:</dt>
+        <dd class="col-sm-9">{{ encuesta.viviendaId }}</dd>
+      </dl>
+      <button class="btn btn-secondary" [routerLink]="['/encuestas']">Volver a la lista</button>
+    </div>
+  </div>
 </div>

@@ -1,20 +1,28 @@
 
-<div class="container">
-  <h2>{{ isEditMode ? 'Edit' : 'Create' }} Renglon</h2>
-  <form [formGroup]="renglonForm" (ngSubmit)="onSubmit()">
-    <div class="mb-3">
-      <label for="valor" class="form-label">Valor</label>
-      <input type="text" id="valor" class="form-control" formControlName="valor">
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">{{ isEditMode ? 'Edit' : 'Create' }} Renglon</h2>
     </div>
-    <div class="mb-3">
-      <label for="tipo" class="form-label">Tipo</label>
-      <input type="text" id="tipo" class="form-control" formControlName="tipo">
+    <div class="card-body">
+      <form [formGroup]="renglonForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="valor" class="form-label">Valor</label>
+          <input type="text" id="valor" class="form-control" formControlName="valor">
+        </div>
+        <div class="mb-3">
+          <label for="tipo" class="form-label">Tipo</label>
+          <input type="text" id="tipo" class="form-control" formControlName="tipo">
+        </div>
+        <div class="mb-3">
+          <label for="encuestaId" class="form-label">Encuesta ID</label>
+          <input type="number" id="encuestaId" class="form-control" formControlName="encuestaId">
+        </div>
+        <div class="d-flex justify-content-between">
+          <button type="submit" class="btn btn-success">{{ isEditMode ? 'Update' : 'Create' }}</button>
+          <button type="button" class="btn btn-secondary" [routerLink]="['/renglones']">Cancel</button>
+        </div>
+      </form>
     </div>
-    <div class="mb-3">
-      <label for="encuestaId" class="form-label">Encuesta ID</label>
-      <input type="number" id="encuestaId" class="form-control" formControlName="encuestaId">
-    </div>
-    <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update' : 'Create' }}</button>
-    <button type="button" class="btn btn-secondary" [routerLink]="['/renglones']">Cancel</button>
-  </form>
+  </div>
 </div>

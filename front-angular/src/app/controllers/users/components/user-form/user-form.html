@@ -1,62 +1,70 @@
-<div class="user-form-container">
-  <h2>{{ isEditMode ? 'Editar Usuario' : 'Nuevo Usuario' }}</h2>
-  <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="dni">DNI:</label>
-      <input type="text" id="dni" formControlName="dni">
-      <div *ngIf="userForm.controls['dni'].invalid && (userForm.controls['dni'].dirty || userForm.controls['dni'].touched)" class="error-message">
-        <div *ngIf="userForm.controls['dni'].errors?.['required']">DNI es requerido.</div>
-        <div *ngIf="userForm.controls['dni'].errors?.['pattern']">DNI debe tener 7 u 8 dígitos.</div>
-      </div>
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">{{ isEditMode ? 'Editar Usuario' : 'Nuevo Usuario' }}</h2>
     </div>
+    <div class="card-body">
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="dni" class="form-label">DNI:</label>
+          <input type="text" id="dni" formControlName="dni" class="form-control">
+          <div *ngIf="userForm.controls['dni'].invalid && (userForm.controls['dni'].dirty || userForm.controls['dni'].touched)" class="text-danger">
+            <div *ngIf="userForm.controls['dni'].errors?.['required']">DNI es requerido.</div>
+            <div *ngIf="userForm.controls['dni'].errors?.['pattern']">DNI debe tener 7 u 8 dígitos.</div>
+          </div>
+        </div>
 
-    <div class="form-group">
-      <label for="apellido">Apellido:</label>
-      <input type="text" id="apellido" formControlName="apellido">
-      <div *ngIf="userForm.controls['apellido'].invalid && (userForm.controls['apellido'].dirty || userForm.controls['apellido'].touched)" class="error-message">
-        <div *ngIf="userForm.controls['apellido'].errors?.['required']">Apellido es requerido.</div>
-      </div>
+        <div class="mb-3">
+          <label for="apellido" class="form-label">Apellido:</label>
+          <input type="text" id="apellido" formControlName="apellido" class="form-control">
+          <div *ngIf="userForm.controls['apellido'].invalid && (userForm.controls['apellido'].dirty || userForm.controls['apellido'].touched)" class="text-danger">
+            <div *ngIf="userForm.controls['apellido'].errors?.['required']">Apellido es requerido.</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="nombres" class="form-label">Nombres:</label>
+          <input type="text" id="nombres" formControlName="nombres" class="form-control">
+          <div *ngIf="userForm.controls['nombres'].invalid && (userForm.controls['nombres'].dirty || userForm.controls['nombres'].touched)" class="text-danger">
+            <div *ngIf="userForm.controls['nombres'].errors?.['required']">Nombres es requerido.</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="domicilio" class="form-label">Domicilio:</label>
+          <input type="text" id="domicilio" formControlName="domicilio" class="form-control">
+          <div *ngIf="userForm.controls['domicilio'].invalid && (userForm.controls['domicilio'].dirty || userForm.controls['domicilio'].touched)" class="text-danger">
+            <div *ngIf="userForm.controls['domicilio'].errors?.['required']">Domicilio es requerido.</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="genero" class="form-label">Género:</label>
+          <select id="genero" formControlName="genero" class="form-select">
+            <option value="">Seleccione</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+          </select>
+          <div *ngIf="userForm.controls['genero'].invalid && (userForm.controls['genero'].dirty || userForm.controls['genero'].touched)" class="text-danger">
+            <div *ngIf="userForm.controls['genero'].errors?.['required']">Género es requerido.</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label">Email:</label>
+          <input type="email" id="email" formControlName="email" class="form-control">
+          <div *ngIf="userForm.controls['email'].invalid && (userForm.controls['email'].dirty || userForm.controls['email'].touched)" class="text-danger">
+            <div *ngIf="userForm.controls['email'].errors?.['required']">Email es requerido.</div>
+            <div *ngIf="userForm.controls['email'].errors?.['email']">Email no válido.</div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <button type="submit" class="btn btn-success" [disabled]="userForm.invalid">{{ isEditMode ? 'Actualizar' : 'Registrar' }}</button>
+          <button type="button" class="btn btn-secondary" (click)="cancel()">Cancelar</button>
+        </div>
+      </form>
     </div>
-
-    <div class="form-group">
-      <label for="nombres">Nombres:</label>
-      <input type="text" id="nombres" formControlName="nombres">
-      <div *ngIf="userForm.controls['nombres'].invalid && (userForm.controls['nombres'].dirty || userForm.controls['nombres'].touched)" class="error-message">
-        <div *ngIf="userForm.controls['nombres'].errors?.['required']">Nombres es requerido.</div>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="domicilio">Domicilio:</label>
-      <input type="text" id="domicilio" formControlName="domicilio">
-      <div *ngIf="userForm.controls['domicilio'].invalid && (userForm.controls['domicilio'].dirty || userForm.controls['domicilio'].touched)" class="error-message">
-        <div *ngIf="userForm.controls['domicilio'].errors?.['required']">Domicilio es requerido.</div>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="genero">Género:</label>
-      <select id="genero" formControlName="genero">
-        <option value="">Seleccione</option>
-        <option value="Masculino">Masculino</option>
-        <option value="Femenino">Femenino</option>
-        <option value="Otro">Otro</option>
-      </select>
-      <div *ngIf="userForm.controls['genero'].invalid && (userForm.controls['genero'].dirty || userForm.controls['genero'].touched)" class="error-message">
-        <div *ngIf="userForm.controls['genero'].errors?.['required']">Género es requerido.</div>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="email">Email:</label>
-      <input type="email" id="email" formControlName="email">
-      <div *ngIf="userForm.controls['email'].invalid && (userForm.controls['email'].dirty || userForm.controls['email'].touched)" class="error-message">
-        <div *ngIf="userForm.controls['email'].errors?.['required']">Email es requerido.</div>
-        <div *ngIf="userForm.controls['email'].errors?.['email']">Email no válido.</div>
-      </div>
-    </div>
-
-    <button type="submit" [disabled]="userForm.invalid">{{ isEditMode ? 'Actualizar' : 'Registrar' }}</button>
-    <button type="button" (click)="cancel()">Cancelar</button>
-  </form>
+  </div>
 </div>

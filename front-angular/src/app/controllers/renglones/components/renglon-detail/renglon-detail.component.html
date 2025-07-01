@@ -1,15 +1,24 @@
 
-<div class="container" *ngIf="renglon">
-  <h2>Renglon Details</h2>
-  <dl>
-    <dt>ID</dt>
-    <dd>{{ renglon.id }}</dd>
-    <dt>Valor</dt>
-    <dd>{{ renglon.valor }}</dd>
-    <dt>Tipo</dt>
-    <dd>{{ renglon.tipo }}</dd>
-    <dt>Encuesta ID</dt>
-    <dd>{{ renglon.encuestaId }}</dd>
-  </dl>
-  <button class="btn btn-secondary" [routerLink]="['/renglones']">Back to list</button>
+<div class="container mt-4" *ngIf="renglon">
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Detalles de Renglón</h2>
+    </div>
+    <div class="card-body">
+      <dl class="row">
+        <dt class="col-sm-3">ID:</dt>
+        <dd class="col-sm-9">{{ renglon.id }}</dd>
+
+        <dt class="col-sm-3">Valor:</dt>
+        <dd class="col-sm-9">{{ renglon.valor }}</dd>
+
+        <dt class="col-sm-3">Tipo:</dt>
+        <dd class="col-sm-9">{{ renglon.tipo }}</dd>
+
+        <dt class="col-sm-3">Encuesta ID:</dt>
+        <dd class="col-sm-9">{{ renglon.encuestaId }}</dd>
+      </dl>
+      <button class="btn btn-secondary" [routerLink]="['/renglones']">Volver a la lista</button>
+    </div>
+  </div>
 </div>

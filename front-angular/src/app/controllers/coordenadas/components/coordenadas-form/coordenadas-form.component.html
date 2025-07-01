@@ -1,42 +1,49 @@
 <div class="container mt-4">
-  <h2>{{ isEditMode ? 'Editar' : 'Crear' }} Coordenada</h2>
-
-  <form [formGroup]="coordenadaForm" (ngSubmit)="onSubmit()">
-    <div class="mb-3">
-      <label for="latitud" class="form-label">Latitud</label>
-      <input type="text" id="latitud" class="form-control" formControlName="latitud">
-      <div *ngIf="coordenadaForm.get('latitud')?.invalid && coordenadaForm.get('latitud')?.touched" class="text-danger">
-        Latitud es requerida y debe ser un número.
-      </div>
+  <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">{{ isEditMode ? 'Editar' : 'Crear' }} Coordenada</h2>
     </div>
+    <div class="card-body">
+      <form [formGroup]="coordenadaForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="latitud" class="form-label">Latitud</label>
+          <input type="text" id="latitud" class="form-control" formControlName="latitud">
+          <div *ngIf="coordenadaForm.get('latitud')?.invalid && coordenadaForm.get('latitud')?.touched" class="text-danger">
+            Latitud es requerida y debe ser un número.
+          </div>
+        </div>
 
-    <div class="mb-3">
-      <label for="longitud" class="form-label">Longitud</label>
-      <input type="text" id="longitud" class="form-control" formControlName="longitud">
-      <div *ngIf="coordenadaForm.get('longitud')?.invalid && coordenadaForm.get('longitud')?.touched" class="text-danger">
-        Longitud es requerida y debe ser un número.
-      </div>
+        <div class="mb-3">
+          <label for="longitud" class="form-label">Longitud</label>
+          <input type="text" id="longitud" class="form-control" formControlName="longitud">
+          <div *ngIf="coordenadaForm.get('longitud')?.invalid && coordenadaForm.get('longitud')?.touched" class="text-danger">
+            Longitud es requerida y debe ser un número.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="barrioId" class="form-label">Barrio ID (Opcional)</label>
+          <input type="number" id="barrioId" class="form-control" formControlName="barrioId">
+          <div *ngIf="coordenadaForm.get('barrioId')?.invalid && coordenadaForm.get('barrioId')?.touched" class="text-danger">
+            Barrio ID debe ser un número.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="zonaId" class="form-label">Zona ID (Opcional)</label>
+          <input type="number" id="zonaId" class="form-control" formControlName="zonaId">
+          <div *ngIf="coordenadaForm.get('zonaId')?.invalid && coordenadaForm.get('zonaId')?.touched" class="text-danger">
+            Zona ID debe ser un número.
+          </div>
+        </div>
+
+        <p class="text-muted">Una coordenada debe pertenecer a un barrio o a una zona, pero no a ambos.</p>
+
+        <div class="d-flex justify-content-between">
+          <button type="submit" class="btn btn-success" [disabled]="coordenadaForm.invalid">{{ isEditMode ? 'Actualizar' : 'Crear' }}</button>
+          <a [routerLink]="['/coordenadas/list']" class="btn btn-secondary">Cancelar</a>
+        </div>
+      </form>
     </div>
-
-    <div class="mb-3">
-      <label for="barrioId" class="form-label">Barrio ID (Opcional)</label>
-      <input type="number" id="barrioId" class="form-control" formControlName="barrioId">
-      <div *ngIf="coordenadaForm.get('barrioId')?.invalid && coordenadaForm.get('barrioId')?.touched" class="text-danger">
-        Barrio ID debe ser un número.
-      </div>
-    </div>
-
-    <div class="mb-3">
-      <label for="zonaId" class="form-label">Zona ID (Opcional)</label>
-      <input type="number" id="zonaId" class="form-control" formControlName="zonaId">
-      <div *ngIf="coordenadaForm.get('zonaId')?.invalid && coordenadaForm.get('zonaId')?.touched" class="text-danger">
-        Zona ID debe ser un número.
-      </div>
-    </div>
-
-    <p class="text-muted">Una coordenada debe pertenecer a un barrio o a una zona, pero no a ambos.</p>
-
-    <button type="submit" class="btn btn-primary" [disabled]="coordenadaForm.invalid">{{ isEditMode ? 'Actualizar' : 'Crear' }}</button>
-    <a [routerLink]="['/coordenadas/list']" class="btn btn-secondary ms-2">Cancelar</a>
-  </form>
+  </div>
 </div>

@@ -1,21 +1,26 @@
 <div class="container mt-4" *ngIf="barrio">
-  <h2>Detalle de Barrio</h2>
-
   <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Detalle de Barrio</h2>
+    </div>
     <div class="card-body">
-      <h5 class="card-title">ID: {{ barrio.id }}</h5>
-      <p class="card-text"><strong>Nombre:</strong> {{ barrio.name }}</p>
+      <dl class="row">
+        <dt class="col-sm-3">ID:</dt>
+        <dd class="col-sm-9">{{ barrio.id }}</dd>
 
-      <h6 class="card-subtitle mb-2 text-muted">Coordenadas:</h6>
+        <dt class="col-sm-3">Nombre:</dt>
+        <dd class="col-sm-9">{{ barrio.name }}</dd>
+      </dl>
+
+      <h6 class="card-subtitle mt-4 mb-2 text-muted">Coordenadas:</h6>
       <ul class="list-group list-group-flush">
         <li class="list-group-item" *ngFor="let coord of barrio.coordenadas">
           Latitud: {{ coord.latitud }}, Longitud: {{ coord.longitud }}
         </li>
       </ul>
+      <a [routerLink]="['/barrios/list']" class="btn btn-secondary mt-3">Volver a la lista</a>
     </div>
   </div>
-
-  <a [routerLink]="['/barrios/list']" class="btn btn-primary mt-3">Volver a la lista</a>
 </div>
 
 <div class="container mt-4" *ngIf="!barrio">

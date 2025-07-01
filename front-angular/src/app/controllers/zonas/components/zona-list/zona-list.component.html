@@ -1,29 +1,34 @@
 <div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Zonas</h2>
-    <button class="btn btn-primary" [routerLink]="['/zonas/new']">Crear Zona</button>
+  <div class="card">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h2 class="mb-0">Zonas</h2>
+      <button class="btn btn-light" [routerLink]="['/zonas/new']">Crear Zona</button>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Color</th>
+              <th>Barrio ID</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let zona of zonas">
+              <td>{{ zona.id }}</td>
+              <td>{{ zona.color }}</td>
+              <td>{{ zona.barrioId }}</td>
+              <td>
+                <button class="btn btn-info btn-sm me-2" (click)="viewZona(zona.id)">Ver</button>
+                <button class="btn btn-warning btn-sm me-2" (click)="editZona(zona.id)">Editar</button>
+                <button class="btn btn-danger btn-sm" (click)="deleteZona(zona.id)">Eliminar</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
-
-  <table class="table table-striped table-hover">
-    <thead class="table-dark">
-      <tr>
-        <th scope="col">ID</th>
-        <th scope="col">Color</th>
-        <th scope="col">Barrio ID</th>
-        <th scope="col">Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let zona of zonas">
-        <th scope="row">{{ zona.id }}</th>
-        <td>{{ zona.color }}</td>
-        <td>{{ zona.barrioId }}</td>
-        <td>
-          <button class="btn btn-sm btn-info me-2" (click)="viewZona(zona.id)">Ver</button>
-          <button class="btn btn-sm btn-warning me-2" (click)="editZona(zona.id)">Editar</button>
-          <button class="btn btn-sm btn-danger" (click)="deleteZona(zona.id)">Eliminar</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
 </div>

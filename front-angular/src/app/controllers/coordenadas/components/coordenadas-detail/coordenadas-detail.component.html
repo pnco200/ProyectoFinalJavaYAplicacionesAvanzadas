@@ -1,17 +1,28 @@
 <div class="container mt-4" *ngIf="coordenada">
-  <h2>Detalle de Coordenada</h2>
-
   <div class="card">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Detalle de Coordenada</h2>
+    </div>
     <div class="card-body">
-      <h5 class="card-title">ID: {{ coordenada.id }}</h5>
-      <p class="card-text"><strong>Latitud:</strong> {{ coordenada.latitud }}</p>
-      <p class="card-text"><strong>Longitud:</strong> {{ coordenada.longitud }}</p>
-      <p class="card-text"><strong>Barrio ID:</strong> {{ coordenada.barrioId || 'N/A' }}</p>
-      <p class="card-text"><strong>Zona ID:</strong> {{ coordenada.zonaId || 'N/A' }}</p>
+      <dl class="row">
+        <dt class="col-sm-3">ID:</dt>
+        <dd class="col-sm-9">{{ coordenada.id }}</dd>
+
+        <dt class="col-sm-3">Latitud:</dt>
+        <dd class="col-sm-9">{{ coordenada.latitud }}</dd>
+
+        <dt class="col-sm-3">Longitud:</dt>
+        <dd class="col-sm-9">{{ coordenada.longitud }}</dd>
+
+        <dt class="col-sm-3">Barrio ID:</dt>
+        <dd class="col-sm-9">{{ coordenada.barrioId || 'N/A' }}</dd>
+
+        <dt class="col-sm-3">Zona ID:</dt>
+        <dd class="col-sm-9">{{ coordenada.zonaId || 'N/A' }}</dd>
+      </dl>
+      <a [routerLink]="['/coordenadas/list']" class="btn btn-secondary mt-3">Volver a la lista</a>
     </div>
   </div>
-
-  <a [routerLink]="['/coordenadas/list']" class="btn btn-primary mt-3">Volver a la lista</a>
 </div>
 
 <div class="container mt-4" *ngIf="!coordenada">

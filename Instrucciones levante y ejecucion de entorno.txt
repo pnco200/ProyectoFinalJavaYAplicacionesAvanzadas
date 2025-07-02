@@ -1,0 +1,20 @@
+Comando para powershell para montar la DB en docker:
+docker run --name mysql-jyaa-test `
+  -e MYSQL_ROOT_PASSWORD=root `
+  -e MYSQL_DATABASE=jyaa `
+  -e MYSQL_USER=jyaa `
+  -e MYSQL_PASSWORD=jyaa `
+  -p 3306:3306 `
+  -d mysql:8.0
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+Levantar Backend:
+Montar un tomcat que levante ProyectoFinal
+	localhost:8080/ProyectoFinal/swagger-ui
+	
+Levantar Frontend:
+Dentro del directorio front-angular:
+	npm install
+	ng serve
+	localhost:4200

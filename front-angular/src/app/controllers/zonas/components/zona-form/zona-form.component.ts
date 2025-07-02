@@ -5,6 +5,8 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ZonaService } from '../../services/zona.service';
 import { Coordenadas } from '../../../coordenadas/models/coordenadas.model';
 import { Zona } from '../../models/zona.model';
+import { Barrio } from '../../../barrios/models/barrio.model';
+import { BarrioService } from '../../../barrios/services/barrio.service';
 
 @Component({
   selector: 'app-zona-form',
@@ -17,21 +19,25 @@ export class ZonaFormComponent implements OnInit {
   zonaForm: FormGroup;
   isEditMode = false;
   zonaId: number | null = null;
+  barrios: Barrio[] = [];
 
   constructor(
     private fb: FormBuilder,
     private zonaService: ZonaService,
+    private barrioService: BarrioService,
     private router: Router,
     private route: ActivatedRoute
   ) {
     this.zonaForm = this.fb.group({
       color: ['', Validators.required],
-      barrioId: [null, [Validators.required, Validators.pattern('^[0-9]*$')]],
+      barrio: [null, Validators.required],
       coordenadas: this.fb.array([])
     });
   }
+  compareById = (a: any, b: any) => a && b && a.id === b.id;
 
   ngOnInit(): void {
+    this.loadBarrios();
     this.zonaId = this.route.snapshot.params['id'];
     if (this.zonaId) {
       this.isEditMode = true;
@@ -40,8 +46,20 @@ export class ZonaFormComponent implements OnInit {
           const zona = data[0];
           this.zonaForm.patchValue({
             color: zona.color,
-            barrioId: zona.barrioId
           });
+          // Find the barrio object from the loaded barrios array
+          console.log('Zona data:', zona);
+          if (zona.barrioId) {
+            this.barrioService.getAll().subscribe(data => {
+              console.log('Barrios data:', data);
+            const selectedBarrio = data.find(b => b.id == zona.barrioId);
+                          console.log('Selected Barrio1:', selectedBarrio);
+            if (selectedBarrio) {
+              console.log('Selected Barrio2:', selectedBarrio);
+              this.zonaForm.get('barrio')?.setValue(selectedBarrio);
+            }
+            });
+          }
           zona.coordenadas.forEach(coord => {
             this.coordenadas.push(this.createCoordenadaGroup(coord));
           });
@@ -66,6 +84,12 @@ export class ZonaFormComponent implements OnInit {
     });
   }
 
+  loadBarrios(): void {
+    this.barrioService.getAll().subscribe(data => {
+      this.barrios = data;
+    });
+  }
+
   addCoordenada(): void {
     this.coordenadas.push(this.createCoordenadaGroup());
   }
@@ -77,6 +101,12 @@ export class ZonaFormComponent implements OnInit {
   onSubmit(): void {
     if (this.zonaForm.valid) {
       const formData: Zona = this.zonaForm.value;
+      const selectedBarrio = this.zonaForm.get('barrio')?.value;
+
+      if (selectedBarrio) {
+        formData.barrioId = selectedBarrio.id;
+      }
+
       if (this.isEditMode && this.zonaId) {
         this.zonaService.update(this.zonaId, formData).subscribe(
           response => {

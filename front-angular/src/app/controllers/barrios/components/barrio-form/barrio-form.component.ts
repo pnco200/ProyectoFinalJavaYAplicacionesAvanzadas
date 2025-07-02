@@ -37,7 +37,7 @@ export class BarrioFormComponent implements OnInit {
         if (data.length > 0) {
           const barrio = data[0];
           this.barrioForm.patchValue({
-            nombre: barrio.nombre
+            nombre: barrio.name
           });
           barrio.coordenadas.forEach(coord => {
             this.coordenadas.push(this.createCoordenadaGroup(coord));

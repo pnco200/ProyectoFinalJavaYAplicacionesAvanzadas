@@ -99,11 +99,15 @@ public class BarrioDAO implements IBarrioDAO {
         try {
             tx.begin();
             Barrio barrio = em.find(Barrio.class, id);
+            System.out.println("LLego y tiene " + barrio.getId());
             if (barrio != null) {
+            	System.out.println("Lo elimina!!!!!!!!!");
                 em.remove(barrio);
             }
             tx.commit();
+            System.out.println("Fin");
         } catch (Exception e) {
+        	System.out.println("excepttion");
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
         }

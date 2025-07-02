@@ -2,10 +2,12 @@ package asis.api;
 
 import asis.dao.IBarrioDAO;
 import asis.dao.ICoordenadasDAO;
+import asis.dao.IZonaDAO;
 import asis.dto.BarrioDTO;
 import asis.dto.CoordenadasDTO;
 import asis.models.Barrio;
 import asis.models.Coordenadas;
+import asis.models.Zona;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,6 +29,10 @@ public class BarrioController {
 
     @Inject
     private IBarrioDAO barrioDAO;
+    
+    @Inject
+    private IZonaDAO zonaDao;
+
 
     @Inject
     private ICoordenadasDAO coordenadasDAO;
@@ -140,6 +146,7 @@ public class BarrioController {
     @Path("/delete/{id}")
     @Operation(summary = "Eliminar barrio y sus coordenadas")
     public Response delete(@PathParam("id") Long id) {
+    	System.out.println(id);
         try {
             if (id == null) {
                 return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\": \"Se requiere ID del barrio\"}").build();
@@ -150,6 +157,13 @@ public class BarrioController {
             }
 
             coordenadasDAO.deleteByBarrioId(id);
+            List<Zona> zonas;
+            zonas = zonaDao.findByBarrioId(id);
+            for (Zona zona : zonas) {
+                coordenadasDAO.deleteByZonaId(zona.getId());
+                zonaDao.deleteById(zona.getId());
+
+			}
             barrioDAO.deleteById(id);
 
             return Response.noContent().build();

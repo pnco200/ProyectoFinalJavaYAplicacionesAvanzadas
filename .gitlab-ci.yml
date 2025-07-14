@@ -1,0 +1,45 @@
+buildDocker:
+  stage: build
+  tags:
+    - jyaa
+  only:
+    - main
+  script:
+    - echo "Construimos la imagen de Docker"
+    - docker buildx build . -t grupo10-docker
+
+detenemosContainer:
+  stage: test
+  tags:
+    - jyaa
+  needs:
+    - buildDocker
+  only:
+    - main
+  script:
+    - echo "Detenemos cualqueir tipo de contenedor existente previo"
+    - docker stop ejemplo || true
+
+eliminamosContainer:
+  stage: test
+  tags:
+    - jyaa
+  only:
+    - main
+  needs:
+    - detenemosContainer
+  script:
+    - echo "Eliminamos cualqueir tipo de contenedor existente previo"
+    - docker rm ejemplo || true
+
+deploy1:
+  stage: deploy
+  tags:
+    - jyaa
+  needs:
+    - eliminamosContainer
+  only:
+    - main
+  script:
+    - echo "Deploy del nuevo contenedor con los cambios"
+    - docker run -p 8090:8090 -d --name grupo10 grupo10-docker

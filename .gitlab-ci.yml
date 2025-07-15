@@ -18,7 +18,7 @@ detenemosContainer:
     - main
   script:
     - echo "Detenemos cualqueir tipo de contenedor existente previo"
-    - docker stop ejemplo || true
+    - docker stop grupo10 || true
 
 eliminamosContainer:
   stage: test
@@ -30,7 +30,7 @@ eliminamosContainer:
     - detenemosContainer
   script:
     - echo "Eliminamos cualqueir tipo de contenedor existente previo"
-    - docker rm ejemplo || true
+    - docker rm grupo10 || true
 
 deploy1:
   stage: deploy

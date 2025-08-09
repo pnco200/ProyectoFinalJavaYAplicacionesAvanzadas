@@ -18,5 +18,7 @@ public interface IUsuarioDAO {
     boolean existsById(Long id);
     boolean existsByEmail(String email);
 
-	boolean assignBarrioToUsuario(Long userId, Long barrioId);
+	    boolean assignBarrioToUsuario(Long userId, Long barrioId);
+    boolean assignRolToUser(Long userId, Long rolId);
+}
 }

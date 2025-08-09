@@ -190,6 +190,9 @@ public class UsuarioDAO implements IUsuarioDAO {
                 return false; // Usuario no encontrado
             }
 
+            // Refresh the user object to ensure roles are up-to-date
+            em.refresh(usuario);
+
             // Check if the user has the ORGANIZACION_SOCIAL role
             boolean hasOrganizacionSocialRole = usuario.getRoles().stream()
             	.anyMatch(rol -> rol.getNombre() == TipoRol.ORGANIZACION_SOCIAL);
@@ -213,6 +216,32 @@ public class UsuarioDAO implements IUsuarioDAO {
             return false;
         } 
     }
+    public boolean assignRolToUser(Long userId, Long rolId) {
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Usuario usuario = em.find(Usuario.class, userId);
+            if (usuario == null) {
+                return false; // Usuario no encontrado
+            }
+
+            Rol rol = em.find(Rol.class, rolId);
+            if (rol == null) {
+                return false; // Rol no encontrado
+            }
+
+            // Add the role to the user's roles set
+            usuario.addRol(rol);
+            em.merge(usuario);
+            tx.commit();
+            return true;
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private boolean isEmailUsedByAnother(Long userId, String email) {
         
         try {

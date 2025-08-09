@@ -1,8 +1,6 @@
-import { Coordenadas } from "../../coordenadas/models/coordenadas.model";
-
 export interface Barrio {
-    id?: number;
-    nombre: string;
-    name?: string;
-    coordenadas: Coordenadas[];
-  }
+  id: number;
+  name: string;
+  nombre: string;
+  coordenadas: any[];
+}

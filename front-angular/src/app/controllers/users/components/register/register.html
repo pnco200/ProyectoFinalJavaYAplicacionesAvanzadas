@@ -1,0 +1,42 @@
+<div class="register-container">
+  <h2>Registro</h2>
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="mail">Email</label>
+      <input type="email" id="mail" formControlName="mail" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" formControlName="password" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="name">Nombre</label>
+      <input type="text" id="name" formControlName="name" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="domicilio">Domicilio</label>
+      <input type="text" id="domicilio" formControlName="domicilio" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="activity">Actividad</label>
+      <input type="text" id="activity" formControlName="activity" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="extra">Extra</label>
+      <input type="text" id="extra" formControlName="extra" class="form-control">
+    </div>
+    <div class="form-group">
+      <label for="rolId">Rol</label>
+      <select id="rolId" formControlName="rolId" class="form-control">
+        <option *ngFor="let rol of roles" [value]="rol.id">{{rol.nombre}}</option>
+      </select>
+    </div>
+    <div *ngIf="showBarrios" class="form-group">
+      <label for="barrioId">Barrio</label>
+      <select id="barrioId" formControlName="barrioId" class="form-control">
+        <option *ngFor="let barrio of barrios" [value]="barrio.id">{{barrio.name}}</option>
+      </select>
+    </div>
+    <button type="submit" [disabled]="!registerForm.valid" class="btn btn-primary">Registrarse</button>
+  </form>
+</div>

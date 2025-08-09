@@ -30,8 +30,11 @@ import java.util.stream.Collectors;
 @Tag(name = "Usuario", description = "Operaciones sobre usuarios")
 public class UsuarioController {
 
-    @Inject
+        @Inject
     private IUsuarioDAO usuarioDAO;
+
+    @Inject
+    private asis.dao.IRolDAO rolDAO;
 
     @GET
     @Operation(summary = "Obtener todos los usuarios",
@@ -83,6 +86,28 @@ public class UsuarioController {
         if (creado == null) {
             return Response.status(Response.Status.CONFLICT).entity("Ya existe un usuario con ese mail").build();
         }
+
+        // Assign role
+        if (dto.rolId != null) {
+            boolean rolAssigned = usuarioDAO.assignRolToUser(creado.getId(), dto.rolId);
+            if (!rolAssigned) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al asignar el rol").build();
+            }
+            // Re-fetch the user to ensure roles are updated in the current session
+            creado = usuarioDAO.findById(creado.getId());
+            if (creado == null) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Usuario no encontrado después de asignar rol").build();
+            }
+        }
+
+        // Assign barrio if applicable
+        if (dto.barrioId != null) {
+            boolean barrioAssigned = usuarioDAO.assignBarrioToUsuario(creado.getId(), dto.barrioId);
+            if (!barrioAssigned) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al asignar el barrio o el usuario no tiene el rol requerido").build();
+            }
+        }
+
         return Response.status(Response.Status.CREATED).entity(UsuarioMapper.toDTO(creado)).build();
     }
 

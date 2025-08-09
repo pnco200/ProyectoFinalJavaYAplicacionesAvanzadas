@@ -1,5 +1,6 @@
+
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Barrio } from '../models/barrio.model';
 
@@ -7,17 +8,17 @@ import { Barrio } from '../models/barrio.model';
   providedIn: 'root'
 })
 export class BarrioService {
-
   private apiUrl = 'http://localhost:8080/ProyectoFinal/api/barrios';
 
   constructor(private http: HttpClient) { }
 
+  getBarrios(): Observable<Barrio[]> {
+    return this.http.get<Barrio[]>(this.apiUrl);
+  }
+
   getAll(id?: number): Observable<Barrio[]> {
-    let params = new HttpParams();
-    if (id) {
-      params = params.append('id', id.toString());
-    }
-    return this.http.get<Barrio[]>(this.apiUrl, { params });
+    const url = id ? `${this.apiUrl}?id=${id}` : this.apiUrl;
+    return this.http.get<Barrio[]>(url);
   }
 
   create(barrio: Barrio): Observable<Barrio> {

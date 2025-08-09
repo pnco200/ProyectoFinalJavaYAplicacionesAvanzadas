@@ -11,6 +11,14 @@
     <li class="nav-item"><a routerLink="/renglones" class="nav-link">Renglones</a></li>
     <li class="nav-item"><a routerLink="/users" class="nav-link">Users</a></li>
     <li class="nav-item"><a routerLink="/zonas" class="nav-link">Zonas</a></li>
+
+    @if (!isLoggedIn) {
+      <li class="nav-item"><a routerLink="/login" class="nav-link">Iniciar Sesion</a></li>
+    <li class="nav-item"><a routerLink="/users/register" class="nav-link">Registrarse</a></li>
+    } @else {
+      <li class="nav-item"><a class="nav-link">{{ userEmail }}</a></li>
+      <li class="nav-item"><a (click)="logout()" class="nav-link">Cerrar Sesion</a></li>
+    }
   </ul>
 </nav>
 <script>

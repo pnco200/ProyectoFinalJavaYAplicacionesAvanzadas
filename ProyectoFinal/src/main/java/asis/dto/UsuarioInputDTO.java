@@ -8,4 +8,6 @@ public class UsuarioInputDTO {
     public String domicilio;
     public String activity;
     public String extra;
+    public Long rolId;
+    public Long barrioId;
 }

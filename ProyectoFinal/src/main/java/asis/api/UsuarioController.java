@@ -102,9 +102,6 @@ public class UsuarioController {
 
         // Assign barrio if applicable
         if (dto.barrioId != null) {
-            // Assuming you have a way to check if the assigned role is ORGANIZACION_SOCIAL
-            // This check might need to be more robust, e.g., by fetching the role name
-            // For now, we'll rely on the assignBarrioToUsuario method to handle the role check
             boolean barrioAssigned = usuarioDAO.assignBarrioToUsuario(creado.getId(), dto.barrioId);
             if (!barrioAssigned) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("Error al asignar el barrio o el usuario no tiene el rol requerido").build();

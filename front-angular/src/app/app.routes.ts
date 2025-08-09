@@ -1,8 +1,10 @@
 import { Routes } from '@angular/router';
 import { HomePage } from './views/home-page/home-page';
+import { LoginComponent } from './controllers/users/components/login/login.component';
 
 export const routes: Routes = [
   { path: '', component: HomePage },
+  { path: 'login', component: LoginComponent },
   {
     path: 'users',
     loadChildren: () => import('./controllers/users/users-routing-module').then(m => m.USERS_ROUTES)

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { Barrio } from '../../models/barrio.model';
 import { BarrioService } from '../../services/barrio.service';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -37,9 +38,36 @@ export class BarrioListComponent implements OnInit {
   }
 
   deleteBarrio(id: number | undefined): void {
-    if (id && confirm('Are you sure you want to delete this barrio?')) {
-      this.barrioService.delete(id).subscribe(() => {
-        this.loadBarrios(); // Refresh the list
+    if (id) {
+      Swal.fire({
+        title: '¿Estás seguro?',
+        text: '¡Se eliminarán todas las zonas y coordenadas asociadas a este barrio!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: '¡Sí, bórralo!',
+        cancelButtonText: 'Cancelar'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.barrioService.delete(id).subscribe({
+            next: () => {
+              this.loadBarrios();
+              Swal.fire(
+                '¡Eliminado!',
+                'El barrio ha sido eliminado.',
+                'success'
+              );
+            },
+            error: (error) => {
+              Swal.fire(
+                'Error',
+                error.error.message || 'No se pudo eliminar el barrio.',
+                'error'
+              );
+            }
+          });
+        }
       });
     }
   }

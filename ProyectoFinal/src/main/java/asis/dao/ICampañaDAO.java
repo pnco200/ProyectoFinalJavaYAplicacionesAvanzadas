@@ -16,4 +16,8 @@ public interface ICampañaDAO {
     List<Campaña> findByName(String name);
 
     List<Campaña> findByStartDateBetween(java.util.Date startDate, java.util.Date endDate);
+
+    boolean isBarrioAsociadoACampana(Long barrioId);
+
+    boolean isZonaAsociadaACampana(Long zonaId);
 }

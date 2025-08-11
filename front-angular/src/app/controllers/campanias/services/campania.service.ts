@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { Campania } from '../models/campania.model';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root'
@@ -22,9 +23,21 @@ export class CampaniaService {
 
   create(campania: Campania): Observable<Campania> {
     return this.http.post<Campania>(this.apiUrl, campania).pipe(
-      tap(() => alert('Campaña creada con éxito')),
+      tap(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Campaña creada con éxito',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }),
       catchError(error => {
-        alert(this.getErrorMessage(error));
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: '¡Algo salió mal!',
+          footer: `<a href="">${this.getErrorMessage(error)}</a>`,
+        });
         return throwError(error);
       })
     );
@@ -32,9 +45,21 @@ export class CampaniaService {
 
   update(campania: Campania): Observable<Campania> {
     return this.http.put<Campania>(this.apiUrl, campania).pipe(
-      tap(() => alert('Campaña actualizada con éxito')),
+      tap(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Campaña actualizada con éxito',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }),
       catchError(error => {
-        alert(this.getErrorMessage(error));
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: '¡Algo salió mal!',
+          footer: `<a href="">${this.getErrorMessage(error)}</a>`,
+        });
         return throwError(error);
       })
     );
@@ -42,9 +67,50 @@ export class CampaniaService {
 
   delete(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`).pipe(
-      tap(() => alert('Campaña eliminada con éxito')),
+      tap(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Campaña eliminada con éxito',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }),
       catchError(error => {
-        alert(this.getErrorMessage(error));
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: '¡Algo salió mal!',
+          footer: `<a href="">${this.getErrorMessage(error)}</a>`,
+        });
+        return throwError(error);
+      })
+    );
+  }
+
+  uploadEncuestas(id: number, data: any): Observable<any> {
+    Swal.fire({
+      title: 'Espere por favor',
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    return this.http.post(`${this.apiUrl}/${id}/upload-encuestas`, data).pipe(
+      tap(() => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Encuestas subidas con éxito',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }),
+      catchError(error => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: '¡Algo salió mal!',
+          footer: `<a href="">${this.getErrorMessage(error)}</a>`,
+        });
         return throwError(error);
       })
     );

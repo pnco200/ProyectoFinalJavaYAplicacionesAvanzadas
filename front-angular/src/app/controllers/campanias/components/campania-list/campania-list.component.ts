@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Campania } from '../../models/campania.model';
 import { CampaniaService } from '../../services/campania.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-campania-list',
@@ -27,10 +28,20 @@ export class CampaniaListComponent implements OnInit {
   }
 
   deleteCampania(id: number): void {
-    if (confirm('¿Estás seguro de que quieres eliminar esta campaña?')) {
-      this.campaniaService.delete(id).subscribe(() => {
-        this.loadCampanias(); // Recargar la lista
-      });
-    }
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¡No podrás revertir esto!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: '¡Sí, bórralo!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.campaniaService.delete(id).subscribe(() => {
+          this.loadCampanias();
+        });
+      }
+    });
   }
 }

@@ -6,6 +6,7 @@ import { Campania } from '../../models/campania.model';
 import { CampaniaService } from '../../services/campania.service';
 import { BarrioService } from '../../../barrios/services/barrio.service';
 import { Barrio } from '../../../barrios/models/barrio.model';
+import Papa from 'papaparse';
 
 @Component({
   selector: 'app-campania-form',
@@ -19,6 +20,8 @@ export class CampaniaFormComponent implements OnInit {
   isEditMode = false;
   campaniaId: number | null = null;
   barrios: Barrio[] = [];
+  viviendasFile: File | null = null;
+  personasFile: File | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -50,12 +53,24 @@ export class CampaniaFormComponent implements OnInit {
     }
   }
 
+  onViviendasFileChange(event: any): void {
+    this.viviendasFile = event.target.files[0];
+  }
+
+  onPersonasFileChange(event: any): void {
+    this.personasFile = event.target.files[0];
+  }
+
   onSubmit(): void {
     if (this.campaniaForm.valid) {
       const campaniaData: Campania = this.campaniaForm.value;
       if (this.isEditMode && this.campaniaId) {
         this.campaniaService.update(campaniaData).subscribe(() => {
-          this.router.navigate(['/campanias']);
+          if (this.viviendasFile && this.personasFile) {
+            this.parseFiles();
+          } else {
+            this.router.navigate(['/campanias']);
+          }
         });
       } else {
         this.campaniaService.create(campaniaData).subscribe(() => {
@@ -63,5 +78,33 @@ export class CampaniaFormComponent implements OnInit {
         });
       }
     }
+  }
+
+  parseFiles(): void {
+    if (this.viviendasFile && this.personasFile) {
+      Papa.parse(this.viviendasFile, {
+        header: true,
+        complete: (viviendasResult : any) => {
+          const viviendasData = viviendasResult.data;
+          Papa.parse(this.personasFile!, {
+            header: true,
+            complete: (personasResult: any) => {
+              const personasData = personasResult.data;
+              this.sendDataToBackend(viviendasData, personasData);
+            }
+          });
+        }
+      });
+    }
+  }
+
+  sendDataToBackend(viviendasData: any[], personasData: any[]): void {
+    const data = {
+      viviendas: viviendasData,
+      personas: personasData
+    };
+    this.campaniaService.uploadEncuestas(this.campaniaId!, data).subscribe(() => {
+      this.router.navigate(['/campanias']);
+    });
   }
 }

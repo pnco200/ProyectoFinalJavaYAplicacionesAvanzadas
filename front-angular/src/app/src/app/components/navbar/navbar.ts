@@ -8,11 +8,13 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [RouterLink, CommonModule],
   templateUrl: './navbar.html',
-  styleUrl: './navbar.css'
+  styleUrls: ['./navbar.css']
 })
 export class NavbarComponent implements OnInit {
-  isLoggedIn: boolean = false;
+  isLoggedIn = false;
   userEmail: string | null = null;
+  roles: string[] = [];
+  menuActive = false;
 
   constructor(private authService: AuthService, private router: Router) { }
 
@@ -20,11 +22,20 @@ export class NavbarComponent implements OnInit {
     this.authService.currentUser.subscribe(user => {
       this.isLoggedIn = !!user;
       this.userEmail = user ? user.mail : null;
+      this.roles = user ? user.roles || [] : [];
     });
   }
 
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  toggleMenu(): void {
+    this.menuActive = !this.menuActive;
+  }
+
+  hasRole(role: string): boolean {
+    return this.roles.includes(role);
   }
 }

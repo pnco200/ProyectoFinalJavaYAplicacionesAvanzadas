@@ -3,12 +3,13 @@ import { UserList } from './components/user-list/user-list';
 import { UserEdit } from './components/user-edit/user-edit';
 import { UserDetail } from './components/user-detail/user-detail';
 import { RegisterComponent } from './components/register/register';
+import { AuthRoleGuard } from '../../services/auth-role.service';
 
-export const USERS_ROUTES: Routes = [ // <-- Exporting an array directly
-  { path: 'list', component: UserList },
-  { path: 'new', component: UserEdit },
-  { path: 'edit/:id', component: UserEdit },
-  { path: 'detail/:id', component: UserDetail },
+export const USERS_ROUTES: Routes = [
+  { path: 'list', component: UserList, canActivate: [AuthRoleGuard], data: { roles: ['ADMINISTRADOR'] } },
+  { path: 'new', component: UserEdit, canActivate: [AuthRoleGuard], data: { roles: ['ADMINISTRADOR'] } },
+  { path: 'edit/:id', component: UserEdit, canActivate: [AuthRoleGuard], data: { roles: ['ADMINISTRADOR'] } },
+  { path: 'detail/:id', component: UserDetail, canActivate: [AuthRoleGuard], data: { roles: ['ADMINISTRADOR'] } },
   { path: 'register', component: RegisterComponent },
   { path: '', redirectTo: 'list', pathMatch: 'full' }
 ];

@@ -13,10 +13,10 @@ export const routes: Routes = [
     path: 'campanias',
     loadChildren: () => import('./controllers/campanias/campanias.routes').then(m => m.CAMPANIAS_ROUTES)
   },
-  {
-    path: 'coordenadas',
-    loadChildren: () => import('./controllers/coordenadas/coordenadas-routing.module').then(m => m.COORDENADAS_ROUTES)
-  },
+  //{
+  //  path: 'coordenadas',
+  //  loadChildren: () => import('./controllers/coordenadas/coordenadas-routing.module').then(m => m.COORDENADAS_ROUTES)
+  //},
   {
     path: 'barrios',
     loadChildren: () => import('./controllers/barrios/barrios-routing.module').then(m => m.BARRIOS_ROUTES)
@@ -25,14 +25,14 @@ export const routes: Routes = [
     path: 'zonas',
     loadChildren: () => import('./controllers/zonas/zonas-routing.module').then(m => m.ZONAS_ROUTES)
   },
-  {
-    path: 'renglones',
-    loadChildren: () => import('./controllers/renglones/renglones-routing.module').then(m => m.RENGLONES_ROUTES)
-  },
-  {
-    path: 'encuestas',
-    loadChildren: () => import('./controllers/encuestas/encuestas.routes').then(m => m.ENCUESTAS_ROUTES)
-  },
+  //{
+  //  path: 'renglones',
+  //  loadChildren: () => import('./controllers/renglones/renglones-routing.module').then(m => m.RENGLONES_ROUTES)
+  //},
+  //{
+  //  path: 'encuestas',
+  //  loadChildren: () => import('./controllers/encuestas/encuestas.routes').then(m => m.ENCUESTAS_ROUTES)
+  //},
   {
     path: 'jornadas',
     loadChildren: () => import('./controllers/jornadas/jornadas.routes').then(m => m.JORNADAS_ROUTES)

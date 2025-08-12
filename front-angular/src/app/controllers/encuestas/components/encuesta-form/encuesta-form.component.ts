@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { EncuestaService } from '../../services/encuesta.service';
 import { Encuesta, TipoEncuesta } from '../../models/encuesta.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-encuesta-form',
@@ -60,11 +61,11 @@ export class EncuestaFormComponent implements OnInit {
       } else {
         this.encuestaService.create(tipo, viviendaId, campaniaId).subscribe(
           response => {
-            alert('Encuesta created successfully: ' + JSON.stringify(response));
+            Swal.fire('¡Éxito!', 'Encuesta creada con éxito.', 'success');
             this.router.navigate(['/encuestas']);
           },
           error => {
-            alert('Error creating encuesta: ' + JSON.stringify(error));
+            Swal.fire('¡Error!', 'Hubo un problema al crear la encuesta.', 'error');
           }
         );
       }

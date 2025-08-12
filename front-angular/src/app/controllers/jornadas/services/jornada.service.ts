@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { Jornada } from '../models/jornada';
 import { Encuestador } from '../../encuestadores/models/encuestador';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root'
@@ -29,9 +30,9 @@ export class JornadaService {
     const payload = this.mapToPayload(jornada);
     return this.http.post<any>(this.apiUrl, payload).pipe(
       map(response => this.mapToJornada(response)),
-      tap(() => alert('Jornada creada con éxito')),
+      tap(() => Swal.fire('¡Éxito!', 'Jornada creada con éxito.', 'success')),
       catchError(error => {
-        alert(this.getErrorMessage(error));
+        Swal.fire('¡Error!', this.getErrorMessage(error), 'error');
         return throwError(error);
       })
     );
@@ -41,9 +42,9 @@ export class JornadaService {
     const payload = this.mapToPayload(jornada);
     return this.http.put<any>(`${this.apiUrl}`, payload).pipe(
       map(response => this.mapToJornada(response)),
-      tap(() => alert('Jornada actualizada con éxito')),
+      tap(() => Swal.fire('¡Éxito!', 'Jornada actualizada con éxito.', 'success')),
       catchError(error => {
-        alert(this.getErrorMessage(error));
+        Swal.fire('¡Error!', this.getErrorMessage(error), 'error');
         return throwError(error);
       })
     );
@@ -51,9 +52,9 @@ export class JornadaService {
 
   deleteJornada(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`).pipe(
-      tap(() => alert('Jornada eliminada con éxito')),
+      tap(() => Swal.fire('¡Éxito!', 'Jornada eliminada con éxito.', 'success')),
       catchError(error => {
-        alert(this.getErrorMessage(error));
+        Swal.fire('¡Error!', this.getErrorMessage(error), 'error');
         return throwError(error);
       })
     );
@@ -65,9 +66,9 @@ export class JornadaService {
 
   addEncuestador(jornadaId: number, encuestadorId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/${jornadaId}/encuestadores/${encuestadorId}`, null).pipe(
-      tap(() => alert('Encuestador agregado con éxito')),
+      tap(() => Swal.fire('¡Éxito!', 'Encuestador agregado con éxito.', 'success')),
       catchError(error => {
-        alert(this.getErrorMessage(error));
+        Swal.fire('¡Error!', this.getErrorMessage(error), 'error');
         return throwError(error);
       })
     );
@@ -75,9 +76,9 @@ export class JornadaService {
 
   removeEncuestador(jornadaId: number, encuestadorId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${jornadaId}/encuestadores/${encuestadorId}`).pipe(
-      tap(() => alert('Encuestador eliminado con éxito')),
+      tap(() => Swal.fire('¡Éxito!', 'Encuestador eliminado con éxito.', 'success')),
       catchError(error => {
-        alert(this.getErrorMessage(error));
+        Swal.fire('¡Error!', this.getErrorMessage(error), 'error');
         return throwError(error);
       })
     );

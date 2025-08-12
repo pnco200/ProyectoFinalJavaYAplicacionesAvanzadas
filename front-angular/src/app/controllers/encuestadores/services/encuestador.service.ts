@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { Encuestador } from '../models/encuestador';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root'
@@ -22,9 +23,9 @@ export class EncuestadorService {
 
   createEncuestador(encuestador: Encuestador): Observable<Encuestador> {
     return this.http.post<Encuestador>(`${this.apiUrl}/create`, encuestador).pipe(
-      tap(() => alert('Encuestador creado con éxito')),
+      tap(() => Swal.fire('¡Éxito!', 'Encuestador creado con éxito.', 'success')),
       catchError(error => {
-        alert(this.getErrorMessage(error));
+        Swal.fire('¡Error!', this.getErrorMessage(error), 'error');
         return throwError(error);
       })
     );
@@ -32,9 +33,9 @@ export class EncuestadorService {
 
   updateEncuestador(encuestador: Encuestador): Observable<Encuestador> {
     return this.http.put<Encuestador>(`${this.apiUrl}/update`, encuestador).pipe(
-      tap(() => alert('Encuestador actualizado con éxito')),
+      tap(() => Swal.fire('¡Éxito!', 'Encuestador actualizado con éxito.', 'success')),
       catchError(error => {
-        alert(this.getErrorMessage(error));
+        Swal.fire('¡Error!', this.getErrorMessage(error), 'error');
         return throwError(error);
       })
     );
@@ -42,9 +43,9 @@ export class EncuestadorService {
 
   deleteEncuestador(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/delete/${id}`).pipe(
-      tap(() => alert('Encuestador eliminado con éxito')),
+      tap(() => Swal.fire('¡Éxito!', 'Encuestador eliminado con éxito.', 'success')),
       catchError(error => {
-        alert(this.getErrorMessage(error));
+        Swal.fire('¡Error!', this.getErrorMessage(error), 'error');
         return throwError(error);
       })
     );

@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { RenglonService } from '../../services/renglon.service';
 import { Renglon } from '../../models/renglon.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-renglon-form',
@@ -47,21 +48,21 @@ export class RenglonFormComponent implements OnInit {
       if (this.isEditMode && this.renglonId) {
         this.renglonService.update({ id: this.renglonId, ...this.renglonForm.value }).subscribe(
           response => {
-            alert('Renglon updated successfully: ' + JSON.stringify(response));
+            Swal.fire('¡Éxito!', 'Renglón actualizado con éxito.', 'success');
             this.router.navigate(['/renglones']);
           },
           error => {
-            alert('Error updating renglon: ' + JSON.stringify(error));
+            Swal.fire('¡Error!', 'Hubo un problema al actualizar el renglón.', 'error');
           }
         );
       } else {
         this.renglonService.create(this.renglonForm.value).subscribe(
           response => {
-            alert('Renglon created successfully: ' + JSON.stringify(response));
+            Swal.fire('¡Éxito!', 'Renglón creado con éxito.', 'success');
             this.router.navigate(['/renglones']);
           },
           error => {
-            alert('Error creating renglon: ' + JSON.stringify(error));
+            Swal.fire('¡Error!', 'Hubo un problema al crear el renglón.', 'error');
           }
         );
       }

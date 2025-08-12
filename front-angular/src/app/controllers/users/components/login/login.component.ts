@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../../../services/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
@@ -34,12 +35,12 @@ export class LoginComponent implements OnInit {
       const { mail, password } = this.loginForm.value;
       this.authService.login(mail, password).subscribe({
         next: () => {
-          alert('Login exitoso!');
+          Swal.fire('¡Éxito!', 'Login exitoso!', 'success');
           this.cdr.detectChanges(); // Force change detection
           this.router.navigate(['/']); // Volver al home
         },
         error: (err) => {
-          alert('Error de login: ' + (err.error || err.message));
+          Swal.fire('¡Error!', 'Error de login: ' + (err.error || err.message), 'error');
           console.error('Login error:', err);
         }
       });

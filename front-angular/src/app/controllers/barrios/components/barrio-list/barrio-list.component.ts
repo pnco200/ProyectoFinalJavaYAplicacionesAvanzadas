@@ -60,9 +60,10 @@ export class BarrioListComponent implements OnInit {
               );
             },
             error: (error) => {
+              console.error('Error al eliminar el barrio:', error);
               Swal.fire(
                 'Error',
-                error.error.message || 'No se pudo eliminar el barrio.',
+                error.error.error ||'No se pudo eliminar el barrio.',
                 'error'
               );
             }

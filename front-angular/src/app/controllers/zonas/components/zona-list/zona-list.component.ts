@@ -59,9 +59,10 @@ export class ZonaListComponent implements OnInit {
               );
             },
             error: (error) => {
+              console.log('Error al eliminar la zona:', error);
               Swal.fire(
                 'Error',
-                error.error.message || 'No se pudo eliminar la zona.',
+                error.error.error || 'No se pudo eliminar la zona porque el barrio esta asociado a una campaña.',
                 'error'
               );
             }

@@ -108,4 +108,45 @@ public class RenglonDAO implements IRenglonDAO {
     public boolean existsById(Long id) {
         return findById(id) != null;
     }
+
+    @Override
+    public List<String> findDistinctTipos() {
+        TypedQuery<String> query = em.createQuery("SELECT DISTINCT r.tipo FROM Renglon r", String.class);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<String> findDistinctValoresByTipo(String tipo) {
+        TypedQuery<String> query = em.createQuery("SELECT DISTINCT r.valor FROM Renglon r WHERE r.tipo = :tipo", String.class);
+        query.setParameter("tipo", tipo);
+        return query.getResultList();
+    }
+}
+
+    @Override
+    public List<String> findDistinctTipos() {
+        TypedQuery<String> query = em.createQuery("SELECT DISTINCT r.tipo FROM Renglon r", String.class);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<String> findDistinctValoresByTipo(String tipo) {
+        TypedQuery<String> query = em.createQuery("SELECT DISTINCT r.valor FROM Renglon r WHERE r.tipo = :tipo", String.class);
+        query.setParameter("tipo", tipo);
+        return query.getResultList();
+    }
+}
+
+    @Override
+    public List<String> findDistinctTipos() {
+        TypedQuery<String> query = em.createQuery("SELECT DISTINCT r.tipo FROM Renglon r", String.class);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<String> findDistinctValoresByTipo(String tipo) {
+        TypedQuery<String> query = em.createQuery("SELECT DISTINCT r.valor FROM Renglon r WHERE r.tipo = :tipo", String.class);
+        query.setParameter("tipo", tipo);
+        return query.getResultList();
+    }
 }

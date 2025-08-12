@@ -184,4 +184,54 @@ public class RenglonController {
         json.append("]");
         return json.toString();
     }
+
+    @GET
+    @Path("/tipos")
+    @Operation(summary = "Obtener todos los tipos de renglones distintos")
+    public Response getDistinctTipos() {
+        List<String> tipos = renglonDAO.findDistinctTipos();
+        return Response.ok(tipos).build();
+    }
+
+    @GET
+    @Path("/valores/{tipo}")
+    @Operation(summary = "Obtener todos los valores distintos para un tipo de renglon")
+    public Response getDistinctValoresByTipo(@PathParam("tipo") String tipo) {
+        List<String> valores = renglonDAO.findDistinctValoresByTipo(tipo);
+        return Response.ok(valores).build();
+    }
+}
+
+    @GET
+    @Path("/tipos")
+    @Operation(summary = "Obtener todos los tipos de renglones distintos")
+    public Response getDistinctTipos() {
+        List<String> tipos = renglonDAO.findDistinctTipos();
+        return Response.ok(tipos).build();
+    }
+
+    @GET
+    @Path("/valores/{tipo}")
+    @Operation(summary = "Obtener todos los valores distintos de un tipo de renglon")
+    public Response getDistinctValoresByTipo(@PathParam("tipo") String tipo) {
+        List<String> valores = renglonDAO.findDistinctValoresByTipo(tipo);
+        return Response.ok(valores).build();
+    }
+}
+
+    @GET
+    @Path("/tipos")
+    @Operation(summary = "Obtener todos los tipos de renglones distintos")
+    public Response getDistinctTipos() {
+        List<String> tipos = renglonDAO.findDistinctTipos();
+        return Response.ok(tipos).build();
+    }
+
+    @GET
+    @Path("/valores/{tipo}")
+    @Operation(summary = "Obtener todos los valores distintos para un tipo de renglon")
+    public Response getDistinctValoresByTipo(@PathParam("tipo") String tipo) {
+        List<String> valores = renglonDAO.findDistinctValoresByTipo(tipo);
+        return Response.ok(valores).build();
+    }
 }

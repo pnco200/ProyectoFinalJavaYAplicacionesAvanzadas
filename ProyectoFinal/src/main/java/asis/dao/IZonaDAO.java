@@ -18,6 +18,8 @@ public interface IZonaDAO {
     void delete(Zona zona);
     
     void deleteById(Long id);
+
+    void deleteByBarrioId(Long barrioId);
     
     boolean existsById(Long id);
 }

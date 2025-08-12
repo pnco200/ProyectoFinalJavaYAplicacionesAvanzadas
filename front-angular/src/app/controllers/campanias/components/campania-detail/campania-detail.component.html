@@ -1,30 +1,45 @@
 <div class="container mt-4" *ngIf="campania">
-  <div class="card">
-    <div class="card-header bg-primary text-white">
-      <h2 class="mb-0">Detalles de la Campaña</h2>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0">Detalles de la Campaña</h2>
+        </div>
+        <div class="card-body">
+          <dl class="row">
+            <dt class="col-sm-3">ID:</dt>
+            <dd class="col-sm-9">{{ campania.id }}</dd>
+
+            <dt class="col-sm-3">Nombre:</dt>
+            <dd class="col-sm-9">{{ campania.name }}</dd>
+
+
+            <dt class="col-sm-3">Fecha de Inicio:</dt>
+            <dd class="col-sm-9">{{ campania.startDate | date:'dd/MM/yyyy' }}</dd>
+
+            <dt class="col-sm-3">Fecha de Fin:</dt>
+            <dd class="col-sm-9">{{ campania.endDate | date:'dd/MM/yyyy' }}</dd>
+
+            <dt class="col-sm-3">Barrio ID:</dt>
+            <dd class="col-sm-9">{{ campania.barrioId }}</dd>
+
+            <dt class="col-sm-3">Barrio Nombre:</dt>
+            <dd class="col-sm-9">{{ barrio?.name }}</dd>
+          </dl>
+          <a routerLink="/campanias" class="btn btn-secondary">Volver a la Lista</a>
+        </div>
+      </div>
     </div>
-    <div class="card-body">
-      <dl class="row">
-        <dt class="col-sm-3">ID:</dt>
-        <dd class="col-sm-9">{{ campania.id }}</dd>
-
-        <dt class="col-sm-3">Nombre:</dt>
-        <dd class="col-sm-9">{{ campania.name }}</dd>
-
-
-        <dt class="col-sm-3">Fecha de Inicio:</dt>
-        <dd class="col-sm-9">{{ campania.startDate | date:'dd/MM/yyyy' }}</dd>
-
-        <dt class="col-sm-3">Fecha de Fin:</dt>
-        <dd class="col-sm-9">{{ campania.endDate | date:'dd/MM/yyyy' }}</dd>
-
-        <dt class="col-sm-3">Barrio ID:</dt>
-        <dd class="col-sm-9">{{ campania.barrioId }}</dd>
-
-        <dt class="col-sm-3">Barrio Nombre:</dt>
-        <dd class="col-sm-9">{{ barrio?.name }}</dd>
-      </dl>
-      <a routerLink="/campanias" class="btn btn-secondary">Volver a la Lista</a>
+    <div class="col-md-4">
+      <div class="card">
+        <div class="card-header bg-info text-white">
+          <h3 class="mb-0">Filtros</h3>
+        </div>
+        <div class="card-body">
+          <button class="btn btn-primary btn-sm">+</button>
+          <button class="btn btn-danger btn-sm">-</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

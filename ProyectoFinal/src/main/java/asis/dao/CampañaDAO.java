@@ -164,4 +164,20 @@ public class CampañaDAO implements ICampañaDAO {
 			return List.of(); // Retorna una lista vacía en caso de error
 		} 
     }
+
+    @Override
+    public boolean isBarrioAsociadoACampana(Long barrioId) {
+        TypedQuery<Long> query = em.createQuery(
+            "SELECT COUNT(c) FROM Campaña c WHERE c.barrio.id = :barrioId", Long.class);
+        query.setParameter("barrioId", barrioId);
+        return query.getSingleResult() > 0;
+    }
+
+    @Override
+    public boolean isZonaAsociadaACampana(Long zonaId) {
+        TypedQuery<Long> query = em.createQuery(
+            "SELECT COUNT(c) FROM Campaña c JOIN c.barrio b JOIN b.zonas z WHERE z.id = :zonaId", Long.class);
+        query.setParameter("zonaId", zonaId);
+        return query.getSingleResult() > 0;
+    }
 }

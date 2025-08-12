@@ -56,4 +56,12 @@ export class RenglonService {
   delete(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/delete/${id}`);
   }
+
+  getDistinctTipos(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrl}/tipos`);
+  }
+
+  getDistinctValoresByTipo(tipo: string): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrl}/valores/${tipo}`);
+  }
 }

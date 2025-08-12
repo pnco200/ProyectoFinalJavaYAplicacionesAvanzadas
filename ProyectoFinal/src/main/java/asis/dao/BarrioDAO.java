@@ -1,6 +1,7 @@
 package asis.dao;
 
 import asis.models.Barrio;
+import asis.models.Zona;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -15,6 +16,15 @@ public class BarrioDAO implements IBarrioDAO {
 
     @Inject
     private EntityManager em;
+
+    @Inject
+    private ICampañaDAO campañaDAO;
+
+    @Inject
+    private IZonaDAO zonaDAO;
+
+    @Inject
+    private ICoordenadasDAO coordenadasDAO;
 
     @Override
     public Barrio save(Barrio barrio) {
@@ -78,36 +88,30 @@ public class BarrioDAO implements IBarrioDAO {
 
     @Override
     public void delete(Barrio barrio) {
-        EntityTransaction tx = em.getTransaction();
-        try {
-            tx.begin();
-            Barrio managedBarrio = barrio;
-            if (!em.contains(barrio)) {
-                managedBarrio = em.merge(barrio);
-            }
-            em.remove(managedBarrio);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            e.printStackTrace();
-        }
+        deleteById(barrio.getId());
     }
 
     @Override
     public void deleteById(Long id) {
+        if (campañaDAO.isBarrioAsociadoACampana(id)) {
+            throw new RuntimeException("No podes borrar un barrio si esta asociado a una campaña");
+        }
+
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
             Barrio barrio = em.find(Barrio.class, id);
-            System.out.println("LLego y tiene " + barrio.getId());
             if (barrio != null) {
-            	System.out.println("Lo elimina!!!!!!!!!");
+                List<Zona> zonas = zonaDAO.findByBarrioId(id);
+                for (Zona zona : zonas) {
+                    coordenadasDAO.deleteByZonaId(zona.getId());
+                }
+                zonaDAO.deleteByBarrioId(id);
+                coordenadasDAO.deleteByBarrioId(id);
                 em.remove(barrio);
             }
             tx.commit();
-            System.out.println("Fin");
         } catch (Exception e) {
-        	System.out.println("excepttion");
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
         }

@@ -14,6 +14,12 @@ public class ZonaDAO implements IZonaDAO {
     @Inject
     private EntityManager em;
 
+    @Inject
+    private ICampañaDAO campañaDAO;
+
+    @Inject
+    private ICoordenadasDAO coordenadasDAO;
+
     @Override
     public Zona save(Zona zona) {
         EntityTransaction tx = em.getTransaction();
@@ -69,28 +75,21 @@ public class ZonaDAO implements IZonaDAO {
 
     @Override
     public void delete(Zona zona) {
-        EntityTransaction tx = em.getTransaction();
-        try {
-            tx.begin();
-            Zona managed = zona;
-            if (!em.contains(zona)) {
-                managed = em.merge(zona);
-            }
-            em.remove(managed);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx.isActive()) tx.rollback();
-            e.printStackTrace();
-        }
+        deleteById(zona.getId());
     }
 
     @Override
     public void deleteById(Long id) {
+        if (campañaDAO.isZonaAsociadaACampana(id)) {
+            throw new RuntimeException("No podes borrar una zona si esta asociado a una campaña");
+        }
+
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
             Zona zona = em.find(Zona.class, id);
             if (zona != null) {
+                coordenadasDAO.deleteByZonaId(id);
                 em.remove(zona);
             }
             tx.commit();
@@ -103,5 +102,13 @@ public class ZonaDAO implements IZonaDAO {
     @Override
     public boolean existsById(Long id) {
         return findById(id) != null;
+    }
+
+    @Override
+    public void deleteByBarrioId(Long barrioId) {
+        List<Zona> zonas = findByBarrioId(barrioId);
+        for (Zona zona : zonas) {
+            delete(zona);
+        }
     }
 }

@@ -141,7 +141,13 @@ public class RenglonController {
             renglon.setEncuesta(encuesta);
         }
 
-        Renglon actualizado = renglonDAO.update(renglon);
+        Renglon actualizado = null;
+		try {
+			actualizado = renglonDAO.update(renglon);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         return Response.ok(renglonToJson(actualizado)).build();
     }
 
@@ -189,7 +195,7 @@ public class RenglonController {
     @Path("/tipos")
     @Operation(summary = "Obtener todos los tipos de renglones distintos")
     public Response getDistinctTipos() {
-        List<String> tipos = renglonDAO.findDistinctTipos();
+        List<Object[]> tipos = renglonDAO.findDistinctTipos();
         return Response.ok(tipos).build();
     }
 
@@ -202,36 +208,3 @@ public class RenglonController {
     }
 }
 
-    @GET
-    @Path("/tipos")
-    @Operation(summary = "Obtener todos los tipos de renglones distintos")
-    public Response getDistinctTipos() {
-        List<String> tipos = renglonDAO.findDistinctTipos();
-        return Response.ok(tipos).build();
-    }
-
-    @GET
-    @Path("/valores/{tipo}")
-    @Operation(summary = "Obtener todos los valores distintos de un tipo de renglon")
-    public Response getDistinctValoresByTipo(@PathParam("tipo") String tipo) {
-        List<String> valores = renglonDAO.findDistinctValoresByTipo(tipo);
-        return Response.ok(valores).build();
-    }
-}
-
-    @GET
-    @Path("/tipos")
-    @Operation(summary = "Obtener todos los tipos de renglones distintos")
-    public Response getDistinctTipos() {
-        List<String> tipos = renglonDAO.findDistinctTipos();
-        return Response.ok(tipos).build();
-    }
-
-    @GET
-    @Path("/valores/{tipo}")
-    @Operation(summary = "Obtener todos los valores distintos para un tipo de renglon")
-    public Response getDistinctValoresByTipo(@PathParam("tipo") String tipo) {
-        List<String> valores = renglonDAO.findDistinctValoresByTipo(tipo);
-        return Response.ok(valores).build();
-    }
-}

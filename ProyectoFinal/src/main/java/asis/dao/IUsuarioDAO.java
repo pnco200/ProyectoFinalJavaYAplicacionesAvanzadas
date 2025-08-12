@@ -21,4 +21,3 @@ public interface IUsuarioDAO {
 	    boolean assignBarrioToUsuario(Long userId, Long barrioId);
     boolean assignRolToUser(Long userId, Long rolId);
 }
-}

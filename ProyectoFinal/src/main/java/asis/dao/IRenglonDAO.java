@@ -19,7 +19,11 @@ public interface IRenglonDAO {
     
     boolean existsById(Long id);
 
-    List<String> findDistinctTipos();
+    List<Object[]> findDistinctTipos();
 
     List<String> findDistinctValoresByTipo(String tipo);
+
+	List<Renglon> findByTipo(String tipo);
+
+	List<Renglon> findByEncuestaId(Long encuestaId);
 }

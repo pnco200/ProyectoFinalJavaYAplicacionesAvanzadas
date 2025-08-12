@@ -8,6 +8,7 @@ import { User } from '../../models/user.model';
 import { Rol } from '../../../roles/models/rol.model';
 import { Barrio } from '../../../barrios/models/barrio.model';
 import { CommonModule } from '@angular/common';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-register',
@@ -77,22 +78,22 @@ export class RegisterComponent implements OnInit {
           if (this.showBarrios && this.registerForm.value.barrioId) {
             this.userService.assignBarrioToUser(createdUser.id, this.registerForm.value.barrioId).subscribe({
               next: () => {
-                alert('Usuario registrado y barrio asignado exitosamente!');
+                Swal.fire('¡Éxito!', 'Usuario registrado y barrio asignado exitosamente!', 'success');
                 this.router.navigate(['/login']);
               },
               error: (err) => {
-                alert('Usuario registrado, pero hubo un error al asignar el barrio.');
+                Swal.fire('¡Error!', 'Usuario registrado, pero hubo un error al asignar el barrio.', 'error');
                 console.error('Error assigning barrio:', err);
                 this.router.navigate(['/login']);
               }
             });
           } else {
-            alert('Usuario registrado exitosamente!');
+            Swal.fire('¡Éxito!', 'Usuario registrado exitosamente!', 'success');
             this.router.navigate(['/login']);
           }
         },
         error: (err) => {
-          alert('Error al registrar usuario: ' + (err.error || err.message));
+          Swal.fire('¡Error!', 'Error al registrar usuario: ' + (err.error || err.message), 'error');
           console.error('Error registering user:', err);
         }
       });

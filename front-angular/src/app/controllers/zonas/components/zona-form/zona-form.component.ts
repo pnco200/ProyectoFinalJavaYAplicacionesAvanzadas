@@ -7,6 +7,7 @@ import { Coordenadas } from '../../../coordenadas/models/coordenadas.model';
 import { Zona } from '../../models/zona.model';
 import { Barrio } from '../../../barrios/models/barrio.model';
 import { BarrioService } from '../../../barrios/services/barrio.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-zona-form',
@@ -110,21 +111,21 @@ export class ZonaFormComponent implements OnInit {
       if (this.isEditMode && this.zonaId) {
         this.zonaService.update(this.zonaId, formData).subscribe(
           response => {
-            alert('Zona updated successfully: ' + JSON.stringify(response));
+            Swal.fire('¡Éxito!', 'Zona actualizada con éxito.', 'success');
             this.router.navigate(['/zonas/list']);
           },
           error => {
-            alert('Error updating zona: ' + JSON.stringify(error));
+            Swal.fire('¡Error!', 'Hubo un problema al actualizar la zona.', 'error');
           }
         );
       } else {
         this.zonaService.create(formData).subscribe(
           response => {
-            alert('Zona created successfully: ' + JSON.stringify(response));
+            Swal.fire('¡Éxito!', 'Zona creada con éxito.', 'success');
             this.router.navigate(['/zonas/list']);
           },
           error => {
-            alert('Error creating zona: ' + JSON.stringify(error));
+            Swal.fire('¡Error!', 'Hubo un problema al crear la zona.', 'error');
           }
         );
       }

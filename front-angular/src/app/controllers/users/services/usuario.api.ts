@@ -3,6 +3,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { User } from '../models/user.model';
 import { HttpClient } from '@angular/common/http';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,7 @@ export class UsuarioService {
   getAll(): Observable<User[]> {
     return this.http.get<User[]>(this.apiUrl).pipe(
       catchError(error => {
-        alert(this.getErrorMessage(error));
+        Swal.fire('¡Error!', this.getErrorMessage(error), 'error');
         return throwError(error);
       })
     );
@@ -24,7 +25,7 @@ export class UsuarioService {
   getById(id: number): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/${id}`).pipe(
       catchError(error => {
-        alert(this.getErrorMessage(error));
+        Swal.fire('¡Error!', this.getErrorMessage(error), 'error');
         return throwError(error);
       })
     );
@@ -32,9 +33,9 @@ export class UsuarioService {
 
   add(usuario: User): Observable<User> {
     return this.http.post<User>(this.apiUrl, usuario).pipe(
-      tap(() => alert('Usuario creado con éxito')),
+      tap(() => Swal.fire('¡Éxito!', 'Usuario creado con éxito.', 'success')),
       catchError(error => {
-        alert(this.getErrorMessage(error));
+        Swal.fire('¡Error!', this.getErrorMessage(error), 'error');
         return throwError(error);
       })
     );
@@ -42,9 +43,9 @@ export class UsuarioService {
 
   update(usuario: User): Observable<User> {
     return this.http.put<User>(`${this.apiUrl}/${usuario.id}`, usuario).pipe(
-      tap(() => alert('Usuario actualizado con éxito')),
+      tap(() => Swal.fire('¡Éxito!', 'Usuario actualizado con éxito.', 'success')),
       catchError(error => {
-        alert(this.getErrorMessage(error));
+        Swal.fire('¡Error!', this.getErrorMessage(error), 'error');
         return throwError(error);
       })
     );
@@ -52,9 +53,9 @@ export class UsuarioService {
 
   delete(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`).pipe(
-      tap(() => alert('Usuario eliminado con éxito')),
+      tap(() => Swal.fire('¡Éxito!', 'Usuario eliminado con éxito.', 'success')),
       catchError(error => {
-        alert(this.getErrorMessage(error));
+        Swal.fire('¡Error!', this.getErrorMessage(error), 'error');
         return throwError(error);
       })
     );
@@ -62,9 +63,9 @@ export class UsuarioService {
 
   assignBarrioToUser(userId: number, barrioId: number): Observable<any> {
     return this.http.put(`${this.apiUrl}/${userId}/barrio/${barrioId}`, {}, { responseType: 'text' }).pipe(
-      tap(() => alert('Barrio asignado con éxito')),
+      tap(() => Swal.fire('¡Éxito!', 'Barrio asignado con éxito.', 'success')),
       catchError(error => {
-        alert(this.getErrorMessage(error));
+        Swal.fire('¡Error!', this.getErrorMessage(error), 'error');
         return throwError(error);
       })
     );
@@ -72,9 +73,9 @@ export class UsuarioService {
 
   removeBarrioFromUser(userId: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${userId}/barrio`).pipe(
-      tap(() => alert('Barrio removido con éxito')),
+      tap(() => Swal.fire('¡Éxito!', 'Barrio removido con éxito.', 'success')),
       catchError(error => {
-        alert(this.getErrorMessage(error));
+        Swal.fire('¡Error!', this.getErrorMessage(error), 'error');
         return throwError(error);
       })
     );

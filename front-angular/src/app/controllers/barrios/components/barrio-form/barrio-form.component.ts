@@ -5,6 +5,8 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BarrioService } from '../../services/barrio.service';
 import { Barrio } from '../../models/barrio.model';
 import { Coordenadas } from '../../../coordenadas/models/coordenadas.model';
+import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-barrio-form',
   standalone: true,
@@ -77,21 +79,21 @@ export class BarrioFormComponent implements OnInit {
       if (this.isEditMode && this.barrioId) {
         this.barrioService.update(this.barrioId, formData).subscribe(
           response => {
-            alert('Barrio updated successfully: ' + JSON.stringify(response));
+            Swal.fire('¡Éxito!', 'Barrio actualizado con éxito.', 'success');
             this.router.navigate(['/barrios/list']);
           },
           error => {
-            alert('Error updating barrio: ' + JSON.stringify(error));
+            Swal.fire('¡Error!', 'Hubo un problema al actualizar el barrio.', 'error');
           }
         );
       } else {
         this.barrioService.create(formData).subscribe(
           response => {
-            alert('Barrio created successfully: ' + JSON.stringify(response));
+            Swal.fire('¡Éxito!', 'Barrio creado con éxito.', 'success');
             this.router.navigate(['/barrios/list']);
           },
           error => {
-            alert('Error creating barrio: ' + JSON.stringify(error));
+            Swal.fire('¡Error!', 'Hubo un problema al crear el barrio.', 'error');
           }
         );
       }

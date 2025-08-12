@@ -8,6 +8,7 @@ import { Barrio } from '../../../barrios/models/barrio.model';
 import { BarrioService } from '../../../barrios/services/barrio.service';
 import { Zona } from '../../../zonas/models/zona.model';
 import { ZonaService } from '../../../zonas/services/zona.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-coordenadas-form',
@@ -114,21 +115,21 @@ export class CoordenadasFormComponent implements OnInit {
       if (this.isEditMode && this.coordenadaId) {
         this.coordenadasService.update(this.coordenadaId, formData).subscribe(
           response => {
-            alert('Coordenada updated successfully: ' + JSON.stringify(response));
+            Swal.fire('¡Éxito!', 'Coordenada actualizada con éxito.', 'success');
             this.router.navigate(['/coordenadas/list']);
           },
           error => {
-            alert('Error updating coordenada: ' + JSON.stringify(error));
+            Swal.fire('¡Error!', 'Hubo un problema al actualizar la coordenada.', 'error');
           }
         );
       } else {
         this.coordenadasService.create(formData).subscribe(
           response => {
-            alert('Coordenada created successfully: ' + JSON.stringify(response));
+            Swal.fire('¡Éxito!', 'Coordenada creada con éxito.', 'success');
             this.router.navigate(['/coordenadas/list']);
           },
           error => {
-            alert('Error creating coordenada: ' + JSON.stringify(error));
+            Swal.fire('¡Error!', 'Hubo un problema al crear la coordenada.', 'error');
           }
         );
       }

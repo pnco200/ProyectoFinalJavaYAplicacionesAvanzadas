@@ -5,11 +5,12 @@ import { Campania } from '../../models/campania.model';
 import { CampaniaService } from '../../services/campania.service';
 import { BarrioService } from '../../../barrios/services/barrio.service';
 import { Barrio } from '../../../barrios/models/barrio.model';
+import { CampaniaFiltersComponent } from '../campania-filters/campania-filters.component';
 
 @Component({
   selector: 'app-campania-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, CampaniaFiltersComponent],
   templateUrl: './campania-detail.component.html',
   styleUrls: ['./campania-detail.component.css']
 })

@@ -1,44 +1,53 @@
 <div class="container mt-4" *ngIf="campania">
   <div class="row">
-    <div class="col-md-8">
-      <div class="card">
+    <!-- Left column: Details -->
+    <div class="col-md-6 d-flex flex-column">
+      <div class="card h-100">
         <div class="card-header bg-primary text-white">
           <h2 class="mb-0">Detalles de la Campaña</h2>
         </div>
         <div class="card-body">
           <dl class="row">
-            <dt class="col-sm-3">ID:</dt>
-            <dd class="col-sm-9">{{ campania.id }}</dd>
+            <dt class="col-sm-4">ID:</dt>
+            <dd class="col-sm-8">{{ campania.id }}</dd>
 
-            <dt class="col-sm-3">Nombre:</dt>
-            <dd class="col-sm-9">{{ campania.name }}</dd>
+            <dt class="col-sm-4">Nombre:</dt>
+            <dd class="col-sm-8">{{ campania.name }}</dd>
 
+            <dt class="col-sm-4">Fecha de Inicio:</dt>
+            <dd class="col-sm-8">{{ campania.startDate | date:'dd/MM/yyyy' }}</dd>
 
-            <dt class="col-sm-3">Fecha de Inicio:</dt>
-            <dd class="col-sm-9">{{ campania.startDate | date:'dd/MM/yyyy' }}</dd>
+            <dt class="col-sm-4">Fecha de Fin:</dt>
+            <dd class="col-sm-8">{{ campania.endDate | date:'dd/MM/yyyy' }}</dd>
 
-            <dt class="col-sm-3">Fecha de Fin:</dt>
-            <dd class="col-sm-9">{{ campania.endDate | date:'dd/MM/yyyy' }}</dd>
-
-            <dt class="col-sm-3">Barrio ID:</dt>
-            <dd class="col-sm-9">{{ campania.barrioId }}</dd>
+            <dt class="col-sm-4">Barrio ID:</dt>
+            <dd class="col-sm-8">{{ campania.barrioId }}</dd>
 
             <dt class="col-sm-3">Barrio Nombre:</dt>
             <dd class="col-sm-9">{{ barrio?.name }}</dd>
+            
           </dl>
           <a routerLink="/campanias" class="btn btn-secondary">Volver a la Lista</a>
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="card">
+
+    <!-- Right column: Filters + buttons -->
+    <div class="col-md-6 d-flex flex-column">
+      <div class="card flex-grow-1">
         <div class="card-header bg-info text-white">
-          <h3 class="mb-0">Filtros</h3>
+          <h5 class="mb-0">Filtros</h5>
         </div>
         <div class="card-body">
-          <button class="btn btn-primary btn-sm">+</button>
-          <button class="btn btn-danger btn-sm">-</button>
+          <app-campania-filters [campaniaId]="campania.id"></app-campania-filters>
         </div>
+      </div>
+
+      <!-- Buttons section -->
+      <div class="mt-1">
+        <button class="btn btn-primary w-100 mb-2">Ver Mapa</button>
+        <button class="btn btn-success w-100 mb-2">Ver Resultados</button>
+        <button class="btn btn-warning w-100">Ver Gráficos</button>
       </div>
     </div>
   </div>

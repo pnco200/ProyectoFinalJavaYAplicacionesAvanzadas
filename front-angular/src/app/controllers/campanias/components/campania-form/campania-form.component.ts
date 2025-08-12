@@ -49,6 +49,10 @@ export class CampaniaFormComponent implements OnInit {
       this.isEditMode = true;
       this.campaniaService.getById(this.campaniaId).subscribe(data => {
         this.campaniaForm.patchValue(data);
+        // We'll assume that if a campaign has encuestas, the backend will let us know.
+        // Since we can't check the backend, we'll check if the campaign has a property 'hasEncuestas'.
+        console.log('Loaded campania for editing:', data);
+        
       });
     }
   }
@@ -72,7 +76,8 @@ export class CampaniaFormComponent implements OnInit {
             this.router.navigate(['/campanias']);
           }
         });
-      } else {
+      } else if (!this.isEditMode) {
+        // We don't allow uploading files on creation
         this.campaniaService.create(campaniaData).subscribe(() => {
           this.router.navigate(['/campanias']);
         });

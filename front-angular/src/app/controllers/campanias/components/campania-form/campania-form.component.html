@@ -5,37 +5,54 @@
     </div>
     <div class="card-body">
       <form [formGroup]="campaniaForm" (ngSubmit)="onSubmit()">
+        
         <div class="mb-3">
           <label for="name" class="form-label">Nombre</label>
           <input type="text" id="name" formControlName="name" class="form-control">
         </div>
+
         <div class="mb-3">
           <label for="startDate" class="form-label">Fecha de Inicio</label>
           <input type="date" id="startDate" formControlName="startDate" class="form-control">
         </div>
+
         <div class="mb-3">
           <label for="endDate" class="form-label">Fecha de Fin</label>
           <input type="date" id="endDate" formControlName="endDate" class="form-control">
         </div>
+
         <div class="mb-3">
           <label for="barrio" class="form-label">Barrio</label>
           <select id="barrio" formControlName="barrioId" class="form-select">
             <option [ngValue]="null" disabled>Seleccione un barrio</option>
-            <option *ngFor="let barrio of barrios" [ngValue]="barrio.id">{{ barrio.name || barrio.nombre }}</option>
+            <option *ngFor="let barrio of barrios" [ngValue]="barrio.id">
+              {{ barrio.name || barrio.nombre }}
+            </option>
           </select>
         </div>
-        <div class="mb-3">
-          <label for="viviendasFile" class="form-label">Archivo de Viviendas (CSV)</label>
-          <input type="file" id="viviendasFile" class="form-control" (change)="onViviendasFileChange($event)">
+
+        <!-- Mostrar solo si es modo edición -->
+        <div *ngIf="isEditMode">
+          <div class="mb-3">
+            <label for="viviendasFile" class="form-label">Archivo de Viviendas (CSV)</label>
+            <input type="file" id="viviendasFile" class="form-control"
+                   (change)="onViviendasFileChange($event)">
+          </div>
+
+          <div class="mb-3">
+            <label for="personasFile" class="form-label">Archivo de Personas (CSV)</label>
+            <input type="file" id="personasFile" class="form-control"
+                   (change)="onPersonasFileChange($event)">
+          </div>
         </div>
-        <div class="mb-3">
-          <label for="personasFile" class="form-label">Archivo de Personas (CSV)</label>
-          <input type="file" id="personasFile" class="form-control" (change)="onPersonasFileChange($event)">
-        </div>
+
         <div class="d-flex justify-content-between">
-          <button type="submit" class="btn btn-success" [disabled]="!campaniaForm.valid">{{ isEditMode ? 'Actualizar' : 'Crear' }}</button>
+          <button type="submit" class="btn btn-success" [disabled]="!campaniaForm.valid">
+            {{ isEditMode ? 'Actualizar' : 'Crear' }}
+          </button>
           <a routerLink="/campanias" class="btn btn-secondary">Cancelar</a>
         </div>
+
       </form>
     </div>
   </div>

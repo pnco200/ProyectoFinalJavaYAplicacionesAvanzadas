@@ -2,6 +2,7 @@ package asis.dao;
 
 import asis.models.Renglon;
 import java.util.List;
+import java.util.Map;
 
 public interface IRenglonDAO {
     
@@ -19,7 +20,11 @@ public interface IRenglonDAO {
     
     boolean existsById(Long id);
 
+    List<Object[]> findEncuestasByFiltros(List<Map<String, String>> filtrosVivienda,
+            List<Map<String, String>> filtrosPersona);
+    
     List<Object[]> findDistinctTipos();
+    
 
     List<String> findDistinctValoresByTipo(String tipo);
 

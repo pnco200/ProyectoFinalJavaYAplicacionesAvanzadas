@@ -37,4 +37,14 @@ export class CampaniaDetailComponent implements OnInit {
       }
     });
   }
+
+  verMapa(): void {
+    // Implementar la lógica para ver el mapa
+  }
+  verResultados(): void {
+    // Implementar la lógica para ver los resultados
+  }
+  verGraficos(): void {
+    // Implementar la lógica para ver los gráficos
+  }
 }

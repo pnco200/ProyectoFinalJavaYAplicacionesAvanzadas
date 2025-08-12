@@ -65,6 +65,7 @@ export class CampaniaFiltersComponent implements OnInit {
       campaniaId: this.campaniaId,
       filters: this.filters
     };
-    console.log('Filters to save:', data);
+      localStorage.setItem('filtro', JSON.stringify(this.filters));
+      console.log('Filters saved successfully to local storage');
   }
 }

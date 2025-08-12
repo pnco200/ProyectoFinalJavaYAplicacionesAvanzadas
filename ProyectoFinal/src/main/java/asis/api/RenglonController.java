@@ -17,6 +17,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 import java.util.List;
+import java.util.Map;
 
 @Path("/renglon")
 @Produces(MediaType.APPLICATION_JSON)
@@ -206,5 +207,25 @@ public class RenglonController {
         List<String> valores = renglonDAO.findDistinctValoresByTipo(tipo);
         return Response.ok(valores).build();
     }
+    @POST
+    @Path("/filtrar")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Filtrar encuestas por filtros de vivienda y/o persona")
+    public Response filtrarEncuestas(Map<String, List<Map<String, String>>> filtrosMap) {
+        try {
+            List<Map<String, String>> filtrosVivienda = filtrosMap.get("filtros_vivienda");
+            List<Map<String, String>> filtrosPersona = filtrosMap.get("filtros_persona");
+
+            List<Object[]> resultados = renglonDAO.findEncuestasByFiltros(filtrosVivienda, filtrosPersona);
+            return Response.ok(resultados).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity("{\"error\":\"Error procesando filtros\"}")
+                           .build();
+        }
+    }
+
 }
 

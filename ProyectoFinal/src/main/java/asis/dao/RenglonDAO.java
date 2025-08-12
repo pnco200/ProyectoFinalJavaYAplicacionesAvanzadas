@@ -9,6 +9,7 @@ import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 
 import java.util.List;
+import java.util.Map;
 
 @ApplicationScoped
 public class RenglonDAO implements IRenglonDAO {
@@ -133,5 +134,125 @@ public class RenglonDAO implements IRenglonDAO {
         TypedQuery<String> query = em.createQuery("SELECT DISTINCT r.valor FROM Renglon r WHERE r.tipo = :tipo", String.class);
         query.setParameter("tipo", tipo);
         return query.getResultList();
+    }
+    
+    
+    public List<Object[]> findEncuestasByFiltros(
+            List<Map<String, String>> filtrosVivienda,
+            List<Map<String, String>> filtrosPersona) {
+
+        StringBuilder sql = new StringBuilder();
+
+        boolean hasVivienda = filtrosVivienda != null && !filtrosVivienda.isEmpty();
+        boolean hasPersona = filtrosPersona != null && !filtrosPersona.isEmpty();
+
+        if (hasVivienda && hasPersona) {
+            // =============================
+            // BOTH FILTER ARRAYS RECEIVED
+            // =============================
+            sql.append("WITH filtros_vivienda AS (\n");
+            appendFiltrosCTE(sql, filtrosVivienda);
+            sql.append("),\n");
+
+            sql.append("filtros_persona AS (\n");
+            appendFiltrosCTE(sql, filtrosPersona);
+            sql.append("),\n");
+
+            sql.append("""
+                cte_viviendas_filtradas AS (
+                    SELECT e.id AS vivienda_id
+                    FROM Encuesta e
+                    INNER JOIN Renglon r ON e.id = r.encuesta_id
+                    INNER JOIN filtros_vivienda f ON f.tipo = r.tipo AND f.valor = r.valor
+                    GROUP BY e.id
+                    HAVING COUNT(*) = (SELECT COUNT(*) FROM filtros_vivienda)
+                ),
+                cte_personas_filtradas AS (
+                    SELECT ep.id AS persona_id, ep.vivienda_id AS vivienda_id
+                    FROM Encuesta ep
+                    INNER JOIN Renglon r ON ep.id = r.encuesta_id
+                    INNER JOIN filtros_persona f ON f.tipo = r.tipo AND f.valor = r.valor
+                    GROUP BY ep.id, ep.vivienda_id
+                    HAVING COUNT(*) = (SELECT COUNT(*) FROM filtros_persona)
+                ),
+                cte_viviendas_finales AS (
+                    SELECT v.vivienda_id
+                    FROM cte_viviendas_filtradas v
+                    INNER JOIN cte_personas_filtradas p ON v.vivienda_id = p.vivienda_id
+                ),
+                cte_final_encuestas AS (
+                    SELECT e.*
+                    FROM Encuesta e
+                    WHERE e.id IN (SELECT vivienda_id FROM cte_viviendas_finales)
+                    UNION ALL
+                    SELECT ep.*
+                    FROM Encuesta ep
+                    WHERE ep.id IN (
+                        SELECT persona_id
+                        FROM cte_personas_filtradas
+                        WHERE vivienda_id IN (SELECT vivienda_id FROM cte_viviendas_finales)
+                    )
+                )
+                SELECT 
+                    e.id AS encuesta_id,
+                    e.tipo,
+                    e.vivienda_id,
+                    JSON_ARRAYAGG(JSON_OBJECT('tipo', r.tipo, 'valor', r.valor)) AS respuestas_json
+                FROM cte_final_encuestas e
+                LEFT JOIN Renglon r ON r.encuesta_id = e.id
+                GROUP BY e.id, e.tipo, e.vivienda_id
+            """);
+
+        } else {
+            // =============================
+            // ONLY ONE FILTER ARRAY
+            // =============================
+            List<Map<String, String>> filtros = hasVivienda ? filtrosVivienda : filtrosPersona;
+
+            sql.append("WITH filtros AS (\n");
+            appendFiltrosCTE(sql, filtros);
+            sql.append("),\n");
+
+            sql.append("""
+                matches AS (
+                    SELECT r.encuesta_id
+                    FROM Renglon r
+                    JOIN filtros f ON r.tipo = f.tipo AND r.valor = f.valor
+                    GROUP BY r.encuesta_id
+                    HAVING COUNT(DISTINCT CONCAT(r.tipo, '-', r.valor)) = (SELECT COUNT(*) FROM filtros)
+                )
+                SELECT 
+                    e.id AS encuesta_id,
+                    e.tipo,
+                    JSON_ARRAYAGG(JSON_OBJECT('tipo', r.tipo, 'valor', r.valor)) AS respuestas_json
+                FROM Encuesta e
+                JOIN Renglon r ON r.encuesta_id = e.id
+                WHERE e.id IN (SELECT encuesta_id FROM matches)
+                GROUP BY e.id, e.tipo
+                ORDER BY e.id
+            """);
+        }
+
+        Query query = em.createNativeQuery(sql.toString());
+        return query.getResultList();
+    }
+
+    /**
+     * Appends the CTE SELECT ... UNION ALL ... for a filter list
+     */
+    private void appendFiltrosCTE(StringBuilder sql, List<Map<String, String>> filtros) {
+        for (int i = 0; i < filtros.size(); i++) {
+            Map<String, String> filtro = filtros.get(i);
+            sql.append("SELECT '")
+               .append(filtro.get("tipo").replace("'", "''"))
+               .append("' AS tipo, '")
+               .append(filtro.get("valor").replace("'", "''"))
+               .append("' AS valor");
+            if (i < filtros.size() - 1) {
+                sql.append("\nUNION ALL\n");
+            } else {
+                sql.append("\n");
+            }
+        }
     }
 }

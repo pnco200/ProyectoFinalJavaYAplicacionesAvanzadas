@@ -23,9 +23,9 @@
     <div class="row">
       <div 
         *ngFor="let tipoData of chartData; let i = index" 
-        class="col-md-6 col-lg-4 mb-4">
-        <div class="card">
-          <div class="card-body">
+        class="col-xl-3 col-lg-4 col-md-6 mb-3">
+        <div class="card h-100">
+          <div class="card-body p-2">
             <canvas 
               [id]="'chart-' + i" 
               width="400" 

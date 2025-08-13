@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RenglonService } from '../../services/renglon.service';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
+import Swal from 'sweetalert2';
 
 Chart.register(...registerables);
 
@@ -68,13 +69,24 @@ export class RenglonesListComponent implements OnInit {
 
     // Eliminar duplicados si los hay
     const uniqueEncuestaIds = [...new Set(encuestaIds)];
-
+    Swal.fire({
+      title: 'Espere por favor',
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
     this.renglonService.getChartData(uniqueEncuestaIds).subscribe({
       next: (chartData) => {
         console.log('Datos del gráfico:', chartData);
         this.chartData = chartData;
         this.showCharts = true;
         this.generateCharts();
+        Swal.fire({
+          icon: 'success',
+          title: 'Graficos generados con éxito',
+          showConfirmButton: false,
+          timer: 1500,
+        });
       },
       error: (error) => {
         console.error('Error obteniendo datos del gráfico:', error);
@@ -97,18 +109,26 @@ export class RenglonesListComponent implements OnInit {
       datasets: [{
         data: tipoData.valores.map((v: any) => v.matches),
         backgroundColor: [
-          '#FF6384',
-          '#36A2EB', 
-          '#FFCE56',
+          '#ff7c43',
+          '#36A2EB',
+          '#f95d6a',
           '#4BC0C0',
           '#9966FF',
-          '#FF9F40',
-          '#FF6384',
+          '#d45087',
+          '#a05195',
           '#C9CBCF',
-          '#4BC0C0',
-          '#FF6384'
+          '#003f5c',
+          '#2f4b7c',
+          '#ffa600',
+          '#8f564b',
+          '#bcbd22',
+          '#17becf',
+          '#7f7f7f',
+          '#c7c7c7',
+          '#ffbb78',
+          '#98df8a',
         ],
-        borderWidth: 2,
+        borderWidth: 1,
         borderColor: '#fff'
       }]
     };
@@ -118,21 +138,44 @@ export class RenglonesListComponent implements OnInit {
       data: data,
       options: {
         responsive: true,
+        maintainAspectRatio: false,
+        aspectRatio: 1,
+        layout: {
+          padding: 10
+        },
         plugins: {
           title: {
             display: true,
-            text: `${tipoData.tipo} (Total: ${tipoData.total})`,
+            text: `${tipoData.tipo} (${tipoData.total})`,
             font: {
-              size: 16,
+              size: 14,
               weight: 'bold'
+            },
+            padding: {
+              top: 5,
+              bottom: 10
             }
           },
           legend: {
             position: 'bottom',
+            labels: {
+              font: {
+                size: 11
+              },
+              padding: 8,
+              usePointStyle: true,
+              boxWidth: 12
+            }
           },
           tooltip: {
+            titleFont: {
+              size: 12
+            },
+            bodyFont: {
+              size: 11
+            },
             callbacks: {
-              label: function(context: any) {
+              label: function (context: any) {
                 const label = context.label || '';
                 const value = context.parsed;
                 const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);

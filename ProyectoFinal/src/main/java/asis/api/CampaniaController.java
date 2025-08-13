@@ -196,7 +196,9 @@ public class CampaniaController {
                 for (Map.Entry<String, String> entry : viviendaData.entrySet()) {
                     Renglon renglon = new Renglon();
                     renglon.setTipo(entry.getKey());
-                    renglon.setValor(entry.getValue());
+                    String valor = entry.getValue();
+                    String resultado = (valor == null || valor.isBlank()) ? "N/C" : valor;
+                    renglon.setValor(resultado);
                     renglon.setEncuesta(savedVivienda);
                     renglonDAO.save(renglon);
                 }

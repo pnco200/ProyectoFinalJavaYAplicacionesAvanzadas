@@ -40,16 +40,6 @@ export class CampaniaDetailComponent implements OnInit {
       }
     });
   }
-
-  verMapa(): void {
-    // Implementar la lógica para ver el mapa
-  }
-  verResultados(): void {
-    // Implementar la lógica para ver los resultados
-  }
-  verGraficos(): void {
-    // Implementar la lógica para ver los gráficos
-  }
 /**
    * Convierte el filtro del localStorage al formato requerido por la API
    */
@@ -101,7 +91,7 @@ export class CampaniaDetailComponent implements OnInit {
       this.renglonService.filtrarRenglones(filtro).subscribe({
         next: (data) => {
           console.log('Renglones filtrados:', data);
-          this.router.navigate(['/renglones/list'], { state: { renglones: data } });
+          this.router.navigate(['/renglones/list'], { state: { renglones: data, ubicacion:"LISTA" } });
         },
         error: (err) => {
           console.error('Error al filtrar renglones:', err);
@@ -112,5 +102,31 @@ export class CampaniaDetailComponent implements OnInit {
       console.warn('No se encontró el filtro en localStorage.');
       // Optionally, navigate to an empty list or show a message
     }
+  }
+
+  verGraficos(): void {
+  const filtroString = localStorage.getItem('filtro');
+    if (filtroString) {
+      // Convertir filtro al formato correcto
+      const filtro = this.convertirFiltro(filtroString);
+      
+      console.log('Filtro convertido:', filtro);
+      
+      this.renglonService.filtrarRenglones(filtro).subscribe({
+        next: (data) => {
+          console.log('Renglones filtrados:', data);
+          this.router.navigate(['/renglones/list'], { state: { renglones: data, ubicacion:"GRAFICO" } });
+        },
+        error: (err) => {
+          console.error('Error al filtrar renglones:', err);
+          // Handle error, e.g., show a message to the user
+        }
+      });
+    } else {
+      console.warn('No se encontró el filtro en localStorage.');
+      // Optionally, navigate to an empty list or show a message
+    }  }
+  verMapa(): void {
+    // Implementar la lógica para ver los gráficos
   }
 }

@@ -25,6 +25,7 @@ public interface IRenglonDAO {
     
     List<Object[]> findRespuestasByEncuestaId(Long encuestaId);
 
+    List<Map<String, Object>> findChartDataByEncuestaIds(List<Long> encuestaIds);
     
     List<Object[]> findDistinctTipos();
     

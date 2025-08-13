@@ -8,8 +8,12 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class RenglonDAO implements IRenglonDAO {
@@ -269,5 +273,70 @@ public class RenglonDAO implements IRenglonDAO {
                 sql.append("\n");
             }
         }
+    }
+    
+    public List<Map<String, Object>> findChartDataByEncuestaIds(List<Long> encuestaIds) {
+        if (encuestaIds == null || encuestaIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        // Crear placeholders para la consulta IN
+        String placeholders = encuestaIds.stream()
+            .map(id -> "?")
+            .collect(Collectors.joining(","));
+         
+        String aux = placeholders;
+        
+        String sql =
+        	    "SELECT r.tipo, r.valor, COUNT(*) as matches " +
+        	    "FROM Renglon r " +
+        	    "INNER JOIN Encuesta e ON r.encuesta_id = e.id " +
+        	    "WHERE r.encuesta_id IN (" + placeholders + ") " +
+        	    "GROUP BY r.tipo, r.valor " +
+        	    "ORDER BY r.tipo, r.valor";
+        System.out.println(sql);
+        Query query = em.createNativeQuery(sql);
+        
+        // Setear los parámetros
+        for (int i = 0; i < encuestaIds.size(); i++) {
+            query.setParameter(i + 1, encuestaIds.get(i));
+        }
+        
+        List<Object[]> rawResults = query.getResultList();
+        
+        // Agrupar los resultados por tipo
+        Map<String, List<Map<String, Object>>> groupedByTipo = new LinkedHashMap<>();
+        Map<String, Long> totalsByTipo = new HashMap<>();
+        
+        for (Object[] row : rawResults) {
+            String tipo = (String) row[0];
+            String valor = (String) row[1];
+            Long matches = ((Number) row[2]).longValue();
+            
+            // Crear el objeto valor con matches
+            Map<String, Object> valorObj = new HashMap<>();
+            valorObj.put("valor", valor);
+            valorObj.put("matches", matches);
+            
+            // Agregar al grupo del tipo
+            groupedByTipo.computeIfAbsent(tipo, k -> new ArrayList<>()).add(valorObj);
+            
+            // Sumar al total del tipo
+            totalsByTipo.put(tipo, totalsByTipo.getOrDefault(tipo, 0L) + matches);
+        }
+        
+        // Crear el resultado final
+        List<Map<String, Object>> result = new ArrayList<>();
+        
+        for (Map.Entry<String, List<Map<String, Object>>> entry : groupedByTipo.entrySet()) {
+            Map<String, Object> tipoObj = new HashMap<>();
+            tipoObj.put("tipo", entry.getKey());
+            tipoObj.put("valores", entry.getValue());
+            tipoObj.put("total", totalsByTipo.get(entry.getKey()));
+            
+            result.add(tipoObj);
+        }
+        
+        return result;
     }
 }

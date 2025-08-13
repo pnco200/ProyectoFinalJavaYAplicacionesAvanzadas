@@ -1,11 +1,58 @@
 <div class="container mt-4">
-  <h2>Lista de Renglones Filtrados</h2>
+  <!-- Header with conditional button -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>{{ showCharts ? 'Gráficos de Encuestas' : 'Lista de Renglones Filtrados' }}</h2>
+    <div>
+      <button 
+        *ngIf="ubicacion === 'GRAFICO' && renglones.length > 0 && !showCharts" 
+        class="btn btn-primary"
+        (click)="verGrafico()">
+        <i class="fas fa-chart-bar me-2"></i>Ver Gráfico
+      </button>
+      <button 
+        *ngIf="showCharts" 
+        class="btn btn-secondary ms-2"
+        (click)="volverALista()">
+        <i class="fas fa-arrow-left me-2"></i>Volver a Lista
+      </button>
+    </div>
+  </div>
 
-  <div *ngIf="renglones.length === 0" class="alert alert-warning" role="alert">
+  <!-- Charts Section -->
+  <div *ngIf="showCharts && chartData.length > 0">
+    <div class="row">
+      <div 
+        *ngFor="let tipoData of chartData; let i = index" 
+        class="col-xl-3 col-lg-4 col-md-6 mb-3">
+        <div class="card h-100">
+          <div class="card-body p-2">
+            <canvas 
+              [id]="'chart-' + i" 
+              width="400" 
+              height="400">
+            </canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading message for charts -->
+  <div *ngIf="showCharts && chartData.length === 0" class="text-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Cargando gráficos...</span>
+    </div>
+    <p class="mt-2">Generando gráficos...</p>
+  </div>
+
+  <!-- No results message -->
+  <div *ngIf="renglones.length === 0 && !showCharts" class="alert alert-warning" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>
     No se encontraron renglones con los filtros aplicados.
   </div>
 
-  <div *ngIf="renglones.length > 0">
+  <!-- Results table -->
+  <div *ngIf="renglones.length > 0 && !showCharts">
     <table class="table table-striped table-bordered">
       <thead class="thead-dark">
         <tr>
@@ -14,7 +61,7 @@
           <th>Longitud</th>
           <th>Vivienda ID</th>
           <th>Encuesta ID</th>
-          <th>Acciones</th>
+          <th *ngIf="ubicacion === 'LISTA'">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -24,8 +71,12 @@
           <td>{{ renglon.longitud }}</td>
           <td>{{ renglon.vivienda_id }}</td>
           <td>{{ renglon.encuesta_id }}</td>
-          <td>
-            <button class="btn btn-info btn-sm" (click)="verResultados(renglon)">Ver Resultados</button>
+          <td *ngIf="ubicacion === 'LISTA'">
+            <button 
+              class="btn btn-info btn-sm" 
+              (click)="verResultados(renglon)">
+              <i class="fas fa-eye me-1"></i>Ver Resultados
+            </button>
           </td>
         </tr>
       </tbody>

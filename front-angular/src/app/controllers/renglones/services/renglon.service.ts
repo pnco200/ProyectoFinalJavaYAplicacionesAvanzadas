@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Renglon } from '../models/renglon.model';
 
@@ -59,6 +59,15 @@ export class RenglonService {
 
   getTipos(): Observable<[string,string][]> {
     return this.http.get<[string,string][]>(`${this.apiUrl}/tipos`);
+  }
+
+  getChartData(encuestaIds: number[]): Observable<any[]> {
+    const url = `${this.apiUrl}/chart-data`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<any[]>(url, encuestaIds, { headers });
   }
 
   getValores(tipo: string): Observable<string[]> {

@@ -268,6 +268,30 @@ public class RenglonController {
                     .build();
         }
     }
+    
+    @POST
+    @Path("/chart-data")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Obtener datos para gráficos basados en múltiples encuestas")
+    public Response getChartDataByEncuestaIds(List<Long> encuestaIds) {
+        try {
+            if (encuestaIds == null || encuestaIds.isEmpty()) {
+                return Response.status(Response.Status.BAD_REQUEST)
+                        .entity("{\"error\":\"Lista de IDs de encuestas no puede estar vacía\"}")
+                        .build();
+            }
+            
+            List<Map<String, Object>> chartData = renglonDAO.findChartDataByEncuestaIds(encuestaIds);
+            return Response.ok(chartData).build();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\":\"Error obteniendo datos para gráficos\"}")
+                    .build();
+        }
+    }
 
 }
 

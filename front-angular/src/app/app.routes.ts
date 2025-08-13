@@ -2,6 +2,9 @@ import { Routes } from '@angular/router';
 import { HomePage } from './views/home-page/home-page';
 import { LoginComponent } from './controllers/users/components/login/login.component';
 
+import { RenglonesListComponent } from './controllers/renglones/components/renglones-list/renglones-list.component';
+import { RenglonesRespuestasComponent } from './controllers/renglones/components/renglones-respuestas/renglones-respuestas.component';
+
 export const routes: Routes = [
   { path: '', component: HomePage },
   { path: 'login', component: LoginComponent },
@@ -25,10 +28,13 @@ export const routes: Routes = [
     path: 'zonas',
     loadChildren: () => import('./controllers/zonas/zonas-routing.module').then(m => m.ZONAS_ROUTES)
   },
-  //{
-  //  path: 'renglones',
-  //  loadChildren: () => import('./controllers/renglones/renglones-routing.module').then(m => m.RENGLONES_ROUTES)
-  //},
+  {
+    path: 'renglones',
+    children: [
+      { path: 'list', component: RenglonesListComponent },
+      { path: 'respuestas', component: RenglonesRespuestasComponent }
+    ]
+  },
   //{
   //  path: 'encuestas',
   //  loadChildren: () => import('./controllers/encuestas/encuestas.routes').then(m => m.ENCUESTAS_ROUTES)
@@ -42,4 +48,4 @@ export const routes: Routes = [
     loadChildren: () => import('./controllers/encuestadores/encuestadores.routes').then(m => m.ENCUESTADORES_ROUTES)
   },
   { path: '**', redirectTo: '', pathMatch: 'full' } // Wildcard route for any unmatched paths
-];;
+];

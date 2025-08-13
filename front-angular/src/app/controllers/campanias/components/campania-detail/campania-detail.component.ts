@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { Campania } from '../../models/campania.model';
 import { CampaniaService } from '../../services/campania.service';
 import { BarrioService } from '../../../barrios/services/barrio.service';
 import { Barrio } from '../../../barrios/models/barrio.model';
 import { CampaniaFiltersComponent } from '../campania-filters/campania-filters.component';
+import { RenglonService } from '../../../renglones/services/renglon.service';
 
 @Component({
   selector: 'app-campania-detail',
@@ -21,7 +22,9 @@ export class CampaniaDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private campaniaService: CampaniaService,
-    private barrioService: BarrioService
+    private barrioService: BarrioService,
+    private renglonService: RenglonService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -46,5 +49,68 @@ export class CampaniaDetailComponent implements OnInit {
   }
   verGraficos(): void {
     // Implementar la lógica para ver los gráficos
+  }
+/**
+   * Convierte el filtro del localStorage al formato requerido por la API
+   */
+  private convertirFiltro(filtroString: string): any {
+    try {
+      // Parsear el string JSON
+      const filtros = JSON.parse(filtroString);
+      
+      // Separar filtros por tipo de encuesta
+      const filtrosVivienda: any[] = [];
+      const filtrosPersona: any[] = [];
+      
+      filtros.forEach((filtro: any) => {
+        // Convertir de "value" a "valor" y extraer solo tipo y valor
+        const filtroConvertido = {
+          tipo: filtro.tipo,
+          valor: filtro.value
+        };
+        
+        if (filtro.tipo_encuesta === "VIVIENDA") {
+          filtrosVivienda.push(filtroConvertido);
+        } else if (filtro.tipo_encuesta === "PERSONA") {
+          filtrosPersona.push(filtroConvertido);
+        }
+      });
+      
+      // Crear el objeto final con null si no hay filtros de ese tipo
+      return {
+        filtros_vivienda: filtrosVivienda.length > 0 ? filtrosVivienda : null,
+        filtros_persona: filtrosPersona.length > 0 ? filtrosPersona : null
+      };
+    } catch (error) {
+      console.error('Error al convertir filtro:', error);
+      return {
+        filtros_vivienda: null,
+        filtros_persona: null
+      };
+    }
+  }
+  
+  verLista(): void {
+    const filtroString = localStorage.getItem('filtro');
+    if (filtroString) {
+      // Convertir filtro al formato correcto
+      const filtro = this.convertirFiltro(filtroString);
+      
+      console.log('Filtro convertido:', filtro);
+      
+      this.renglonService.filtrarRenglones(filtro).subscribe({
+        next: (data) => {
+          console.log('Renglones filtrados:', data);
+          this.router.navigate(['/renglones/list'], { state: { renglones: data } });
+        },
+        error: (err) => {
+          console.error('Error al filtrar renglones:', err);
+          // Handle error, e.g., show a message to the user
+        }
+      });
+    } else {
+      console.warn('No se encontró el filtro en localStorage.');
+      // Optionally, navigate to an empty list or show a message
+    }
   }
 }

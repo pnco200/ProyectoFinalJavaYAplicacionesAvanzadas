@@ -23,6 +23,9 @@ public interface IRenglonDAO {
     List<Object[]> findEncuestasByFiltros(List<Map<String, String>> filtrosVivienda,
             List<Map<String, String>> filtrosPersona);
     
+    List<Object[]> findRespuestasByEncuestaId(Long encuestaId);
+
+    
     List<Object[]> findDistinctTipos();
     
 

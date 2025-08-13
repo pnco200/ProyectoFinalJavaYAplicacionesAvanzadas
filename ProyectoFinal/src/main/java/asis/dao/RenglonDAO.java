@@ -197,10 +197,10 @@ public class RenglonDAO implements IRenglonDAO {
                     e.id AS encuesta_id,
                     e.tipo,
                     e.vivienda_id,
-                    JSON_ARRAYAGG(JSON_OBJECT('tipo', r.tipo, 'valor', r.valor)) AS respuestas_json
+                    (SELECT r1.valor FROM Renglon r1 WHERE r1.encuesta_id = e.id AND r1.tipo = 'lat_1_Presione_actualiza' LIMIT 1) AS latitud,
+            		(SELECT r2.valor FROM Renglon r2 WHERE r2.encuesta_id = e.id AND r2.tipo = 'long_1_Presione_actualiza' LIMIT 1) AS longitud
                 FROM cte_final_encuestas e
-                LEFT JOIN Renglon r ON r.encuesta_id = e.id
-                GROUP BY e.id, e.tipo, e.vivienda_id
+                ORDER BY e.vivienda_id, e.tipo, e.id
             """);
 
         } else {
@@ -224,16 +224,31 @@ public class RenglonDAO implements IRenglonDAO {
                 SELECT 
                     e.id AS encuesta_id,
                     e.tipo,
-                    JSON_ARRAYAGG(JSON_OBJECT('tipo', r.tipo, 'valor', r.valor)) AS respuestas_json
+                    e.vivienda_id,
+                    (SELECT r1.valor FROM Renglon r1 WHERE r1.encuesta_id = e.id AND r1.tipo = 'lat_1_Presione_actualiza' LIMIT 1) AS latitud,
+            		(SELECT r2.valor FROM Renglon r2 WHERE r2.encuesta_id = e.id AND r2.tipo = 'long_1_Presione_actualiza' LIMIT 1) AS longitud
                 FROM Encuesta e
-                JOIN Renglon r ON r.encuesta_id = e.id
                 WHERE e.id IN (SELECT encuesta_id FROM matches)
-                GROUP BY e.id, e.tipo
                 ORDER BY e.id
             """);
         }
 
         Query query = em.createNativeQuery(sql.toString());
+        return query.getResultList();
+    }
+
+    public List<Object[]> findRespuestasByEncuestaId(Long encuestaId) {
+        String sql = """
+            SELECT 
+                r.tipo,
+                r.valor
+            FROM Renglon r
+            WHERE r.encuesta_id = :encuestaId
+            ORDER BY r.tipo
+        """;
+        
+        Query query = em.createNativeQuery(sql);
+        query.setParameter("encuestaId", encuestaId);
         return query.getResultList();
     }
 

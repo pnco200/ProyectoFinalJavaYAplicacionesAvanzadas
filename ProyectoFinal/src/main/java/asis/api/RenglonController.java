@@ -16,6 +16,8 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -207,23 +209,63 @@ public class RenglonController {
         List<String> valores = renglonDAO.findDistinctValoresByTipo(tipo);
         return Response.ok(valores).build();
     }
+    
     @POST
     @Path("/filtrar")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Filtrar encuestas por filtros de vivienda y/o persona")
-    public Response filtrarEncuestas(Map<String, List<Map<String, String>>> filtrosMap) {
+    @Operation(summary = "Filtrar encuestas por filtros de vivienda y/o persona (sin respuestas)")
+    public Response filtrarEncuestasSinRespuestas(Map<String, List<Map<String, String>>> filtrosMap) {
         try {
             List<Map<String, String>> filtrosVivienda = filtrosMap.get("filtros_vivienda");
             List<Map<String, String>> filtrosPersona = filtrosMap.get("filtros_persona");
 
             List<Object[]> resultados = renglonDAO.findEncuestasByFiltros(filtrosVivienda, filtrosPersona);
-            return Response.ok(resultados).build();
+            
+            // Convertir a formato más amigable
+            List<Map<String, Object>> encuestas = new ArrayList<>();
+            for (Object[] row : resultados) {
+                Map<String, Object> encuesta = new HashMap<>();
+                
+                encuesta.put("encuesta_id", row[0]);
+                encuesta.put("tipo", row[1]);
+                encuesta.put("vivienda_id", row[2]);
+                encuesta.put("latitud", row[3]);
+                encuesta.put("longitud", row[4]);
+                encuestas.add(encuesta);
+            }
+            
+            return Response.ok(encuestas).build();
         } catch (Exception e) {
             e.printStackTrace();
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                           .entity("{\"error\":\"Error procesando filtros\"}")
-                           .build();
+                    .entity("{\"error\":\"Error procesando filtros\"}")
+                    .build();
+        }
+    }
+    @GET
+    @Path("/respuestas/{encuestaId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(summary = "Obtener respuestas de una encuesta específica")
+    public Response getRespuestasByEncuestaId(@PathParam("encuestaId") Long encuestaId) {
+        try {
+            List<Object[]> resultados = renglonDAO.findRespuestasByEncuestaId(encuestaId);
+            
+            // Convertir a formato más amigable
+            List<Map<String, String>> respuestas = new ArrayList<>();
+            for (Object[] row : resultados) {
+                Map<String, String> respuesta = new HashMap<>();
+                respuesta.put("tipo", (String) row[0]);
+                respuesta.put("valor", (String) row[1]);
+                respuestas.add(respuesta);
+            }
+            
+            return Response.ok(respuestas).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\":\"Error obteniendo respuestas de la encuesta\"}")
+                    .build();
         }
     }
 

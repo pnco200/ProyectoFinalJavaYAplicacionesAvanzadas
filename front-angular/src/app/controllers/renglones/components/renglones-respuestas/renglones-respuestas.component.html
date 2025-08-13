@@ -1,0 +1,26 @@
+<div class="container mt-4">
+  <h2>Respuestas del Renglón</h2>
+
+  <div *ngIf="respuestas.length === 0" class="alert alert-warning" role="alert">
+    No se encontraron respuestas para este renglón.
+  </div>
+
+  <div *ngIf="respuestas.length > 0">
+    <table class="table table-striped table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th>Tipo</th>
+          <th>Valor</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let respuesta of respuestas">
+          <td>{{ respuesta.tipo }}</td>
+          <td>{{ respuesta.valor }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <button class="btn btn-secondary mt-3" (click)="goBack()">Volver</button>
+</div>

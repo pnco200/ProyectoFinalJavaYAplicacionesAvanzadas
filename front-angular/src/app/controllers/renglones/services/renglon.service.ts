@@ -64,4 +64,13 @@ export class RenglonService {
   getValores(tipo: string): Observable<string[]> {
     return this.http.get<string[]>(`${this.apiUrl}/valores/${tipo}`);
   }
+
+  filtrarRenglones(filtro: any): Observable<any[]> {
+    return this.http.post<any[]>(`${this.apiUrl}/filtrar`, filtro);
+  }
+
+  getRespuestas(encuestaId: number): Observable<any[]> {
+
+    return this.http.get<any[]>(`${this.apiUrl}/respuestas/${encuestaId}`);
+  }
 }

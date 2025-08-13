@@ -26,6 +26,9 @@
                 <button class="btn btn-info btn-sm me-2" (click)="viewUserDetail(user.id)">Ver</button>
                 <button class="btn btn-warning btn-sm me-2" (click)="editUser(user.id)">Editar</button>
                 <button class="btn btn-danger btn-sm me-2" (click)="deleteUser(user.id)">Eliminar</button>
+                <button class="btn btn-sm" [ngClass]="{'btn-success': !user.is_active, 'btn-secondary': user.is_active}" (click)="toggleUserStatus(user)">
+                  {{ user.is_active ? 'Deshabilitar' : 'Habilitar' }}
+                </button>
               </td>
             </tr>
           </tbody>

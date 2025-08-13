@@ -61,6 +61,16 @@ export class UsuarioService {
     );
   }
 
+  updateStatus(id: number, isActive: boolean): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}/estado`, { is_active: isActive }).pipe(
+      tap(() => Swal.fire('¡Éxito!', 'Estado del usuario actualizado con éxito.', 'success')),
+      catchError(error => {
+        Swal.fire('¡Error!', this.getErrorMessage(error), 'error');
+        return throwError(error);
+      })
+    );
+  }
+
   assignBarrioToUser(userId: number, barrioId: number): Observable<any> {
     return this.http.put(`${this.apiUrl}/${userId}/barrio/${barrioId}`, {}, { responseType: 'text' }).pipe(
       tap(() => Swal.fire('¡Éxito!', 'Barrio asignado con éxito.', 'success')),

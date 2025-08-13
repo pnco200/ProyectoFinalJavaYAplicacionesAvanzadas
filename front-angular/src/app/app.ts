@@ -5,7 +5,7 @@ import { RegisterComponent } from './controllers/users/components/register/regis
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, NavbarComponent, RegisterComponent],
+  imports: [RouterOutlet, NavbarComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

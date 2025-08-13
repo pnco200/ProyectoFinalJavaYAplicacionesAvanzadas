@@ -28,7 +28,6 @@ public class UsuarioDAO implements IUsuarioDAO {
         EntityTransaction tx = em.getTransaction();
 
         try {
-        	usuario.setIs_active(false);
             tx.begin();
             em.persist(usuario);
             tx.commit();
@@ -74,7 +73,6 @@ public class UsuarioDAO implements IUsuarioDAO {
         } 
     }
 
-    @Override
     public Usuario update(Usuario usuario) throws Exception{
 
     	    EntityTransaction tx = em.getTransaction();
@@ -90,9 +88,15 @@ public class UsuarioDAO implements IUsuarioDAO {
     	                throw new Exception("El email ya está en uso por otro usuario.");
     	            }
     	        }
-            	usuario.setIs_active(false);
+                existente.setMail(usuario.getMail());
+                existente.setName(usuario.getName());
+                existente.setDomicilio(usuario.getDomicilio());
+                existente.setActivity(usuario.getActivity());
+                existente.setExtra(usuario.getExtra());
+                existente.setIs_active(usuario.isIs_active());
+
     	        tx.begin();
-    	        merged = em.merge(usuario);
+    	        merged = em.merge(existente);
     	        tx.commit();
     	        return merged;
     	    } catch (Exception e) {

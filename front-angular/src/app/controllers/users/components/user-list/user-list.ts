@@ -53,7 +53,7 @@ users: User[] = [];
             console.log('User deleted successfully');
             this.loadUsers(); // Refresh the list
           },
-          (error) => {
+          (error: any) => {
             console.error('Error deleting user:', error);
           }
         );
@@ -61,7 +61,23 @@ users: User[] = [];
     }
   }
 
-  
+  toggleUserStatus(user: User): void {
+    const newStatus = !user.is_active;
+    const action = newStatus ? 'habilitar' : 'deshabilitar';
+    if (confirm(`¿Estás seguro de que quieres ${action} este usuario?`)) {
+      if (user.id) {
+        this.usuarioService.updateStatus(user.id, newStatus).subscribe(
+          () => {
+            console.log('User status updated successfully');
+            this.loadUsers(); // Refresh the list
+          },
+          (error: any) => {
+            console.error('Error updating user status:', error);
+          }
+        );
+      }
+    }
+  }
 
   goToNewUser(): void {
     this.router.navigate(['/users/new']);

@@ -19,6 +19,10 @@ export class AuthRoleGuard implements CanActivate {
     try {
       const user = JSON.parse(userStr);
       const allowedRoles = route.data['roles'] as string[] || [];
+      if (user.is_active == false) {
+        this.router.navigate(['/inactive']);
+        return false;
+      }
       if (user.roles && allowedRoles.some(role => user.roles.includes(role))) {
         return true;
       }

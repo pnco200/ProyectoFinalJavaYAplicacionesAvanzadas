@@ -4,10 +4,12 @@ import { LoginComponent } from './controllers/users/components/login/login.compo
 
 import { RenglonesListComponent } from './controllers/renglones/components/renglones-list/renglones-list.component';
 import { RenglonesRespuestasComponent } from './controllers/renglones/components/renglones-respuestas/renglones-respuestas.component';
+import { InactiveUser } from './components/inactive-user/inactive-user';
 
 export const routes: Routes = [
   { path: '', component: HomePage },
   { path: 'login', component: LoginComponent },
+  { path: 'inactive', component: InactiveUser },
   {
     path: 'users',
     loadChildren: () => import('./controllers/users/users-routing-module').then(m => m.USERS_ROUTES)

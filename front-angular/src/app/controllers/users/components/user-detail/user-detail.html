@@ -23,7 +23,7 @@
         <strong>Barrio:</strong> {{ user.barrio }}
       </div>
       <div class="mb-2">
-        <strong>Roles:</strong> {{ user.roles?.join(', ') }}
+        <strong>Roles:</strong> {{ user.roles.join(', ') }}
       </div>
       <div class="mb-2">
         <strong>Activo:</strong> {{ user.is_active ? 'Sí' : 'No' }}

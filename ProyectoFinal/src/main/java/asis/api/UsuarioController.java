@@ -183,4 +183,18 @@ public class UsuarioController {
 
         return Response.ok("Barrio asignado correctamente").build();
     }
+
+    @PUT
+    @Path("/{id}/estado")
+    public Response updateStatus(@PathParam("id") Long id, asis.dto.UsuarioEstadoDTO estadoDTO) {
+        Usuario usuario = usuarioDAO.findById(id);
+        if (usuario == null) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        usuarioDAO.updateIsActive(id, estadoDTO.is_active);
+        usuario = usuarioDAO.findById(id);
+
+        return Response.ok(UsuarioMapper.toDTO(usuario)).build();
+    }
 } 

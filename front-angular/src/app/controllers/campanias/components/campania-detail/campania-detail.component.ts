@@ -7,6 +7,7 @@ import { BarrioService } from '../../../barrios/services/barrio.service';
 import { Barrio } from '../../../barrios/models/barrio.model';
 import { CampaniaFiltersComponent } from '../campania-filters/campania-filters.component';
 import { RenglonService } from '../../../renglones/services/renglon.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-campania-detail',
@@ -85,7 +86,6 @@ export class CampaniaDetailComponent implements OnInit {
     if (filtroString) {
       // Convertir filtro al formato correcto
       const filtro = this.convertirFiltro(filtroString);
-      
       console.log('Filtro convertido:', filtro);
       
       this.renglonService.filtrarRenglones(filtro).subscribe({
@@ -99,6 +99,11 @@ export class CampaniaDetailComponent implements OnInit {
         }
       });
     } else {
+            Swal.fire({
+        icon: 'warning',
+        title: 'Filtro no encontrado',
+        text: 'No se pudo aplicar el filtro porque no se encontró en el almacenamiento local.',
+      });
       console.warn('No se encontró el filtro en localStorage.');
       // Optionally, navigate to an empty list or show a message
     }
@@ -123,10 +128,39 @@ export class CampaniaDetailComponent implements OnInit {
         }
       });
     } else {
+            Swal.fire({
+        icon: 'warning',
+        title: 'Filtro no encontrado',
+        text: 'No se pudo aplicar el filtro porque no se encontró en el almacenamiento local.',
+      });
       console.warn('No se encontró el filtro en localStorage.');
       // Optionally, navigate to an empty list or show a message
     }  }
   verMapa(): void {
-    // Implementar la lógica para ver los gráficos
-  }
+const filtroString = localStorage.getItem('filtro');
+    if (filtroString) {
+      // Convertir filtro al formato correcto
+      const filtro = this.convertirFiltro(filtroString);
+      
+      console.log('Filtro convertido:', filtro);
+      
+      this.renglonService.filtrarRenglones(filtro).subscribe({
+        next: (data) => {
+          console.log('Renglones filtrados:', data);
+          this.router.navigate(['/renglones/list'], { state: { renglones: data, ubicacion:"MAPA" } });
+        },
+        error: (err) => {
+          console.error('Error al filtrar renglones:', err);
+          // Handle error, e.g., show a message to the user
+        }
+      });
+    } else {
+            Swal.fire({
+        icon: 'warning',
+        title: 'Filtro no encontrado',
+        text: 'No se pudo aplicar el filtro porque no se encontró en el almacenamiento local.',
+      });
+      console.warn('No se encontró el filtro en localStorage.');
+      // Optionally, navigate to an empty list or show a message
+    }  }
 }

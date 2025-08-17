@@ -1,0 +1,8 @@
+<div class="solicitar-reporte-container">
+  <h2>Solicitar Reporte</h2>
+  <div class="form-group">
+    <label for="reporteInput">Solicitud:</label>
+    <input type="text" id="reporteInput" [(ngModel)]="reporteInput" placeholder="Ingrese el reporte a solicitar">
+  </div>
+  <button (click)="solicitarReporte()" [disabled]="!reporteInput">Solicitar</button>
+</div>

@@ -104,6 +104,12 @@
       <artifactId>swagger-models-jakarta</artifactId>
       <version>2.2.20</version>
     </dependency>
+<dependency>
+    <groupId>org.glassfish.jersey.media</groupId>
+    <artifactId>jersey-media-multipart</artifactId>
+    <version>${jersey.version}</version>
+</dependency>
+
 
         <!-- JSR 305 (para anotaciones como @Nonnull, opcional) -->
         <dependency>

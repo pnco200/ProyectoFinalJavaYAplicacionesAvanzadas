@@ -1,2 +1,22 @@
 <h1>ASIS</h1>
 
+<div class="report-list">
+  <h3>Reportes Públicos</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre del Archivo</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let reporte of reportesPublicos">
+        <td>{{ reporte }}</td>
+        <td>
+          <button (click)="descargarReporte(reporte)">Descargar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+

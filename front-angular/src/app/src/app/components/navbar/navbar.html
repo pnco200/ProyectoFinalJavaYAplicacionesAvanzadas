@@ -15,8 +15,11 @@
       <li class="nav-item"><a routerLink="/campanias" class="nav-link">Campanias</a></li>
 
     }    
+    @if (hasRole('PERSONAL_SALUD')){
+      <li class="nav-item"><a routerLink="/reportes/subir" class="nav-link">Subir Reporte</a></li>
+    }
     @if (hasRole('ORGANIZACION_SOCIAL')){
-      <li class="nav-item"><a routerLink="/solicitarReporte" class="nav-link">Reportes</a></li>
+      <li class="nav-item"><a routerLink="/reportes/solicitar" class="nav-link">Reportes</a></li>
     }
     @if (!isLoggedIn) {
       <li class="nav-item"><a routerLink="/login" class="nav-link">Iniciar Sesion</a></li>

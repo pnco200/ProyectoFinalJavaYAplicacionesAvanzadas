@@ -6,6 +6,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { UserService } from './controllers/users/services/user.service';
 import { RolService } from './controllers/roles/services/rol.service';
 import { BarrioService } from './controllers/barrios/services/barrio.service';
+import { AuthRoleGuard } from './services/auth-role.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,6 +16,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     UserService,
     RolService,
-    BarrioService
+    BarrioService,
+    AuthRoleGuard
   ]
 };

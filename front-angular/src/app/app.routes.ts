@@ -49,5 +49,9 @@ export const routes: Routes = [
     path: 'encuestadores',
     loadChildren: () => import('./controllers/encuestadores/encuestadores.routes').then(m => m.ENCUESTADORES_ROUTES)
   },
+  {
+    path: 'reportes',
+    loadChildren: () => import('./controllers/reportes/reportes.routes').then(m => m.REPORTES_ROUTES)
+  },
   { path: '**', redirectTo: '', pathMatch: 'full' } // Wildcard route for any unmatched paths
 ];

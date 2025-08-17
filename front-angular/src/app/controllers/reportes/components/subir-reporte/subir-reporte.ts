@@ -81,4 +81,16 @@ export class SubirReporteComponent implements OnInit {
       }
     );
   }
+
+  eliminarReporte(nombreArchivo: string) {
+    const url = `http://localhost:8080/ProyectoFinal/api/reportes/privado/${nombreArchivo}`;
+    this.http.delete(url).subscribe(
+      () => {
+        this.listarReportesPrivados();
+      },
+      (error) => {
+        console.error('Error al eliminar el reporte:', error);
+      }
+    );
+  }
 }

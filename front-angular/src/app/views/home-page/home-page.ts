@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-home-page',
@@ -10,11 +11,16 @@ import { CommonModule } from '@angular/common';
 })
 export class HomePage implements OnInit {
   reportesPublicos: string[] = [];
+  isAdmin: boolean = false;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   ngOnInit() {
     this.listarReportesPublicos();
+    const currentUser = this.authService.currentUserValue;
+    if (currentUser && currentUser.roles) {
+      this.isAdmin = currentUser.roles.includes('ADMINISTRADOR');
+    }
   }
 
   listarReportesPublicos() {
@@ -43,6 +49,18 @@ export class HomePage implements OnInit {
       },
       (error) => {
         console.error('Error al descargar el reporte:', error);
+      }
+    );
+  }
+
+  eliminarReporte(nombreArchivo: string) {
+    const url = `http://localhost:8080/ProyectoFinal/api/reportes/publico/${nombreArchivo}`;
+    this.http.delete(url).subscribe(
+      () => {
+        this.listarReportesPublicos();
+      },
+      (error) => {
+        console.error('Error al eliminar el reporte:', error);
       }
     );
   }

@@ -14,6 +14,7 @@
         <td>{{ reporte }}</td>
         <td>
           <button (click)="descargarReporte(reporte)">Descargar</button>
+          <button *ngIf="isAdmin" (click)="eliminarReporte(reporte)">Eliminar</button>
         </td>
       </tr>
     </tbody>

@@ -147,6 +147,41 @@ public class ReporteController {
 
         return Response.ok(files).build();
     }
+    @DELETE
+    @Path("/{visibilidad}/{nombreArchivo}")
+    @Operation(summary = "Eliminar un reporte por nombre y visibilidad", responses = {
+            @ApiResponse(responseCode = "200", description = "Reporte eliminado correctamente"),
+            @ApiResponse(responseCode = "400", description = "Visibilidad inválida"),
+            @ApiResponse(responseCode = "404", description = "Archivo no encontrado")
+    })
+    public Response eliminarReporte(
+            @PathParam("visibilidad") @Parameter(description = "Define si el reporte es 'publico' o 'privado'", required = true) String visibilidad,
+            @PathParam("nombreArchivo") @Parameter(description = "Nombre del archivo a eliminar", required = true) String nombreArchivo) {
+
+        String basePath;
+        if ("publico".equalsIgnoreCase(visibilidad)) {
+            basePath = PUBLIC_DOCS_PATH;
+        } else if ("privado".equalsIgnoreCase(visibilidad)) {
+            basePath = PRIVATE_DOCS_PATH;
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"error\": \"La visibilidad debe ser 'publico' o 'privado'\"}").build();
+        }
+
+        File file = new File(basePath, nombreArchivo);
+        if (!file.exists() || !file.isFile()) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"error\": \"Archivo no encontrado\"}").build();
+        }
+
+        boolean deleted = file.delete();
+        if (deleted) {
+            return Response.ok("{\"message\": \"Archivo eliminado correctamente\"}").build();
+        } else {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity("{\"error\": \"No se pudo eliminar el archivo\"}").build();
+        }
+    }
 
     private int getNextFileNumber(File folder) {
         int maxNumber = 0;

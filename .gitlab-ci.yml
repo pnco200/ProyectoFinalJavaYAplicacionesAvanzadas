@@ -42,7 +42,17 @@ deploy1:
     - main
   script:
     - echo "Deploy del nuevo contenedor con los cambios"
-    - docker run --network javaproyec_jyaa-network -p 8090:8080 -l "traefik.enable=true" -l "traefik.http.routers.grupo10.rule=Host(\`grupo10.jyaa-ci.linti.unlp.edu.ar\`)" -l "traefik.http.routers.grupo10.entrypoints=websecure" -l "traefik.http.routers.grupo10.tls.certresolver=le" -l "traefik.http.services.grupo10.loadbalancer.server.port=8080" -d --name grupo10 grupo10-docker
+    - docker volume create grupo10-reportes || true
+    - docker run --network javaproyec_jyaa-network \
+        -p 8090:8080 \
+        -v grupo10-reportes:/home/tomcat \
+        -l "traefik.enable=true" \
+        -l "traefik.http.routers.grupo10.rule=Host(`grupo10.jyaa-ci.linti.unlp.edu.ar`)" \
+        -l "traefik.http.routers.grupo10.entrypoints=websecure" \
+        -l "traefik.http.routers.grupo10.tls.certresolver=le" \
+        -l "traefik.http.services.grupo10.loadbalancer.server.port=8080" \
+        -d --name grupo10 grupo10-docker
+
 
 verLogs:
   stage: deploy

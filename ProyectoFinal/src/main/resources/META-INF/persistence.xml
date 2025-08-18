@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence xmlns="https://jakarta.ee/xml/ns/persistence" version="3.1">
-    <persistence-unit name="miUP">
+
+    <!-- Persistence Unit para desarrollo -->
+    <persistence-unit name="miUP-dev">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
         <class>asis.models.Barrio</class>
@@ -21,9 +23,38 @@
             <property name="jakarta.persistence.jdbc.password" value="jyaa"/>
 
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+        </properties>
+    </persistence-unit>
+
+    <!-- Persistence Unit para producción -->
+    <persistence-unit name="miUP-prod">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <class>asis.models.Barrio</class>
+        <class>asis.models.Campafia</class>
+        <class>asis.models.Coordenadas</class>
+        <class>asis.models.Encuesta</class>
+        <class>asis.models.Encuestador</class>
+        <class>asis.models.Jornada</class>
+        <class>asis.models.Renglon</class>
+        <class>asis.models.Rol</class>
+        <class>asis.models.Usuario</class>
+        <class>asis.models.Zona</class>
+
+        <properties>
+            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://mysql.java.linti.unlp.edu.ar:3306/jyaa2025_bd10?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC"/>
+            <property name="jakarta.persistence.jdbc.user" value="jyaa2025_usr10"/>
+            <property name="jakarta.persistence.jdbc.password" value="jyaa2025_pwd10"/>
+
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
             <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.format_sql" value="true"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
         </properties>
     </persistence-unit>
+
 </persistence>

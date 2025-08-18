@@ -7,4 +7,4 @@ COPY ProyectoFinal/src src
 RUN mvn package
 
 FROM tomcat
-COPY --from=grupo10build /home/ejemplo/target/ASIS-ProyectoFinal-0.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
+COPY --from=grupo10build /home/ejemplo/target/ProyectoFinal-0.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war

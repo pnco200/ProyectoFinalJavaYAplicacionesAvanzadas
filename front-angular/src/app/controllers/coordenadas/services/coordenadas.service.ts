@@ -1,3 +1,4 @@
+import { environment } from '../../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -8,7 +9,7 @@ import { Coordenadas } from '../models/coordenadas.model';
 })
 export class CoordenadasService {
 
-  private apiUrl = 'http://localhost:8080/ProyectoFinal/api/coordenadas';
+  private apiUrl = `${environment.apiUrl}/coordenadas`;
 
   constructor(private http: HttpClient) { }
 

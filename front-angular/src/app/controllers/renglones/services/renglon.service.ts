@@ -1,3 +1,4 @@
+import { environment } from '../../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -8,7 +9,7 @@ import { Renglon } from '../models/renglon.model';
 })
 export class RenglonService {
 
-  private apiUrl = 'http://localhost:8080/ProyectoFinal/api/renglon';
+  private apiUrl = `${environment.apiUrl}/renglon`;
 
   constructor(private http: HttpClient) { }
 

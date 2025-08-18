@@ -1,4 +1,5 @@
 
+import { environment } from '../../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -8,7 +9,7 @@ import { Barrio } from '../models/barrio.model';
   providedIn: 'root'
 })
 export class BarrioService {
-  private apiUrl = 'http://localhost:8080/ProyectoFinal/api/barrios';
+  private apiUrl = `${environment.apiUrl}/barrios`;
 
   constructor(private http: HttpClient) { }
 

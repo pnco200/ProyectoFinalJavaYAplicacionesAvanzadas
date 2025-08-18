@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Zona } from '../models/zona.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ZonaService {
 
-  private apiUrl = 'http://localhost:8080/ProyectoFinal/api/zonas';
+  private apiUrl = `${environment.apiUrl}/zonas`;
 
   constructor(private http: HttpClient) { }
 

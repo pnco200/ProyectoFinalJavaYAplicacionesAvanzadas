@@ -1,3 +1,4 @@
+import { environment } from '../../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -10,7 +11,7 @@ import Swal from 'sweetalert2';
   providedIn: 'root'
 })
 export class JornadaService {
-  private apiUrl = 'http://localhost:8080/ProyectoFinal/api/jornadas';
+  private apiUrl = `${environment.apiUrl}/jornadas`;
 
   constructor(private http: HttpClient) { }
 

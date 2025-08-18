@@ -1,3 +1,4 @@
+import { environment } from '../../../environments/environment';
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -24,7 +25,7 @@ export class HomePage implements OnInit {
   }
 
   listarReportesPublicos() {
-    const url = 'http://localhost:8080/ProyectoFinal/api/reportes/listar/publico';
+    const url = `${environment.apiUrl}/reportes/listar/publico`;
     this.http.get<string[]>(url).subscribe(
       (data) => {
         this.reportesPublicos = data;
@@ -36,7 +37,7 @@ export class HomePage implements OnInit {
   }
 
   descargarReporte(nombreArchivo: string) {
-    const url = `http://localhost:8080/ProyectoFinal/api/reportes/descargar/publico/${nombreArchivo}`;
+    const url = `${environment.apiUrl}/reportes/descargar/publico/${nombreArchivo}`;
     this.http.get(url, { responseType: 'blob' }).subscribe(
       (data) => {
         const blob = new Blob([data], { type: 'application/pdf' });
@@ -54,7 +55,7 @@ export class HomePage implements OnInit {
   }
 
   eliminarReporte(nombreArchivo: string) {
-    const url = `http://localhost:8080/ProyectoFinal/api/reportes/publico/${nombreArchivo}`;
+    const url = `${environment.apiUrl}/reportes/publico/${nombreArchivo}`;
     this.http.delete(url).subscribe(
       () => {
         this.listarReportesPublicos();

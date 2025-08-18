@@ -1,3 +1,4 @@
+import { environment } from '../../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -12,7 +13,7 @@ export interface Rol {
   providedIn: 'root',
 })
 export class RolService {
-  private apiUrl = 'http://localhost:8080/ProyectoFinal/api/roles';
+  private apiUrl = `${environment.apiUrl}/roles`;
 
   constructor(private http: HttpClient) {}
 

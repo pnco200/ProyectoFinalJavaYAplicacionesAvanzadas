@@ -1,4 +1,5 @@
 
+import { environment } from '../../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -9,7 +10,7 @@ import { Encuesta, TipoEncuesta } from '../models/encuesta.model';
 })
 export class EncuestaService {
 
-  private apiUrl = 'http://localhost:8080/ProyectoFinal/api/encuesta';
+  private apiUrl = `${environment.apiUrl}/encuesta`;
 
   constructor(private http: HttpClient) { }
 

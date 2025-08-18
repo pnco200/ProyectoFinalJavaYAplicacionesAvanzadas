@@ -1,3 +1,4 @@
+import { environment } from '../../../../environments/environment';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -9,7 +10,7 @@ import Swal from 'sweetalert2';
   providedIn: 'root'
 })
 export class CampaniaService {
-  private apiUrl = 'http://localhost:8080/ProyectoFinal/api/campanias';
+  private apiUrl = `${environment.apiUrl}/campanias`;
 
   constructor(private http: HttpClient) { }
 

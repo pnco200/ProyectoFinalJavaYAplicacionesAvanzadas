@@ -1,3 +1,4 @@
+import { environment } from '../../../../../environments/environment';
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -36,7 +37,7 @@ export class SubirReporteComponent implements OnInit {
     const formData = new FormData();
     formData.append('file', this.selectedFile, this.selectedFile.name);
 
-    const url = `http://localhost:8080/ProyectoFinal/api/reportes/upload/${this.visibilidad}`;
+    const url = `${environment.apiUrl}/reportes/upload/${this.visibilidad}`;
 
     this.http.post(url, formData).subscribe(
       (response) => {
@@ -53,7 +54,7 @@ export class SubirReporteComponent implements OnInit {
   }
 
   listarReportesPrivados() {
-    const url = 'http://localhost:8080/ProyectoFinal/api/reportes/listar/privado';
+    const url = `${environment.apiUrl}/reportes/listar/privado`;
     this.http.get<string[]>(url).subscribe(
       (data) => {
         this.reportesPrivados = data;
@@ -65,7 +66,7 @@ export class SubirReporteComponent implements OnInit {
   }
 
   descargarReporte(nombreArchivo: string) {
-    const url = `http://localhost:8080/ProyectoFinal/api/reportes/descargar/privado/${nombreArchivo}`;
+    const url = `${environment.apiUrl}/reportes/descargar/privado/${nombreArchivo}`;
     this.http.get(url, { responseType: 'blob' }).subscribe(
       (data) => {
         const blob = new Blob([data], { type: 'application/pdf' });
@@ -83,7 +84,7 @@ export class SubirReporteComponent implements OnInit {
   }
 
   eliminarReporte(nombreArchivo: string) {
-    const url = `http://localhost:8080/ProyectoFinal/api/reportes/privado/${nombreArchivo}`;
+    const url = `${environment.apiUrl}/reportes/privado/${nombreArchivo}`;
     this.http.delete(url).subscribe(
       () => {
         this.listarReportesPrivados();
@@ -94,3 +95,4 @@ export class SubirReporteComponent implements OnInit {
     );
   }
 }
+

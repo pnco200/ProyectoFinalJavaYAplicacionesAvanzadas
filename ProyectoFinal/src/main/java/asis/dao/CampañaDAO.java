@@ -21,63 +21,74 @@ public class CampañaDAO implements ICampañaDAO {
     @Inject
     private BarrioDAO barrioDAO;
     @Override
-    public Campaña save(Campaña campaña) throws CampañaException {
-        if (campaña.getStartDate() != null && campaña.getEndDate() != null) {
-            if (campaña.getStartDate().after(campaña.getEndDate())) {
+    public Campaña save(Campaña data) throws CampañaException {
+        if (data.getStartDate() != null && data.getEndDate() != null) {
+            if (data.getStartDate().after(data.getEndDate())) {
                 throw new CampañaException("La fecha de inicio es posterior a la fecha de fin.");
             }
         }
 
-
         EntityTransaction tx = em.getTransaction();
         try {
+            // validación de solapamiento (igual que antes)
             String jpql = "SELECT c FROM Campaña c WHERE c.name = :name AND " +
                           "((c.startDate BETWEEN :startDate AND :endDate) OR " +
                           "(c.endDate BETWEEN :startDate AND :endDate) OR " +
                           "(:startDate BETWEEN c.startDate AND c.endDate))";
-
-            if (campaña.getId() != null) {
+            if (data.getId() != null) {
                 jpql += " AND c.id <> :id";
             }
-
             TypedQuery<Campaña> query = em.createQuery(jpql, Campaña.class);
-            query.setParameter("name", campaña.getName());
-            query.setParameter("startDate", campaña.getStartDate());
-            query.setParameter("endDate", campaña.getEndDate());
-
-            if (campaña.getId() != null) {
-                query.setParameter("id", campaña.getId());
+            query.setParameter("name", data.getName());
+            query.setParameter("startDate", data.getStartDate());
+            query.setParameter("endDate", data.getEndDate());
+            if (data.getId() != null) {
+                query.setParameter("id", data.getId());
             }
-
-            List<Campaña> conflictos = query.getResultList();
-            if (!conflictos.isEmpty()) {
+            if (!query.getResultList().isEmpty()) {
                 throw new CampañaException("Ya existe una campaña con ese nombre y fechas solapadas.");
             }
 
             tx.begin();
-            if (campaña.getBarrio() != null && campaña.getBarrio().getId() != null) {
-                Barrio barrio = barrioDAO.findById(campaña.getBarrio().getId());
-                if (barrio == null) {
-                    throw new CampañaException("Barrio no encontrado con ID: " + campaña.getBarrio().getId());
-                }
-                campaña.setBarrio(barrio);
+
+            // Resolver barrio (si viene)
+            Barrio barrio = null;
+            if (data.getBarrio() != null && data.getBarrio().getId() != null) {
+                barrio = barrioDAO.findById(data.getBarrio().getId());
+                if (barrio == null) throw new CampañaException("Barrio no encontrado con ID: " + data.getBarrio().getId());
             }
 
-            if (campaña.getId() == null) {
-                em.persist(campaña);
+            Campaña managed;
+            if (data.getId() == null) {
+                // CREAR: persistir una NUEVA entidad vacía y setear solo escalares
+                managed = new Campaña();
+                em.persist(managed);
             } else {
-                campaña = em.merge(campaña);
+                // ACTUALIZAR: traer la administrada
+                managed = em.find(Campaña.class, data.getId());
+                if (managed == null) throw new CampañaException("Campaña no encontrada");
             }
+
+            // Copiar SOLO escalares/asociaciones many-to-one
+            managed.setName(data.getName());
+            managed.setStartDate(data.getStartDate());
+            managed.setEndDate(data.getEndDate());
+            managed.setBarrio(barrio);
+
+            // MUY IMPORTANTE:
+            // No tocar managed.getEncuestas() ni managed.getJornadas() acá.
+            // No usar merge(managed) ni merge(data).
+
             tx.commit();
-            return campaña;
+            return managed;
         } catch (CampañaException e) {
             if (tx.isActive()) tx.rollback();
-            throw e; 
+            throw e;
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
             e.printStackTrace();
             throw new CampañaException("Error interno al guardar la campaña.");
-        } 
+        }
     }
 
 

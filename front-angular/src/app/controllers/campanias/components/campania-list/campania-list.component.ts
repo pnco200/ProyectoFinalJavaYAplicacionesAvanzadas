@@ -27,10 +27,10 @@ export class CampaniaListComponent implements OnInit {
     });
   }
 
-  deleteCampania(id: number): void {
+    deleteCampania(id: number): void {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: '¡No podrás revertir esto!',
+      text: '¡Se eliminaran todas las jornadas y encuestas asociadas a la campaña!',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -38,8 +38,33 @@ export class CampaniaListComponent implements OnInit {
       confirmButtonText: '¡Sí, bórralo!'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.campaniaService.delete(id).subscribe(() => {
-          this.loadCampanias();
+        Swal.fire({
+          title: 'Eliminando Campaña...',
+          didOpen: () => {
+            Swal.showLoading();
+          },
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          allowEnterKey: false
+        });
+        this.campaniaService.delete(id).subscribe({
+          next: () => {
+            Swal.close();
+            this.loadCampanias();
+            Swal.fire(
+              '¡Borrado!',
+              'La campaña ha sido eliminada.',
+              'success'
+            );
+          },
+          error: (err) => {
+            Swal.close();
+            Swal.fire(
+              'Error',
+              'Hubo un error al eliminar la campaña.',
+              'error'
+            );
+          }
         });
       }
     });

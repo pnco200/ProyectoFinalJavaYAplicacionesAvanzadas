@@ -8,7 +8,7 @@ import jakarta.persistence.Persistence;
 
 public class JPAUtil {
     private static final EntityManagerFactory emf = 
-            Persistence.createEntityManagerFactory("miUP-prod");
+            Persistence.createEntityManagerFactory("miUP-dev");
 
         @Produces
         @RequestScoped

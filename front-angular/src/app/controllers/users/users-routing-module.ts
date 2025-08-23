@@ -7,7 +7,7 @@ import { AuthRoleGuard } from '../../services/auth-role.service';
 
 export const USERS_ROUTES: Routes = [
   { path: 'list', component: UserList, canActivate: [AuthRoleGuard], data: { roles: ['ADMINISTRADOR'] } },
-  { path: 'new', component: UserEdit, canActivate: [AuthRoleGuard], data: { roles: ['ADMINISTRADOR'] } },
+  { path: 'new', component: RegisterComponent, canActivate: [AuthRoleGuard], data: { roles: ['ADMINISTRADOR'] } },
   { path: 'edit/:id', component: UserEdit, canActivate: [AuthRoleGuard], data: { roles: ['ADMINISTRADOR'] } },
   { path: 'detail/:id', component: UserDetail, canActivate: [AuthRoleGuard], data: { roles: ['ADMINISTRADOR'] } },
   { path: 'register', component: RegisterComponent },

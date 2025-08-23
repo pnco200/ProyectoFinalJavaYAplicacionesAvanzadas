@@ -22,7 +22,7 @@ export class RegisterComponent implements OnInit {
   roles: Rol[] = [];
   barrios: Barrio[] = [];
   showBarrios = false;
-
+  isAdmin = false;
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
@@ -43,6 +43,11 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const userStr = localStorage.getItem('currentUser');
+    const user = JSON.parse(userStr || '{}');
+    if (user && user.roles && user.roles.includes('ADMINISTRADOR')) {
+      this.isAdmin = true;
+    }
     this.rolService.getRoles().subscribe({
       next: (roles) => {
         this.roles = roles.filter(rol => rol.nombre !== 'ADMINISTRADOR');
@@ -68,10 +73,14 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(): void {
+    console.log(this.isAdmin);
     if (this.registerForm.valid) {
       const newUser: User = { ...this.registerForm.value };
       if (!this.showBarrios) {
         delete newUser.barrioId;
+      }
+      if(this.isAdmin){
+        newUser.is_active = true;
       }
       this.userService.createUser(newUser).subscribe({
         next: createdUser => {

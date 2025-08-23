@@ -1,48 +1,156 @@
 <div class="container mt-4">
   <div class="card">
-    <div class="card-header bg-primary text-white">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
       <h2 class="mb-0">{{ isEditMode ? 'Editar' : 'Crear' }} Barrio</h2>
+      <button type="button" class="btn btn-light btn-sm" (click)="toggleMapView()">
+        <i class="fas fa-{{ showMap ? 'list' : 'map' }}"></i>
+        {{ showMap ? 'Vista Manual' : 'Vista Mapa' }}
+      </button>
     </div>
     <div class="card-body">
-      <form [formGroup]="barrioForm" (ngSubmit)="onSubmit()">
-        <div class="mb-3">
-          <label for="nombre" class="form-label">Nombre del Barrio</label>
-          <input type="text" id="nombre" class="form-control" formControlName="nombre">
-          <div *ngIf="barrioForm.get('nombre')?.invalid && barrioForm.get('nombre')?.touched" class="text-danger">
-            Nombre es requerido.
+      <form [formGroup]="barrioForm" (ngSubmit)="onSubmit(0)">
+        <!-- Nombre del barrio -->
+        <div class="mb-4">
+          <label for="nombre" class="form-label">
+            <i class="fas fa-map-marker-alt me-2"></i>Nombre del Barrio
+          </label>
+          <input type="text" id="nombre" class="form-control" formControlName="nombre" 
+                 placeholder="Ingresa el nombre del barrio">
+          <div *ngIf="barrioForm.get('nombre')?.invalid && barrioForm.get('nombre')?.touched" 
+               class="text-danger mt-1">
+            <i class="fas fa-exclamation-triangle me-1"></i>Nombre es requerido.
           </div>
         </div>
 
-        <h3 class="mt-4">Coordenadas</h3>
-        <div formArrayName="coordenadas">
-          <div *ngFor="let coordGroup of coordenadas.controls; let i = index" [formGroupName]="i" class="card mb-3">
+        <!-- Map View -->
+        <div *ngIf="showMap" class="mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">
+              <i class="fas fa-map me-2"></i>Definir Área del Barrio
+            </h4>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-outline-info btn-sm" (click)="centerMapOnArgentina()">
+                <i class="fas fa-crosshairs me-1"></i>Centrar Argentina
+              </button>
+              <button type="button" class="btn btn-outline-danger btn-sm" (click)="clearAllMarkers()">
+                <i class="fas fa-trash me-1"></i>Limpiar Todo
+              </button>
+            </div>
+          </div>
+
+          <!-- Map container -->
+          <div id="barrio-map" style="height: 500px; width: 100%; border: 2px solid #dee2e6; border-radius: 0.5rem;"></div>
+          
+          <!-- Map instructions -->
+          <div class="alert alert-info mt-3">
+            <h6><i class="fas fa-info-circle me-2"></i>Instrucciones:</h6>
+            <ul class="mb-0">
+              <li>Haz <strong>doble click</strong> en el mapa para agregar puntos</li>
+              <li><strong>Arrastra</strong> los marcadores para reposicionarlos</li>
+              <li>Se necesitan <strong>mínimo 3 puntos</strong> para crear el área</li>
+              <li>El área se formará automáticamente conectando todos los puntos</li>
+              <li>Haz clic en un marcador para ver la opción de eliminarlo</li>
+            </ul>
+          </div>
+
+          <!-- Coordinates summary -->
+          <div class="card mt-3" *ngIf="coordenadas.length > 0">
+            <div class="card-header bg-light">
+              <h6 class="mb-0">
+                <i class="fas fa-list me-2"></i>Coordenadas Agregadas ({{ coordenadas.length }})
+              </h6>
+            </div>
             <div class="card-body">
-              <h5 class="card-title">Coordenada {{ i + 1 }}</h5>
-              <div class="mb-3">
-                <label for="latitud-{{i}}" class="form-label">Latitud</label>
-                <input type="text" id="latitud-{{i}}" class="form-control" formControlName="latitud">
-                <div *ngIf="coordGroup.get('latitud')?.invalid && coordGroup.get('latitud')?.touched" class="text-danger">
-                  Latitud es requerida y debe ser un número.
+              <div class="row">
+                <div class="col-md-6" *ngFor="let coord of coordenadas.controls; let i = index">
+                  <small class="text-muted">
+                    <strong>Punto {{ i + 1 }}:</strong> 
+                    {{ coord.get('latitud')?.value | number:'1.6-6' }}, 
+                    {{ coord.get('longitud')?.value | number:'1.6-6' }}
+                  </small>
                 </div>
               </div>
-              <div class="mb-3">
-                <label for="longitud-{{i}}" class="form-label">Longitud</label>
-                <input type="text" id="longitud-{{i}}" class="form-control" formControlName="longitud">
-                <div *ngIf="coordGroup.get('longitud')?.invalid && coordGroup.get('longitud')?.touched" class="text-danger">
-                  Longitud es requerida y debe ser un número.
-                </div>
-              </div>
-              <button type="button" class="btn btn-danger btn-sm" (click)="removeCoordenada(i)">Eliminar Coordenada</button>
             </div>
           </div>
         </div>
-        <button type="button" class="btn btn-info mb-3" (click)="addCoordenada()">Agregar Coordenada</button>
 
-        <p class="text-muted">Se requieren al menos 3 coordenadas para definir un barrio.</p>
+        <!-- Manual Form View (fallback) -->
+        <div *ngIf="showManualForm" class="mb-4">
+          <h4 class="mb-3">
+            <i class="fas fa-edit me-2"></i>Coordenadas Manuales
+          </h4>
+          <div formArrayName="coordenadas">
+            <div *ngFor="let coordGroup of coordenadas.controls; let i = index" 
+                 [formGroupName]="i" class="card mb-3">
+              <div class="card-body">
+                <h6 class="card-title">
+                  <i class="fas fa-map-pin me-2"></i>Coordenada {{ i + 1 }}
+                </h6>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="latitud-{{i}}" class="form-label">Latitud</label>
+                    <input type="text" id="latitud-{{i}}" class="form-control" 
+                           formControlName="latitud" placeholder="-34.6118">
+                    <div *ngIf="coordGroup.get('latitud')?.invalid && coordGroup.get('latitud')?.touched" 
+                         class="text-danger mt-1">
+                      <small>Latitud es requerida y debe ser un número válido.</small>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="longitud-{{i}}" class="form-label">Longitud</label>
+                    <input type="text" id="longitud-{{i}}" class="form-control" 
+                           formControlName="longitud" placeholder="-58.3960">
+                    <div *ngIf="coordGroup.get('longitud')?.invalid && coordGroup.get('longitud')?.touched" 
+                         class="text-danger mt-1">
+                      <small>Longitud es requerida y debe ser un número válido.</small>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeCoordenada(i)">
+                  <i class="fas fa-trash me-1"></i>Eliminar Coordenada
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <button type="button" class="btn btn-outline-primary mb-3" (click)="addCoordenada()">
+            <i class="fas fa-plus me-2"></i>Agregar Coordenada
+          </button>
+          
+          <div class="alert alert-warning" *ngIf="coordenadas.length < 3">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Se requieren al menos 3 coordenadas para definir un barrio.
+          </div>
+        </div>
 
-        <div class="d-flex justify-content-between">
-          <button type="submit" class="btn btn-success" [disabled]="barrioForm.invalid || coordenadas.length < 3">{{ isEditMode ? 'Actualizar' : 'Crear' }}</button>
-          <a [routerLink]="['/barrios/list']" class="btn btn-secondary">Cancelar</a>
+        <!-- Status indicator -->
+        <div class="mb-3">
+          <div class="d-flex align-items-center">
+            <span class="badge me-2" [class]="coordenadas.length >= 3 ? 'bg-success' : 'bg-warning'">
+              {{ coordenadas.length }} coordenadas
+            </span>
+            <small class="text-muted">
+              {{ coordenadas.length >= 3 ? '¡Perfecto! Ya puedes crear el barrio.' : 'Necesitas ' + (3 - coordenadas.length) + ' coordenada(s) más.' }}
+            </small>
+          </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <button (click)="confirmAction()" class="btn btn-success me-2" 
+                    [disabled]="barrioForm.invalid || coordenadas.length < 3">
+              <i class="fas fa-{{ isEditMode ? 'save' : 'plus' }} me-2"></i>
+              {{ isEditMode ? 'Actualizar' : 'Crear' }} Barrio
+            </button>
+            <a [routerLink]="['/barrios/list']" class="btn btn-secondary">
+              <i class="fas fa-arrow-left me-2"></i>Cancelar
+            </a>
+          </div>
+          <div *ngIf="coordenadas.length >= 3" class="text-success">
+            <i class="fas fa-check-circle me-1"></i>
+            <small>Listo para guardar</small>
+          </div>
         </div>
       </form>
     </div>

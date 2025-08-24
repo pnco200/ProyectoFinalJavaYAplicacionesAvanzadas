@@ -1,58 +1,69 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  IMAGE_NAME: grupo10-docker
+  CONTAINER_NAME: grupo10
+  VOLUME_NAME: grupo10-reportes
+  PORT_PUBLISH: "8090:8080"
+  # Ruta interna donde la app guarda/lee reportes (debe coincidir con REPORTS_DIR)
+  REPORTS_DIR: /data/reportes
+
 buildDocker:
   stage: build
-  tags:
-    - jyaa
-  only:
-    - main
+  tags: [jyaa]
+  only: [main]
   script:
     - echo "Construimos la imagen de Docker"
-    - docker buildx build . -t grupo10-docker
+    - docker buildx build --pull . -t ${IMAGE_NAME}:latest
 
 detenemosContainer:
   stage: test
-  tags:
-    - jyaa
-  needs:
-    - buildDocker
-  only:
-    - main
+  tags: [jyaa]
+  needs: [buildDocker]
+  only: [main]
   script:
-    - echo "Detenemos cualqueir tipo de contenedor existente previo"
-    - docker stop grupo10 || true
+    - echo "Detenemos contenedor previo (si existe)"
+    - docker stop ${CONTAINER_NAME} || true
 
 eliminamosContainer:
   stage: test
-  tags:
-    - jyaa
-  only:
-    - main
-  needs:
-    - detenemosContainer
+  tags: [jyaa]
+  needs: [detenemosContainer]
+  only: [main]
   script:
-    - echo "Eliminamos cualqueir tipo de contenedor existente previo"
-    - docker rm grupo10 || true
+    - echo "Eliminamos contenedor previo (si existe)"
+    - docker rm ${CONTAINER_NAME} || true
 
 deploy1:
   stage: deploy
-  tags:
-    - jyaa
-  needs:
-    - eliminamosContainer
-  only:
-    - main
+  tags: [jyaa]
+  needs: [eliminamosContainer]
+  only: [main]
   script:
-    - echo "Deploy del nuevo contenedor con los cambios"
-    - docker run --network javaproyec_jyaa-network -p 8090:8080 -l "traefik.enable=true" -l "traefik.http.routers.grupo10.rule=Host(\`grupo10.jyaa-ci.linti.unlp.edu.ar\`)" -l "traefik.http.routers.grupo10.entrypoints=websecure" -l "traefik.http.routers.grupo10.tls.certresolver=le" -l "traefik.http.services.grupo10.loadbalancer.server.port=8080" -d --name grupo10 grupo10-docker
+    - echo "Creamos (si no existe) el volumen persistente para reportes"
+    - docker volume create ${VOLUME_NAME} || true
+
+    - echo "Lanzamos el contenedor con volumen y labels Traefik"
+    - docker run --network javaproyec_jyaa-network \
+        -p ${PORT_PUBLISH} \
+        -l "traefik.enable=true" \
+        -l "traefik.http.routers.grupo10.rule=Host(`grupo10.jyaa-ci.linti.unlp.edu.ar`)" \
+        -l "traefik.http.routers.grupo10.entrypoints=websecure" \
+        -l "traefik.http.routers.grupo10.tls.certresolver=le" \
+        -l "traefik.http.services.grupo10.loadbalancer.server.port=8080" \
+        -e REPORTS_DIR=${REPORTS_DIR} \
+        -v ${VOLUME_NAME}:${REPORTS_DIR} \
+        -d --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
 
 verLogs:
   stage: deploy
-  tags:
-    - jyaa
-  needs:
-    - deploy1
-  only:
-    - main
+  tags: [jyaa]
+  needs: [deploy1]
+  only: [main]
   when: manual
   script:
-    - echo "Ver ultimos logs"
-    - docker logs --tail=200 grupo10
+    - echo "Ver últimos logs"
+    - docker logs --tail=200 ${CONTAINER_NAME}

@@ -48,15 +48,16 @@ deploy1:
 
     - echo "Lanzamos el contenedor con volumen y labels Traefik"
     - docker run --network javaproyec_jyaa-network \
-        -p ${PORT_PUBLISH} \
-        -l "traefik.enable=true" \
-        -l "traefik.http.routers.grupo10.rule=Host(`grupo10.jyaa-ci.linti.unlp.edu.ar`)" \
-        -l "traefik.http.routers.grupo10.entrypoints=websecure" \
-        -l "traefik.http.routers.grupo10.tls.certresolver=le" \
-        -l "traefik.http.services.grupo10.loadbalancer.server.port=8080" \
+        -p "${PORT_PUBLISH}" \
+        --label 'traefik.enable=true' \
+        --label 'traefik.http.routers.grupo10.rule=Host(`grupo10.jyaa-ci.linti.unlp.edu.ar`)' \
+        --label 'traefik.http.routers.grupo10.entrypoints=websecure' \
+        --label 'traefik.http.routers.grupo10.tls.certresolver=le' \
+        --label 'traefik.http.services.grupo10.loadbalancer.server.port=8080' \
         -e REPORTS_DIR=${REPORTS_DIR} \
         -v ${VOLUME_NAME}:${REPORTS_DIR} \
         -d --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
+
 
 verLogs:
   stage: deploy

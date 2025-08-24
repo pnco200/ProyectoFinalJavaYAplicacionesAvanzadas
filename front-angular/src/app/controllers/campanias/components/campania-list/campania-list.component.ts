@@ -4,16 +4,19 @@ import { RouterModule } from '@angular/router';
 import { Campania } from '../../models/campania.model';
 import { CampaniaService } from '../../services/campania.service';
 import Swal from 'sweetalert2';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-campania-list',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './campania-list.component.html',
   styleUrls: ['./campania-list.component.css']
 })
 export class CampaniaListComponent implements OnInit {
   campanias: Campania[] = [];
+  startDate: string = '';
+  endDate: string = '';
 
   constructor(private campaniaService: CampaniaService) { }
 
@@ -25,6 +28,16 @@ export class CampaniaListComponent implements OnInit {
     this.campaniaService.getAll().subscribe(data => {
       this.campanias = data;
     });
+  }
+
+  filtrar(): void {
+    if (this.startDate && this.endDate) {
+      this.campaniaService.getByDateRange(this.startDate, this.endDate).subscribe(data => {
+        this.campanias = data;
+      });
+    } else {
+      this.loadCampanias();
+    }
   }
 
     deleteCampania(id: number): void {

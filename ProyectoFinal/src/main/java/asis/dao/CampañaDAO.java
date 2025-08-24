@@ -191,4 +191,17 @@ public class CampañaDAO implements ICampañaDAO {
         query.setParameter("zonaId", zonaId);
         return query.getSingleResult() > 0;
     }
+
+    public List<Campaña> findByDateRange(Date startDate, Date endDate) {
+        try {
+            TypedQuery<Campaña> query = em.createQuery(
+                "SELECT c FROM Campaña c WHERE c.startDate <= :endDate AND c.endDate >= :startDate", Campaña.class);
+            query.setParameter("startDate", startDate);
+            query.setParameter("endDate", endDate);
+            return query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return List.of();
+        }
+    }
 }

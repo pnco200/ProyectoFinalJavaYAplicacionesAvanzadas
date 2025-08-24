@@ -23,23 +23,21 @@ RUN npm run build --configuration front-angular
 # =========================
 FROM tomcat:11.0-jdk17-temurin
 
-# --- Desplegar backend como WAR en /ProyectoFinal ---
+# Backend WAR
 COPY --from=backend-builder /app/backend/target/ProyectoFinal-0.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/ProyectoFinal.war
 
-# --- Desplegar frontend en ROOT (Angular SPA) ---
+# Frontend en ROOT
 RUN rm -rf /usr/local/tomcat/webapps/ROOT
 COPY --from=frontend-builder /app/frontend/dist/front-angular/browser /usr/local/tomcat/webapps/ROOT/
 
-# --- web.xml para manejar rutas SPA (opcional si ya lo tenías) ---
+# web.xml para SPA (si lo usás)
 RUN mkdir -p /usr/local/tomcat/webapps/ROOT/WEB-INF
 COPY frontend-web.xml /usr/local/tomcat/webapps/ROOT/WEB-INF/web.xml
 
-# === Almacenamiento persistente de reportes ===
+# Persistencia de reportes
 ENV REPORTS_DIR=/data/reportes
 RUN mkdir -p ${REPORTS_DIR}/public_docs ${REPORTS_DIR}/private_docs
 VOLUME ["/data/reportes"]
-
-# (Opcional)  exponemos como propiedad JVM  -Dreports.dir
 ENV CATALINA_OPTS="$CATALINA_OPTS -Dreports.dir=/data/reportes"
 
 EXPOSE 8080

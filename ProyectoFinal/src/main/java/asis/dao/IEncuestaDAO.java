@@ -12,7 +12,7 @@ public interface IEncuestaDAO {
     List<Encuesta> findByTipo(TipoEncuesta tipo);
     List<Encuesta> findByViviendaId(Long viviendaId);
     List<Encuesta> findByCampañaId(Long campañaId);
-    
+    void deleteAllByCampañaId(Long id);
     Encuesta update(Encuesta encuesta);
     
     void delete(Encuesta encuesta);

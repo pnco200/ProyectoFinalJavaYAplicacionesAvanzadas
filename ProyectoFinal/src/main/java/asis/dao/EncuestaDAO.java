@@ -70,6 +70,60 @@ public class EncuestaDAO implements IEncuestaDAO {
     }
 
     @Override
+    public void deleteAllByCampañaId(Long campañaId) {
+        if (campañaId == null) return;
+
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+
+            // 1) IDs of encuestas (viviendas) that belong to the campaña
+            List<Long> viviendaIds = em.createQuery(
+                    "SELECT e.id FROM Encuesta e WHERE e.campaña.id = :campañaId", Long.class)
+                .setParameter("campañaId", campañaId)
+                .getResultList();
+
+            if (viviendaIds == null || viviendaIds.isEmpty()) {
+                tx.commit();
+                return;
+            }
+
+            // 2) IDs of personas whose vivienda is in that set
+            List<Long> personaIds = em.createQuery(
+                    "SELECT p.id FROM Encuesta p WHERE p.vivienda.id IN :viviendaIds", Long.class)
+                .setParameter("viviendaIds", viviendaIds)
+                .getResultList();
+
+            // 2.a) Delete Renglones of PERSONAS
+            if (personaIds != null && !personaIds.isEmpty()) {
+                em.createQuery("DELETE FROM Renglon r WHERE r.encuesta.id IN :personaIds")
+                  .setParameter("personaIds", personaIds)
+                  .executeUpdate();
+
+                // 2.b) Delete PERSONAS
+                em.createQuery("DELETE FROM Encuesta p WHERE p.id IN :personaIds")
+                  .setParameter("personaIds", personaIds)
+                  .executeUpdate();
+            }
+
+            // 3.a) Delete Renglones of VIVIENDAS
+            em.createQuery("DELETE FROM Renglon r WHERE r.encuesta.id IN :viviendaIds")
+              .setParameter("viviendaIds", viviendaIds)
+              .executeUpdate();
+
+            // 3.b) Delete VIVIENDAS (the original set)
+            em.createQuery("DELETE FROM Encuesta e WHERE e.id IN :viviendaIds")
+              .setParameter("viviendaIds", viviendaIds)
+              .executeUpdate();
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            e.printStackTrace();
+        }
+    }
+    
+    @Override
     public List<Encuesta> findByViviendaId(Long viviendaId) {
         TypedQuery<Encuesta> query = em.createQuery("SELECT e FROM Encuesta e WHERE e.vivienda.id = :viviendaId", Encuesta.class);
         query.setParameter("viviendaId", viviendaId);

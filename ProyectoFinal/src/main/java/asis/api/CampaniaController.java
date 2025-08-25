@@ -191,8 +191,8 @@ public class CampaniaController {
                         .entity("{\"error\": \"Campaña no encontrada\"}").build();
             }
             
-            System.out.println("Campaña encontrada: " + campaña.getName());
-
+            
+            encuestaDAO.deleteAllByCampañaId(id);
             // Validar que los datos no estén vacíos
             if (data.getViviendas() == null || data.getPersonas() == null) {
                 return Response.status(Response.Status.BAD_REQUEST)
@@ -202,7 +202,6 @@ public class CampaniaController {
             Map<String, Long> viviendaIdMap = new HashMap<>();
 
             // Procesar viviendas
-            System.out.println("Procesando " + data.getViviendas().size() + " viviendas...");
             for (Map<String, String> viviendaData : data.getViviendas()) {
                 Encuesta vivienda = new Encuesta();
                 vivienda.setTipo(Encuesta.TipoEncuesta.VIVIENDA);
@@ -222,7 +221,6 @@ public class CampaniaController {
             }
 
             // Procesar personas
-            System.out.println("Procesando " + data.getPersonas().size() + " personas...");
             for (Map<String, String> personaData : data.getPersonas()) {
                 Encuesta persona = new Encuesta();
                 persona.setTipo(Encuesta.TipoEncuesta.PERSONA);

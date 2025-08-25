@@ -20,6 +20,7 @@ import jakarta.ws.rs.core.Response;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.time.ZoneId;
 
@@ -120,9 +121,15 @@ public class JornadaController {
     @Operation(summary = "Actualizar jornada existente")
     public Response update(JornadaDTO dto) {
         try {
+            Jornada j = jornadaDAO.findById(dto.id);
+            if (j == null) {
+                return Response.status(Response.Status.NOT_FOUND).entity(Map.of("error", "Jornada no encontrada")).build();
+            }
+
             Campaña campaña = campañaDAO.findById(dto.campañaId);
-            if (campaña == null)
+            if (campaña == null) {
                 throw new JornadaException("Campaña no encontrada.");
+            }
 
             // Convertir java.util.Date a LocalDate
             var campañaStart = campaña.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -132,12 +139,15 @@ public class JornadaController {
                 throw new JornadaException("Las fechas de la jornada deben estar dentro del rango de fechas de la campaña.");
             }
 
-            Jornada j = toEntity(dto);
+            j.setName(dto.name);
+            j.setStartDate(Date.from(dto.startDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            j.setEndDate(Date.from(dto.endDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
             j.setCampaña(campaña);
+
             Jornada actualizada = jornadaDAO.save(j);
             return Response.ok(toDTO(actualizada)).build();
         } catch (JornadaException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\":\"" + e.getMessage() + "\"}").build();
+            return Response.status(Response.Status.BAD_REQUEST).entity(Map.of("error", e.getMessage())).build();
         }
     }
 

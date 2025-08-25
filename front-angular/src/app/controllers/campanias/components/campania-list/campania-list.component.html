@@ -2,7 +2,12 @@
   <div class="card">
     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
       <h2 class="mb-0">Lista de Campañas</h2>
-      <a routerLink="/campanias/nuevo" class="btn btn-light">Crear Nueva Campaña</a>
+      <div class="d-flex align-items-center">
+        <a routerLink="/campanias/nuevo" class="btn btn-light me-2">Crear Nueva Campaña</a>
+        <input type="date" class="form-control date-filter-input me-2" [(ngModel)]="startDate" style="width: auto;">
+        <input type="date" class="form-control date-filter-input me-2" [(ngModel)]="endDate" style="width: auto;">
+        <button class="btn btn-secondary" (click)="filtrar()">Filtrar</button>
+      </div>
     </div>
     <div class="card-body">
       <div class="table-responsive">

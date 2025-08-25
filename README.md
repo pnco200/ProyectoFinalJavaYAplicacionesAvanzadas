@@ -1,6 +1,7 @@
 # jyaa2025_grupo10
 
-
+## Link to deploy
+[Deploy link](https://grupo10.jyaa-ci.linti.unlp.edu.ar/)
 
 ## Getting started
 

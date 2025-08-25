@@ -18,6 +18,10 @@ export class CampaniaService {
     return this.http.get<Campania[]>(this.apiUrl);
   }
 
+  getByDateRange(startDate: string, endDate: string): Observable<Campania[]> {
+    return this.http.get<Campania[]>(`${this.apiUrl}/by_date_range?startDate=${startDate}&endDate=${endDate}`);
+  }
+
   getById(id: number): Observable<Campania> {
     return this.http.get<Campania>(`${this.apiUrl}/${id}`);
   }

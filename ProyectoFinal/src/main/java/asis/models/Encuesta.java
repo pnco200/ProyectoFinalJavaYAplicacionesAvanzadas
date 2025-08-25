@@ -8,10 +8,14 @@ public class Encuesta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "encuesta")
+    @OneToMany(mappedBy = "encuesta",
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, //Si no anda cambiar a cascadeAll no remove
+            orphanRemoval = true)
     private List<Renglon> renglones;
 
-    @OneToMany(mappedBy = "vivienda")
+    @OneToMany(mappedBy = "vivienda",
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            orphanRemoval = true)
     private List<Encuesta> personas;
     
     @ManyToOne

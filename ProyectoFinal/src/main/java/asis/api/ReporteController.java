@@ -23,13 +23,18 @@ public class ReporteController {
     private final String PRIVATE_DOCS_PATH;
 
     public ReporteController() {
-        String userHome = System.getProperty("user.home");
-        String basePath = userHome + File.separator + "ProyectoFinal" + File.separator + "docs";
+        String base = System.getenv("REPORTS_DIR");
+        if (base == null || base.isBlank()) {
+            base = System.getProperty(
+                "reports.dir",
+                System.getProperty("user.home") + File.separator + "ProyectoFinal" + File.separator + "docs"
+            );
+        }
 
-        this.PUBLIC_DOCS_PATH = basePath + File.separator + "public_docs" + File.separator;
-        this.PRIVATE_DOCS_PATH = basePath + File.separator + "private_docs" + File.separator;
+        String sep = File.separator;
+        this.PUBLIC_DOCS_PATH  = base + sep + "public_docs"  + sep;
+        this.PRIVATE_DOCS_PATH = base + sep + "private_docs" + sep;
 
-        // Crear carpetas si no existen
         new File(PUBLIC_DOCS_PATH).mkdirs();
         new File(PRIVATE_DOCS_PATH).mkdirs();
     }

@@ -76,6 +76,23 @@ public class CampaniaController {
         return Response.ok(CampaniaMapper.toDTOList(campañas)).build();
     }
 
+    @GET
+    @Path("/by_date_range")
+    @Operation(summary = "Obtener campañas por rango de fechas", responses = {
+            @ApiResponse(responseCode = "200", description = "Lista de campañas", content = @Content(schema = @Schema(implementation = CampaniaDTO.class)))
+    })
+    public Response getByDateRange(@QueryParam("startDate") String startDateStr, @QueryParam("endDate") String endDateStr) {
+        try {
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date startDate = sdf.parse(startDateStr);
+            java.util.Date endDate = sdf.parse(endDateStr);
+            List<Campaña> campañas = campañaDAO.findByDateRange(startDate, endDate);
+            return Response.ok(CampaniaMapper.toDTOList(campañas)).build();
+        } catch (java.text.ParseException e) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\": \"Formato de fecha inválido. Use yyyy-MM-dd.\"}").build();
+        }
+    }
+
     @POST
     @Operation(summary = "Crear nueva campaña", responses = {
             @ApiResponse(responseCode = "201", description = "Campaña creada", content = @Content(schema = @Schema(implementation = CampaniaDTO.class))),

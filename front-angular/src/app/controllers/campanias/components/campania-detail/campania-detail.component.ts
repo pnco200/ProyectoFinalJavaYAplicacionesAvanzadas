@@ -86,12 +86,10 @@ export class CampaniaDetailComponent implements OnInit {
     if (filtroString) {
       // Convertir filtro al formato correcto
       const filtro = this.convertirFiltro(filtroString);
-      console.log('Filtro convertido:', filtro);
       
       this.renglonService.filtrarRenglones(filtro).subscribe({
         next: (data) => {
-          console.log('Renglones filtrados:', data);
-          this.router.navigate(['/renglones/list'], { state: { renglones: data, ubicacion:"LISTA" } });
+          this.router.navigate(['/renglones/list'], { state: { renglones: data, ubicacion:"LISTA", barrioId:this.campania!.barrioId } });
         },
         error: (err) => {
           console.error('Error al filtrar renglones:', err);
@@ -114,13 +112,11 @@ export class CampaniaDetailComponent implements OnInit {
     if (filtroString) {
       // Convertir filtro al formato correcto
       const filtro = this.convertirFiltro(filtroString);
-      
-      console.log('Filtro convertido:', filtro);
-      
+            
       this.renglonService.filtrarRenglones(filtro).subscribe({
         next: (data) => {
           console.log('Renglones filtrados:', data);
-          this.router.navigate(['/renglones/list'], { state: { renglones: data, ubicacion:"GRAFICO" } });
+          this.router.navigate(['/renglones/list'], { state: { renglones: data, ubicacion:"GRAFICO", barrioId:this.campania!.barrioId } });
         },
         error: (err) => {
           console.error('Error al filtrar renglones:', err);
@@ -142,12 +138,10 @@ const filtroString = localStorage.getItem('filtro');
       // Convertir filtro al formato correcto
       const filtro = this.convertirFiltro(filtroString);
       
-      console.log('Filtro convertido:', filtro);
       
       this.renglonService.filtrarRenglones(filtro).subscribe({
         next: (data) => {
-          console.log('Renglones filtrados:', data);
-          this.router.navigate(['/renglones/list'], { state: { renglones: data, ubicacion:"MAPA" } });
+          this.router.navigate(['/renglones/list'], { state: { renglones: data, ubicacion:"MAPA", barrioId:this.campania!.barrioId } });
         },
         error: (err) => {
           console.error('Error al filtrar renglones:', err);

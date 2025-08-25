@@ -1,59 +1,237 @@
 <div class="container mt-4">
   <div class="card">
-    <div class="card-header bg-primary text-white">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
       <h2 class="mb-0">{{ isEditMode ? 'Editar' : 'Crear' }} Zona</h2>
+      <button type="button" class="btn btn-light btn-sm" (click)="toggleMapView()">
+        <i class="fas fa-{{ showMap ? 'list' : 'map' }}"></i>
+        {{ showMap ? 'Vista Manual' : 'Vista Mapa' }}
+      </button>
     </div>
     <div class="card-body">
       <form [formGroup]="zonaForm" (ngSubmit)="onSubmit()">
-        <div class="mb-3">
-          <label for="color" class="form-label">Color</label>
-          <input type="text" id="color" class="form-control" formControlName="color">
-          <div *ngIf="zonaForm.get('color')?.invalid && zonaForm.get('color')?.touched" class="text-danger">
-            Color es requerido.
+        
+        <!-- Color and Barrio Selection -->
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <label for="color" class="form-label">
+              <i class="fas fa-palette me-2"></i>Color de la Zona
+            </label>
+            <div class="input-group">
+              <input type="color" id="color" class="form-control form-control-color" 
+                     formControlName="color" (change)="onColorChange()" style="width: 80px;">
+              <input type="text" class="form-control" formControlName="color" 
+                     placeholder="#28a745" (input)="onColorChange()">
+            </div>
+            <div *ngIf="zonaForm.get('color')?.invalid && zonaForm.get('color')?.touched" 
+                 class="text-danger mt-1">
+              <i class="fas fa-exclamation-triangle me-1"></i>Color es requerido.
+            </div>
           </div>
-        </div>
 
-        <div class="mb-3">
-          <label for="barrio" class="form-label">Barrio</label>
-          <select id="barrio" class="form-control" formControlName="barrio" [compareWith]="compareById">
-            <option [ngValue]="null">-- Seleccione un Barrio --</option>
-            <option *ngFor="let barrio of barrios" [ngValue]="barrio">{{ barrio.name }}</option>
-          </select>
-          <div *ngIf="zonaForm.get('barrio')?.invalid && zonaForm.get('barrio')?.touched" class="text-danger">
-            Barrio es requerido.
-          </div>
-        </div>
-
-        <h3 class="mt-4">Coordenadas</h3>
-        <div formArrayName="coordenadas">
-          <div *ngFor="let coordGroup of coordenadas.controls; let i = index" [formGroupName]="i" class="card mb-3">
-            <div class="card-body">
-              <h5 class="card-title">Coordenada {{ i + 1 }}</h5>
-              <div class="mb-3">
-                <label for="latitud-{{i}}" class="form-label">Latitud</label>
-                <input type="text" id="latitud-{{i}}" class="form-control" formControlName="latitud">
-                <div *ngIf="coordGroup.get('latitud')?.invalid && coordGroup.get('latitud')?.touched" class="text-danger">
-                  Latitud es requerida y debe ser un número.
-                </div>
-              </div>
-              <div class="mb-3">
-                <label for="longitud-{{i}}" class="form-label">Longitud</label>
-                <input type="text" id="longitud-{{i}}" class="form-control" formControlName="longitud">
-                <div *ngIf="coordGroup.get('longitud')?.invalid && coordGroup.get('longitud')?.touched" class="text-danger">
-                  Longitud es requerida y debe ser un número.
-                </div>
-              </div>
-              <button type="button" class="btn btn-danger btn-sm" (click)="removeCoordenada(i)">Eliminar Coordenada</button>
+          <div class="col-md-6">
+            <label for="barrio" class="form-label">
+              <i class="fas fa-map-marked-alt me-2"></i>Barrio
+            </label>
+            <select id="barrio" class="form-control" formControlName="barrio" [compareWith]="compareById">
+              <option [ngValue]="null">-- Seleccione un Barrio --</option>
+              <option *ngFor="let barrio of barrios" [ngValue]="barrio">{{ barrio.name }}</option>
+            </select>
+            <div *ngIf="zonaForm.get('barrio')?.invalid && zonaForm.get('barrio')?.touched" 
+                 class="text-danger mt-1">
+              <i class="fas fa-exclamation-triangle me-1"></i>Barrio es requerido.
             </div>
           </div>
         </div>
-        <button type="button" class="btn btn-info mb-3" (click)="addCoordenada()">Agregar Coordenada</button>
 
-        <p class="text-muted">Se requieren al menos 3 coordenadas para definir una zona.</p>
+        <!-- Map View -->
+        <div *ngIf="showMap" class="mb-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="mb-0">
+              <i class="fas fa-map me-2"></i>Definir Zona en el Mapa
+            </h4>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-outline-danger btn-sm" 
+                      (click)="clearAllMarkers()" [disabled]="coordenadas.length === 0">
+                <i class="fas fa-trash me-1"></i>Limpiar Zona
+              </button>
+            </div>
+          </div>
 
-        <div class="d-flex justify-content-between">
-          <button type="submit" class="btn btn-success" [disabled]="zonaForm.invalid || coordenadas.length < 3">{{ isEditMode ? 'Actualizar' : 'Crear' }}</button>
-          <a [routerLink]="['/zonas/list']" class="btn btn-secondary">Cancelar</a>
+          <!-- Map container -->
+          <div id="zona-map" style="height: 500px; width: 100%; border: 2px solid #dee2e6; border-radius: 0.5rem;"></div>
+          
+          <!-- Map instructions -->
+          <div class="alert" [class]="selectedBarrio ? 'alert-info' : 'alert-warning'" role="alert">
+            <div *ngIf="!selectedBarrio">
+              <h6><i class="fas fa-exclamation-triangle me-2"></i>¡Primero selecciona un barrio!</h6>
+              <p class="mb-0">Debes seleccionar un barrio antes de poder crear zonas en el mapa.</p>
+            </div>
+            <div *ngIf="selectedBarrio">
+              <h6><i class="fas fa-info-circle me-2"></i>Instrucciones para crear la zona:</h6>
+              <ul class="mb-0">
+                <li>El área azul representa el <strong>barrio seleccionado: {{ selectedBarrio.name }}</strong></li>
+                <li>Haz <strong>doble clic</strong> dentro del barrio para agregar puntos de la zona</li>
+                <li><strong>Arrastra</strong> los marcadores para reposicionarlos (deben permanecer dentro del barrio)</li>
+                <li>Se necesitan <strong>mínimo 3 puntos</strong> para crear la zona</li>
+                <li>La zona se dibujará con el color seleccionado</li>
+                <li>Haz clic en un marcador para ver la opción de eliminarlo</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Coordinates summary -->
+          <div class="card mt-3" *ngIf="coordenadas.length > 0">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+              <h6 class="mb-0">
+                <i class="fas fa-list me-2"></i>Coordenadas de la Zona ({{ coordenadas.length }})
+              </h6>
+              <span class="badge" 
+                    [style.background-color]="zonaForm.get('color')?.value || '#28a745'"
+                    style="color: white;">
+                {{ zonaForm.get('color')?.value || '#28a745' }}
+              </span>
+            </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-md-6" *ngFor="let coord of coordenadas.controls; let i = index">
+                  <small class="text-muted">
+                    <strong>Punto {{ i + 1 }}:</strong> 
+                    {{ coord.get('latitud')?.value | number:'1.6-6' }}, 
+                    {{ coord.get('longitud')?.value | number:'1.6-6' }}
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Manual Form View (fallback) -->
+        <div *ngIf="showManualForm" class="mb-4">
+          <h4 class="mb-3">
+            <i class="fas fa-edit me-2"></i>Coordenadas Manuales
+          </h4>
+          
+          <div class="alert alert-warning" *ngIf="!selectedBarrio">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>¡Atención!</strong> Asegúrate de que las coordenadas estén dentro del barrio seleccionado.
+          </div>
+
+          <div formArrayName="coordenadas">
+            <div *ngFor="let coordGroup of coordenadas.controls; let i = index" 
+                 [formGroupName]="i" class="card mb-3">
+              <div class="card-body">
+                <h6 class="card-title">
+                  <i class="fas fa-map-pin me-2"></i>Coordenada {{ i + 1 }}
+                </h6>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="latitud-{{i}}" class="form-label">Latitud</label>
+                    <input type="text" id="latitud-{{i}}" class="form-control" 
+                           formControlName="latitud" placeholder="-34.6118">
+                    <div *ngIf="coordGroup.get('latitud')?.invalid && coordGroup.get('latitud')?.touched" 
+                         class="text-danger mt-1">
+                      <small>Latitud es requerida y debe ser un número válido.</small>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="longitud-{{i}}" class="form-label">Longitud</label>
+                    <input type="text" id="longitud-{{i}}" class="form-control" 
+                           formControlName="longitud" placeholder="-58.3960">
+                    <div *ngIf="coordGroup.get('longitud')?.invalid && coordGroup.get('longitud')?.touched" 
+                         class="text-danger mt-1">
+                      <small>Longitud es requerida y debe ser un número válido.</small>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeCoordenada(i)">
+                  <i class="fas fa-trash me-1"></i>Eliminar Coordenada
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <button type="button" class="btn btn-outline-primary mb-3" (click)="addCoordenada()">
+            <i class="fas fa-plus me-2"></i>Agregar Coordenada
+          </button>
+          
+          <div class="alert alert-warning" *ngIf="coordenadas.length < 3">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Se requieren al menos 3 coordenadas para definir una zona.
+          </div>
+        </div>
+
+        <!-- Zone Preview -->
+        <div class="mb-3" *ngIf="selectedBarrio && coordenadas.length > 0">
+          <div class="card border-0" [style.border-left]="'4px solid ' + (zonaForm.get('color')?.value || '#28a745') + ' !important'">
+            <div class="card-body">
+              <h6 class="card-title mb-2">
+                <i class="fas fa-eye me-2"></i>Vista Previa de la Zona
+              </h6>
+              <div class="row">
+                <div class="col-md-6">
+                  <small class="text-muted">
+                    <strong>Barrio:</strong> {{ selectedBarrio.name }}<br>
+                    <strong>Color:</strong> 
+                    <span class="badge" 
+                          [style.background-color]="zonaForm.get('color')?.value || '#28a745'"
+                          style="color: white; margin-left: 5px;">
+                      {{ zonaForm.get('color')?.value || '#28a745' }}
+                    </span>
+                  </small>
+                </div>
+                <div class="col-md-6">
+                  <small class="text-muted">
+                    <strong>Coordenadas:</strong> {{ coordenadas.length }}<br>
+                    <strong>Estado:</strong> 
+                    <span class="badge" [class]="coordenadas.length >= 3 ? 'bg-success' : 'bg-warning'">
+                      {{ coordenadas.length >= 3 ? 'Completa' : 'Incompleta' }}
+                    </span>
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status indicator -->
+        <div class="mb-3">
+          <div class="d-flex align-items-center">
+            <span class="badge me-2" [class]="coordenadas.length >= 3 ? 'bg-success' : 'bg-warning'">
+              {{ coordenadas.length }} coordenadas
+            </span>
+            <small class="text-muted">
+              {{ coordenadas.length >= 3 ? '¡Perfecto! Ya puedes crear la zona.' : 'Necesitas ' + (3 - coordenadas.length) + ' coordenada(s) más.' }}
+            </small>
+          </div>
+        </div>
+
+        <!-- Validation Messages -->
+        <div class="alert alert-danger" *ngIf="zonaForm.get('barrio')?.invalid && zonaForm.get('barrio')?.touched">
+          <i class="fas fa-exclamation-circle me-2"></i>
+          Debes seleccionar un barrio antes de crear la zona.
+        </div>
+
+        <div class="alert alert-danger" *ngIf="coordenadas.length > 0 && coordenadas.length < 3">
+          <i class="fas fa-exclamation-circle me-2"></i>
+          Se requieren al menos 3 coordenadas para definir una zona válida.
+        </div>
+
+        <!-- Action buttons -->
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <button type="submit" class="btn btn-success me-2" 
+                    [disabled]="zonaForm.invalid || coordenadas.length < 3">
+              <i class="fas fa-{{ isEditMode ? 'save' : 'plus' }} me-2"></i>
+              {{ isEditMode ? 'Actualizar' : 'Crear' }} Zona
+            </button>
+            <a [routerLink]="['/zonas/list']" class="btn btn-secondary">
+              <i class="fas fa-arrow-left me-2"></i>Cancelar
+            </a>
+          </div>
+          <div *ngIf="coordenadas.length >= 3 && selectedBarrio" class="text-success">
+            <i class="fas fa-check-circle me-1"></i>
+            <small>Listo para guardar</small>
+          </div>
         </div>
       </form>
     </div>

@@ -1,6 +1,6 @@
 import { environment } from '../../../../../environments/environment';
 import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -18,7 +18,7 @@ export class SubirReporteComponent implements OnInit {
   errorMessage: string | null = null;
   reportesPrivados: string[] = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   ngOnInit() {
     this.listarReportesPrivados();
@@ -38,61 +38,59 @@ export class SubirReporteComponent implements OnInit {
     formData.append('file', this.selectedFile, this.selectedFile.name);
 
     const url = `${environment.apiUrl}/reportes/upload/${this.visibilidad}`;
-
-    this.http.post(url, formData).subscribe(
-      (response) => {
+    this.http.post(url, formData).subscribe({
+      next: () => {
         this.uploadSuccess = true;
         this.errorMessage = null;
-        this.listarReportesPrivados(); // Actualizar la lista después de subir
+        this.listarReportesPrivados();
       },
-      (error) => {
+      error: (err) => {
         this.uploadSuccess = false;
         this.errorMessage = 'Error al subir el reporte. Por favor, inténtelo de nuevo.';
-        console.error(error);
+        console.error(err);
       }
-    );
+    });
   }
 
   listarReportesPrivados() {
     const url = `${environment.apiUrl}/reportes/listar/privado`;
-    this.http.get<string[]>(url).subscribe(
-      (data) => {
-        this.reportesPrivados = data;
-      },
-      (error) => {
-        console.error('Error al listar los reportes privados:', error);
-      }
-    );
+    this.http.get<string[]>(url).subscribe({
+      next: (data) => (this.reportesPrivados = data ?? []),
+      error: (err) => console.error('Error al listar los reportes privados:', err)
+    });
+  }
+
+  // Helper para encodar SOLO el segmento del nombre
+  private encNombre(nombreArchivo: string): string {
+    return encodeURIComponent(nombreArchivo);
   }
 
   descargarReporte(nombreArchivo: string) {
-    const url = `${environment.apiUrl}/reportes/descargar/privado/${nombreArchivo}`;
-    this.http.get(url, { responseType: 'blob' }).subscribe(
-      (data) => {
-        const blob = new Blob([data], { type: 'application/pdf' });
-        const url = window.URL.createObjectURL(blob);
+    const url = `${environment.apiUrl}/reportes/descargar/privado/${this.encNombre(nombreArchivo)}`;
+    this.http.get(url, { responseType: 'blob', observe: 'response' }).subscribe({
+      next: (resp) => {
+        const blob = resp.body!;
+        // Intentar tomar nombre desde Content-Disposition si viene
+        const cd = resp.headers.get('Content-Disposition') ?? '';
+        const match = /filename\*?=(?:UTF-8'')?"?([^\";]+)"?/i.exec(cd);
+        const filenameFromHeader = match ? decodeURIComponent(match[1]) : nombreArchivo;
+
+        const objUrl = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url;
-        a.download = nombreArchivo;
+        a.href = objUrl;
+        a.download = filenameFromHeader;
         a.click();
-        window.URL.revokeObjectURL(url);
+        URL.revokeObjectURL(objUrl);
       },
-      (error) => {
-        console.error('Error al descargar el reporte:', error);
-      }
-    );
+      error: (err) => console.error('Error al descargar el reporte:', err)
+    });
   }
 
   eliminarReporte(nombreArchivo: string) {
-    const url = `${environment.apiUrl}/reportes/privado/${nombreArchivo}`;
-    this.http.delete(url).subscribe(
-      () => {
-        this.listarReportesPrivados();
-      },
-      (error) => {
-        console.error('Error al eliminar el reporte:', error);
-      }
-    );
+    const url = `${environment.apiUrl}/reportes/privado/${this.encNombre(nombreArchivo)}`;
+    this.http.delete(url).subscribe({
+      next: () => this.listarReportesPrivados(),
+      error: (err) => console.error('Error al eliminar el reporte:', err)
+    });
   }
 }
-

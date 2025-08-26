@@ -17,6 +17,6 @@ export const appConfig: ApplicationConfig = {
     UserService,
     RolService,
     BarrioService,
-    AuthRoleGuard,
+    AuthRoleGuard
   ]
 };

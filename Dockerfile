@@ -38,7 +38,6 @@ COPY frontend-web.xml /usr/local/tomcat/webapps/ROOT/WEB-INF/web.xml
 ENV REPORTS_DIR=/data/reportes
 RUN mkdir -p ${REPORTS_DIR}/public_docs ${REPORTS_DIR}/private_docs
 VOLUME ["/data/reportes"]
-ENV CATALINA_OPTS="$CATALINA_OPTS -Dreports.dir=/data/reportes -Dtomcat.util.http.parser.HttpParser.requestTargetAllow=[]{}^|\\"
-
+ENV CATALINA_OPTS="-Dreports.dir=/data/reportes -Dtomcat.util.http.parser.HttpParser.requestTargetAllow=[]{}^|"
 
 EXPOSE 8080

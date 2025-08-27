@@ -20,14 +20,14 @@ public interface IRenglonDAO {
     
     boolean existsById(Long id);
 
-    List<Object[]> findEncuestasByFiltros(List<Map<String, String>> filtrosVivienda,
+    List<Object[]> findEncuestasByFiltros(Long campaniaId,List<Map<String, String>> filtrosVivienda,
             List<Map<String, String>> filtrosPersona);
     
     List<Object[]> findRespuestasByEncuestaId(Long encuestaId);
 
     List<Map<String, Object>> findChartDataByEncuestaIds(List<Long> encuestaIds);
     
-    List<Object[]> findDistinctTipos();
+    List<Object[]> findDistinctTipos(Long campaniaId);
     
 
     List<String> findDistinctValoresByTipo(String tipo);

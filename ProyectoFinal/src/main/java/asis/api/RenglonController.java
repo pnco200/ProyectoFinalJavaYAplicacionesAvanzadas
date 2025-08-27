@@ -195,10 +195,10 @@ public class RenglonController {
     }
 
     @GET
-    @Path("/tipos")
+    @Path("/tipos/{campaniaId}")
     @Operation(summary = "Obtener todos los tipos de renglones distintos")
-    public Response getDistinctTipos() {
-        List<Object[]> tipos = renglonDAO.findDistinctTipos();
+    public Response getDistinctTipos(@PathParam("campaniaId") Long campaniaId) {
+        List<Object[]> tipos = renglonDAO.findDistinctTipos(campaniaId);
         return Response.ok(tipos).build();
     }
 
@@ -211,16 +211,16 @@ public class RenglonController {
     }
     
     @POST
-    @Path("/filtrar")
+    @Path("/filtrar/{campaniaId}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(summary = "Filtrar encuestas por filtros de vivienda y/o persona (sin respuestas)")
-    public Response filtrarEncuestasSinRespuestas(Map<String, List<Map<String, String>>> filtrosMap) {
+    public Response filtrarEncuestasSinRespuestas(Map<String, List<Map<String, String>>> filtrosMap, @PathParam("campaniaId") Long campaniaId) {
         try {
             List<Map<String, String>> filtrosVivienda = filtrosMap.get("filtros_vivienda");
             List<Map<String, String>> filtrosPersona = filtrosMap.get("filtros_persona");
 
-            List<Object[]> resultados = renglonDAO.findEncuestasByFiltros(filtrosVivienda, filtrosPersona);
+            List<Object[]> resultados = renglonDAO.findEncuestasByFiltros(campaniaId, filtrosVivienda, filtrosPersona);
             
             // Convertir a formato más amigable
             List<Map<String, Object>> encuestas = new ArrayList<>();

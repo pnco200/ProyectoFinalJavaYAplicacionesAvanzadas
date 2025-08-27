@@ -115,23 +115,26 @@ public class RenglonDAO implements IRenglonDAO {
         return findById(id) != null;
     }
 
-    @Override
-    public List<Object[]> findDistinctTipos() {
-        String sql = """
-            SELECT DISTINCT r.tipo, 'VIVIENDA' AS tipo_encuesta
-            FROM Renglon r
-            INNER JOIN Encuesta e ON e.id = r.encuesta_id
-            WHERE e.vivienda_id IS NULL
-            UNION
-            SELECT DISTINCT r.tipo, 'PERSONA' AS tipo_encuesta
-            FROM Renglon r
-            INNER JOIN Encuesta e ON e.id = r.encuesta_id
-            WHERE e.vivienda_id IS NOT NULL
-        """;
+@Override
+public List<Object[]> findDistinctTipos(Long campaniaId) {
+    String sql = """
+        SELECT DISTINCT r.tipo, 'VIVIENDA' AS tipo_encuesta
+        FROM Renglon r
+        INNER JOIN Encuesta e ON e.id = r.encuesta_id
+        WHERE e.vivienda_id IS NULL
+          AND e.campaña_id = :campaniaId
+        UNION
+        SELECT DISTINCT r.tipo, 'PERSONA' AS tipo_encuesta
+        FROM Renglon r
+        INNER JOIN Encuesta ep ON ep.id = r.encuesta_id
+        INNER JOIN Encuesta v  ON v.id = ep.vivienda_id
+        WHERE v.campaña_id = :campaniaId
+    """;
 
-        Query query = em.createNativeQuery(sql);
-        return query.getResultList(); // each Object[] -> { tipo, tipo_encuesta }
-    }
+    Query query = em.createNativeQuery(sql);
+    query.setParameter("campaniaId", campaniaId);
+    return query.getResultList(); // Object[] -> { tipo, tipo_encuesta }
+}
 
     @Override
     public List<String> findDistinctValoresByTipo(String tipo) {
@@ -141,105 +144,123 @@ public class RenglonDAO implements IRenglonDAO {
     }
     
     
-    public List<Object[]> findEncuestasByFiltros(
-            List<Map<String, String>> filtrosVivienda,
-            List<Map<String, String>> filtrosPersona) {
+public List<Object[]> findEncuestasByFiltros(
+        Long campaniaId,
+        List<Map<String, String>> filtrosVivienda,
+        List<Map<String, String>> filtrosPersona) {
 
-        StringBuilder sql = new StringBuilder();
+    StringBuilder sql = new StringBuilder();
 
-        boolean hasVivienda = filtrosVivienda != null && !filtrosVivienda.isEmpty();
-        boolean hasPersona = filtrosPersona != null && !filtrosPersona.isEmpty();
+    boolean hasVivienda = filtrosVivienda != null && !filtrosVivienda.isEmpty();
+    boolean hasPersona = filtrosPersona != null && !filtrosPersona.isEmpty();
 
-        if (hasVivienda && hasPersona) {
-            // =============================
-            // BOTH FILTER ARRAYS RECEIVED
-            // =============================
-            sql.append("WITH filtros_vivienda AS (\n");
-            appendFiltrosCTE(sql, filtrosVivienda);
-            sql.append("),\n");
+    if (hasVivienda && hasPersona) {
+        // =============================
+        // HAY FILTROS DE VIVIENDA Y PERSONA
+        // =============================
+        sql.append("WITH filtros_vivienda AS (\n");
+        appendFiltrosCTE(sql, filtrosVivienda);
+        sql.append("),\n");
 
-            sql.append("filtros_persona AS (\n");
-            appendFiltrosCTE(sql, filtrosPersona);
-            sql.append("),\n");
+        sql.append("filtros_persona AS (\n");
+        appendFiltrosCTE(sql, filtrosPersona);
+        sql.append("),\n");
 
-            sql.append("""
-                cte_viviendas_filtradas AS (
-                    SELECT e.id AS vivienda_id
-                    FROM Encuesta e
-                    INNER JOIN Renglon r ON e.id = r.encuesta_id
-                    INNER JOIN filtros_vivienda f ON f.tipo = r.tipo AND f.valor = r.valor
-                    GROUP BY e.id
-                    HAVING COUNT(*) = (SELECT COUNT(*) FROM filtros_vivienda)
-                ),
-                cte_personas_filtradas AS (
-                    SELECT ep.id AS persona_id, ep.vivienda_id AS vivienda_id
-                    FROM Encuesta ep
-                    INNER JOIN Renglon r ON ep.id = r.encuesta_id
-                    INNER JOIN filtros_persona f ON f.tipo = r.tipo AND f.valor = r.valor
-                    GROUP BY ep.id, ep.vivienda_id
-                    HAVING COUNT(*) = (SELECT COUNT(*) FROM filtros_persona)
-                ),
-                cte_viviendas_finales AS (
-                    SELECT v.vivienda_id
-                    FROM cte_viviendas_filtradas v
-                    INNER JOIN cte_personas_filtradas p ON v.vivienda_id = p.vivienda_id
-                ),
-                cte_final_encuestas AS (
-                    SELECT e.*
-                    FROM Encuesta e
-                    WHERE e.id IN (SELECT vivienda_id FROM cte_viviendas_finales)
-                    UNION ALL
-                    SELECT ep.*
-                    FROM Encuesta ep
-                    WHERE ep.id IN (
-                        SELECT persona_id
-                        FROM cte_personas_filtradas
-                        WHERE vivienda_id IN (SELECT vivienda_id FROM cte_viviendas_finales)
-                    )
-                )
-                SELECT 
-                    e.id AS encuesta_id,
-                    e.tipo,
-                    e.vivienda_id,
-                    (SELECT r1.valor FROM Renglon r1 WHERE r1.encuesta_id = e.id AND r1.tipo = 'lat_1_Presione_actualiza' LIMIT 1) AS latitud,
-            		(SELECT r2.valor FROM Renglon r2 WHERE r2.encuesta_id = e.id AND r2.tipo = 'long_1_Presione_actualiza' LIMIT 1) AS longitud
-                FROM cte_final_encuestas e
-                ORDER BY e.vivienda_id, e.tipo, e.id
-            """);
-
-        } else {
-            // =============================
-            // ONLY ONE FILTER ARRAY
-            // =============================
-            List<Map<String, String>> filtros = hasVivienda ? filtrosVivienda : filtrosPersona;
-
-            sql.append("WITH filtros AS (\n");
-            appendFiltrosCTE(sql, filtros);
-            sql.append("),\n");
-
-            sql.append("""
-                matches AS (
-                    SELECT r.encuesta_id
-                    FROM Renglon r
-                    JOIN filtros f ON r.tipo = f.tipo AND r.valor = f.valor
-                    GROUP BY r.encuesta_id
-                    HAVING COUNT(DISTINCT CONCAT(r.tipo, '-', r.valor)) = (SELECT COUNT(*) FROM filtros)
-                )
-                SELECT 
-                    e.id AS encuesta_id,
-                    e.tipo,
-                    e.vivienda_id,
-                    (SELECT r1.valor FROM Renglon r1 WHERE r1.encuesta_id = e.id AND r1.tipo = 'lat_1_Presione_actualiza' LIMIT 1) AS latitud,
-            		(SELECT r2.valor FROM Renglon r2 WHERE r2.encuesta_id = e.id AND r2.tipo = 'long_1_Presione_actualiza' LIMIT 1) AS longitud
+        sql.append("""
+            cte_viviendas_filtradas AS (
+                SELECT e.id AS vivienda_id
                 FROM Encuesta e
-                WHERE e.id IN (SELECT encuesta_id FROM matches)
-                ORDER BY e.id
-            """);
-        }
+                INNER JOIN Renglon r ON e.id = r.encuesta_id
+                INNER JOIN filtros_vivienda f ON f.tipo = r.tipo AND f.valor = r.valor
+                WHERE e.vivienda_id IS NULL
+                  AND e.campaña_id = :campaniaId
+                GROUP BY e.id
+                HAVING COUNT(*) = (SELECT COUNT(*) FROM filtros_vivienda)
+            ),
+            cte_personas_filtradas AS (
+                SELECT ep.id AS persona_id, ep.vivienda_id AS vivienda_id
+                FROM Encuesta ep
+                INNER JOIN Encuesta v ON v.id = ep.vivienda_id
+                INNER JOIN Renglon r ON ep.id = r.encuesta_id
+                INNER JOIN filtros_persona f ON f.tipo = r.tipo AND f.valor = r.valor
+                WHERE v.campaña_id = :campaniaId
+                GROUP BY ep.id, ep.vivienda_id
+                HAVING COUNT(*) = (SELECT COUNT(*) FROM filtros_persona)
+            ),
+            cte_viviendas_finales AS (
+                SELECT v.vivienda_id
+                FROM cte_viviendas_filtradas v
+                INNER JOIN cte_personas_filtradas p ON v.vivienda_id = p.vivienda_id
+            ),
+            cte_final_encuestas AS (
+                SELECT e.*
+                FROM Encuesta e
+                WHERE e.id IN (SELECT vivienda_id FROM cte_viviendas_finales)
+                UNION ALL
+                SELECT ep.*
+                FROM Encuesta ep
+                WHERE ep.id IN (
+                    SELECT persona_id
+                    FROM cte_personas_filtradas
+                    WHERE vivienda_id IN (SELECT vivienda_id FROM cte_viviendas_finales)
+                )
+            )
+            SELECT 
+                e.id AS encuesta_id,
+                e.tipo,
+                e.vivienda_id,
+                (SELECT r1.valor FROM Renglon r1 WHERE r1.encuesta_id = e.id AND r1.tipo = 'lat_1_Presione_actualiza' LIMIT 1) AS latitud,
+                (SELECT r2.valor FROM Renglon r2 WHERE r2.encuesta_id = e.id AND r2.tipo = 'long_1_Presione_actualiza' LIMIT 1) AS longitud
+            FROM cte_final_encuestas e
+            ORDER BY e.vivienda_id, e.tipo, e.id
+        """);
 
-        Query query = em.createNativeQuery(sql.toString());
-        return query.getResultList();
+    } else {
+        // =============================
+        // SOLO UNA DE LAS LISTAS DE FILTROS
+        // =============================
+        List<Map<String, String>> filtros = hasVivienda ? filtrosVivienda : filtrosPersona;
+
+        sql.append("WITH filtros AS (\n");
+        appendFiltrosCTE(sql, filtros);
+        sql.append("),\n");
+
+        // En este caso, las encuestas pueden ser vivienda o persona.
+        // Aplicamos campaña así:
+        // - Si es vivienda (e.vivienda_id IS NULL): e.campaña_id = :campaniaId
+        // - Si es persona  (e.vivienda_id NOT NULL): campaña de su vivienda = :campaniaId
+        sql.append("""
+            matches AS (
+                SELECT r.encuesta_id
+                FROM Renglon r
+                JOIN filtros f ON r.tipo = f.tipo AND r.valor = f.valor
+                JOIN Encuesta e ON e.id = r.encuesta_id
+                LEFT JOIN Encuesta v ON v.id = e.vivienda_id
+                WHERE
+                    (e.vivienda_id IS NULL AND e.campaña_id = :campaniaId)
+                    OR
+                    (e.vivienda_id IS NOT NULL AND v.campaña_id = :campaniaId)
+                GROUP BY r.encuesta_id
+                HAVING COUNT(DISTINCT CONCAT(r.tipo, '-', r.valor)) = (SELECT COUNT(*) FROM filtros)
+            )
+            SELECT 
+                e.id AS encuesta_id,
+                e.tipo,
+                e.vivienda_id,
+                (SELECT r1.valor FROM Renglon r1 WHERE r1.encuesta_id = e.id AND r1.tipo = 'lat_1_Presione_actualiza' LIMIT 1) AS latitud,
+                (SELECT r2.valor FROM Renglon r2 WHERE r2.encuesta_id = e.id AND r2.tipo = 'long_1_Presione_actualiza' LIMIT 1) AS longitud
+            FROM Encuesta e
+            WHERE e.id IN (SELECT encuesta_id FROM matches)
+            ORDER BY e.id
+        """);
     }
+
+    Query query = em.createNativeQuery(sql.toString());
+    query.setParameter("campaniaId", campaniaId);
+
+    return query.getResultList();
+}
+
 
     public List<Object[]> findRespuestasByEncuestaId(Long encuestaId) {
         String sql = """

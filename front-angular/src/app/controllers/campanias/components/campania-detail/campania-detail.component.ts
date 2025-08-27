@@ -87,7 +87,7 @@ export class CampaniaDetailComponent implements OnInit {
       // Convertir filtro al formato correcto
       const filtro = this.convertirFiltro(filtroString);
       
-      this.renglonService.filtrarRenglones(filtro).subscribe({
+      this.renglonService.filtrarRenglones(filtro, this.campania!.id).subscribe({
         next: (data) => {
           this.router.navigate(['/renglones/list'], { state: { renglones: data, ubicacion:"LISTA", barrioId:this.campania!.barrioId } });
         },
@@ -113,7 +113,7 @@ export class CampaniaDetailComponent implements OnInit {
       // Convertir filtro al formato correcto
       const filtro = this.convertirFiltro(filtroString);
             
-      this.renglonService.filtrarRenglones(filtro).subscribe({
+      this.renglonService.filtrarRenglones(filtro, this.campania!.id).subscribe({
         next: (data) => {
           console.log('Renglones filtrados:', data);
           this.router.navigate(['/renglones/list'], { state: { renglones: data, ubicacion:"GRAFICO", barrioId:this.campania!.barrioId } });
@@ -139,7 +139,7 @@ const filtroString = localStorage.getItem('filtro');
       const filtro = this.convertirFiltro(filtroString);
       
       
-      this.renglonService.filtrarRenglones(filtro).subscribe({
+      this.renglonService.filtrarRenglones(filtro, this.campania!.id).subscribe({
         next: (data) => {
           this.router.navigate(['/renglones/list'], { state: { renglones: data, ubicacion:"MAPA", barrioId:this.campania!.barrioId } });
         },

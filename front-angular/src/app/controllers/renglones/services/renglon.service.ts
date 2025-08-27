@@ -58,8 +58,8 @@ export class RenglonService {
     return this.http.delete(`${this.apiUrl}/delete/${id}`);
   }
 
-  getTipos(): Observable<[string,string][]> {
-    return this.http.get<[string,string][]>(`${this.apiUrl}/tipos`);
+  getTipos(campaniaId:number): Observable<[string,string][]> {
+    return this.http.get<[string,string][]>(`${this.apiUrl}/tipos/${campaniaId}`);
   }
 
   getChartData(encuestaIds: number[]): Observable<any[]> {
@@ -75,8 +75,8 @@ export class RenglonService {
     return this.http.get<string[]>(`${this.apiUrl}/valores/${tipo}`);
   }
 
-  filtrarRenglones(filtro: any): Observable<any[]> {
-    return this.http.post<any[]>(`${this.apiUrl}/filtrar`, filtro);
+  filtrarRenglones(filtro: any, campaniaId:number): Observable<any[]> {
+    return this.http.post<any[]>(`${this.apiUrl}/filtrar/${campaniaId}`, filtro);
   }
 
   getRespuestas(encuestaId: number): Observable<any[]> {

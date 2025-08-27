@@ -25,7 +25,8 @@ export class CampaniaFiltersComponent implements OnInit {
   constructor(private renglonService: RenglonService) { }
 
   ngOnInit(): void {
-    this.renglonService.getTipos().subscribe(data => {
+    console.log('Fetching tipos for campaniaId:', this.campaniaId);
+    this.renglonService.getTipos(this.campaniaId).subscribe(data => {
       this.tipos = data;
     });
   }

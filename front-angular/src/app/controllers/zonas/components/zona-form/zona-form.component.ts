@@ -22,6 +22,8 @@ export class ZonaFormComponent implements OnInit, AfterViewInit, OnDestroy {
   isEditMode = false;
   zonaId: number | null = null;
   barrios: Barrio[] = [];
+  zonas: any[] = [];
+  zonaPolygons: L.Polygon[] = [];
   
   // Map related properties
   map: any;
@@ -193,6 +195,7 @@ export class ZonaFormComponent implements OnInit, AfterViewInit, OnDestroy {
   onBarrioSelected(): void {
     if (this.map && this.selectedBarrio) {
       this.showBarrioOnMap();
+      this.loadZonasData();
       
       // Only clear zona markers if we're not in edit mode or if changing barrio
       if (!this.isEditMode) {
@@ -231,8 +234,73 @@ export class ZonaFormComponent implements OnInit, AfterViewInit, OnDestroy {
       </div>
     `);
 
+    this.addZonasToMap();
     // Fit map to show barrio
-    this.map.fitBounds(this.barrioPolygon.getBounds().pad(0.1));
+    this.fitMapBounds();
+  }
+
+  loadZonasData(): void {
+    if (!this.selectedBarrio) return;
+    this.zonaService.findByBarrioId(this.selectedBarrio.id!).subscribe(data => {
+      this.zonas = data;
+      if (this.map) {
+        this.addZonasToMap();
+      }
+    });
+  }
+
+  addZonasToMap(): void {
+    if (!this.zonas || this.zonas.length === 0) return;
+
+    this.zonaPolygons.forEach(p => this.map.removeLayer(p));
+    this.zonaPolygons = [];
+
+    this.zonas.forEach(zona => {
+      if (zona.id !== this.zonaId && zona.coordenadas && zona.coordenadas.length >= 3) {
+        const zonaCoords = zona.coordenadas.map((coord: any) => 
+          [parseFloat(coord.latitud.toString()), parseFloat(coord.longitud.toString())] as [number, number]
+        );
+
+        const zonaPolygon = L.polygon(zonaCoords, {
+          color: zona.color || '#28a745',
+          weight: 2,
+          opacity: 0.8,
+          fillColor: zona.color || '#28a745',
+          fillOpacity: 0.3
+        }).addTo(this.map);
+
+        zonaPolygon.bindPopup(`
+          <div>
+            <h6><strong>Zona</strong></h6>
+            <p><strong>Color:</strong> ${zona.color}</p>
+          </div>
+        `);
+
+        this.zonaPolygons.push(zonaPolygon);
+      }
+    });
+  }
+
+  fitMapBounds(): void {
+    const allBounds: L.LatLngBounds[] = [];
+
+    if (this.barrioPolygon) {
+      allBounds.push(this.barrioPolygon.getBounds());
+    }
+
+    if (this.polygon) {
+      allBounds.push(this.polygon.getBounds());
+    }
+
+    this.zonaPolygons.forEach(p => allBounds.push(p.getBounds()));
+
+    if (allBounds.length > 0) {
+      let combinedBounds = allBounds[0];
+      for (let i = 1; i < allBounds.length; i++) {
+        combinedBounds.extend(allBounds[i]);
+      }
+      this.map.fitBounds(combinedBounds.pad(0.1));
+    }
   }
 
   isPointInsideBarrio(lat: number, lng: number): boolean {
@@ -422,6 +490,8 @@ export class ZonaFormComponent implements OnInit, AfterViewInit, OnDestroy {
           <p>Puntos: ${this.markers.length}</p>
         </div>
       `);
+
+      this.fitMapBounds();
     }
   }
 

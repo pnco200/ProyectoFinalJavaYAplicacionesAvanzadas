@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormArray } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BarrioService } from '../../services/barrio.service';
+import { ZonaService } from '../../../zonas/services/zona.service';
 import { Barrio } from '../../models/barrio.model';
 import { Coordenadas } from '../../../coordenadas/models/coordenadas.model';
 import Swal from 'sweetalert2';
@@ -25,12 +26,15 @@ export class BarrioFormComponent implements OnInit, AfterViewInit, OnDestroy {
   map: any;
   markers: L.Marker[] = [];
   polygon: L.Polygon | null = null;
+  zonas: any[] = [];
+  zonaPolygons: L.Polygon[] = [];
   showMap = true;
   showManualForm = false;
 
   constructor(
     private fb: FormBuilder,
     private barrioService: BarrioService,
+    private zonaService: ZonaService,
     private router: Router,
     private route: ActivatedRoute
   ) {
@@ -45,6 +49,7 @@ export class BarrioFormComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.barrioId) {
       this.isEditMode = true;
       this.loadBarrioData();
+      this.loadZonasData();
     }
   }
 
@@ -80,6 +85,15 @@ export class BarrioFormComponent implements OnInit, AfterViewInit, OnDestroy {
         if (this.map) {
           this.loadMarkersFromForm();
         }
+      }
+    });
+  }
+
+  loadZonasData(): void {
+    this.zonaService.findByBarrioId(this.barrioId!).subscribe(data => {
+      this.zonas = data;
+      if (this.map) {
+        this.addZonasToMap();
       }
     });
   }
@@ -122,6 +136,7 @@ export class BarrioFormComponent implements OnInit, AfterViewInit, OnDestroy {
     // Load existing markers if in edit mode
     if (this.isEditMode) {
       this.loadMarkersFromForm();
+      this.addZonasToMap();
     }
   }
 
@@ -229,8 +244,65 @@ export class BarrioFormComponent implements OnInit, AfterViewInit, OnDestroy {
       }).addTo(this.map);
 
       // Fit map to show all markers
-      const group = L.featureGroup([...this.markers, this.polygon]);
-      this.map.fitBounds(group.getBounds().pad(0.1));
+      this.fitMapBounds();
+    }
+  }
+
+  addZonasToMap(): void {
+    if (!this.zonas || this.zonas.length === 0) return;
+
+    // Clear existing zona polygons
+    this.zonaPolygons.forEach(polygon => {
+      this.map.removeLayer(polygon);
+    });
+    this.zonaPolygons = [];
+
+    // Add each zona
+    this.zonas.forEach(zona => {
+      if (zona.coordenadas && zona.coordenadas.length >= 3) {
+        const zonaCoords = zona.coordenadas.map((coord: any) => 
+          [parseFloat(coord.latitud.toString()), parseFloat(coord.longitud.toString())] as [number, number]
+        );
+
+        const zonaPolygon = L.polygon(zonaCoords, {
+          color: zona.color || '#28a745',
+          weight: 2,
+          opacity: 0.8,
+          fillColor: zona.color || '#28a745',
+          fillOpacity: 0.3
+        }).addTo(this.map);
+
+        // Add popup to zona
+        zonaPolygon.bindPopup(`
+          <div>
+            <h6><strong>Zona</strong></h6>
+            <p><strong>Color:</strong> ${zona.color}</p>
+            <p><strong>Coordenadas:</strong> ${zona.coordenadas.length}</p>
+          </div>
+        `);
+
+        this.zonaPolygons.push(zonaPolygon);
+      }
+    });
+  }
+
+  fitMapBounds(): void {
+    const allBounds: L.LatLngBounds[] = [];
+
+    if (this.polygon) {
+      allBounds.push(this.polygon.getBounds());
+    }
+
+    this.zonaPolygons.forEach(polygon => {
+      allBounds.push(polygon.getBounds());
+    });
+
+    if (allBounds.length > 0) {
+      let combinedBounds = allBounds[0];
+      for (let i = 1; i < allBounds.length; i++) {
+        combinedBounds.extend(allBounds[i]);
+      }
+      this.map.fitBounds(combinedBounds.pad(0.1));
     }
   }
 

@@ -17,9 +17,6 @@ public class ZonaDAO implements IZonaDAO {
     @Inject
     private ICampañaDAO campañaDAO;
 
-    @Inject
-    private ICoordenadasDAO coordenadasDAO;
-
     @Override
     public Zona save(Zona zona) {
         EntityTransaction tx = em.getTransaction();
@@ -59,9 +56,7 @@ public class ZonaDAO implements IZonaDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             Zona existente = em.find(Zona.class, zona.getId());
-            if (existente == null) {
-                throw new Exception("Zona no encontrada.");
-            }
+            if (existente == null) throw new Exception("Zona no encontrada.");
 
             tx.begin();
             Zona merged = em.merge(zona);
@@ -81,17 +76,23 @@ public class ZonaDAO implements IZonaDAO {
     @Override
     public void deleteById(Long id) {
         if (campañaDAO.isZonaAsociadaACampana(id)) {
-            throw new RuntimeException("No podes borrar una zona si esta asociado a una campaña");
+            throw new RuntimeException("No podes borrar una zona si está asociada a una campaña");
         }
 
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            Zona zona = em.find(Zona.class, id);
-            if (zona != null) {
-                coordenadasDAO.deleteByZonaId(id);
-                em.remove(zona);
-            }
+
+            // 1) Borrar coordenadas de la zona
+            em.createQuery(
+                "DELETE FROM Coordenadas c WHERE c.zona.id = :zonaId"
+            ).setParameter("zonaId", id).executeUpdate();
+
+            // 2) Borrar la zona
+            em.createQuery(
+                "DELETE FROM Zona z WHERE z.id = :zonaId"
+            ).setParameter("zonaId", id).executeUpdate();
+
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
@@ -106,9 +107,26 @@ public class ZonaDAO implements IZonaDAO {
 
     @Override
     public void deleteByBarrioId(Long barrioId) {
-        List<Zona> zonas = findByBarrioId(barrioId);
-        for (Zona zona : zonas) {
-            delete(zona);
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+
+            // 1) Borrar coordenadas de todas las zonas del barrio
+            em.createQuery(
+                "DELETE FROM Coordenadas c WHERE c.zona.id IN (" +
+                "  SELECT z.id FROM Zona z WHERE z.barrio.id = :barrioId" +
+                ")"
+            ).setParameter("barrioId", barrioId).executeUpdate();
+
+            // 2) Borrar todas las zonas del barrio
+            em.createQuery(
+                "DELETE FROM Zona z WHERE z.barrio.id = :barrioId"
+            ).setParameter("barrioId", barrioId).executeUpdate();
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx.isActive()) tx.rollback();
+            e.printStackTrace();
         }
     }
 }

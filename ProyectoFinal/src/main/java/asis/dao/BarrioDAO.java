@@ -91,7 +91,7 @@ public class BarrioDAO implements IBarrioDAO {
         deleteById(barrio.getId());
     }
 
-    @Override
+@Override
     public void deleteById(Long id) {
         if (campañaDAO.isBarrioAsociadoACampana(id)) {
             throw new RuntimeException("No podes borrar un barrio si esta asociado a una campaña");
@@ -100,16 +100,29 @@ public class BarrioDAO implements IBarrioDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            Barrio barrio = em.find(Barrio.class, id);
-            if (barrio != null) {
-                List<Zona> zonas = zonaDAO.findByBarrioId(id);
-                for (Zona zona : zonas) {
-                    coordenadasDAO.deleteByZonaId(zona.getId());
-                }
-                zonaDAO.deleteByBarrioId(id);
-                coordenadasDAO.deleteByBarrioId(id);
-                em.remove(barrio);
-            }
+
+            // 1) Borrar coordenadas de las zonas del barrio
+            em.createQuery(
+                "DELETE FROM Coordenadas c WHERE c.zona.id IN (" +
+                "  SELECT z.id FROM Zona z WHERE z.barrio.id = :barrioId" +
+                ")"
+            ).setParameter("barrioId", id).executeUpdate();
+
+            // 2) Borrar coordenadas del barrio
+            em.createQuery(
+                "DELETE FROM Coordenadas c WHERE c.barrio.id = :barrioId"
+            ).setParameter("barrioId", id).executeUpdate();
+
+            // 3) Borrar zonas del barrio
+            em.createQuery(
+                "DELETE FROM Zona z WHERE z.barrio.id = :barrioId"
+            ).setParameter("barrioId", id).executeUpdate();
+
+            // 4) Finalmente, borrar el barrio
+            em.createQuery(
+                "DELETE FROM Barrio b WHERE b.id = :barrioId"
+            ).setParameter("barrioId", id).executeUpdate();
+
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();

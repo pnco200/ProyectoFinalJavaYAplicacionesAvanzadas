@@ -142,35 +142,25 @@ public class BarrioController {
         }
     }
 
-    @DELETE
-    @Path("/delete/{id}")
-    @Operation(summary = "Eliminar barrio y sus coordenadas")
-    public Response delete(@PathParam("id") Long id) {
-    	System.out.println(id);
-        try {
-            if (id == null) {
-                return Response.status(Response.Status.BAD_REQUEST).entity("{\"error\": \"Se requiere ID del barrio\"}").build();
-            }
-
-            if (!barrioDAO.existsById(id)) {
-                return Response.status(Response.Status.NOT_FOUND).entity("{\"error\": \"Barrio no encontrado\"}").build();
-            }
-
-            coordenadasDAO.deleteByBarrioId(id);
-            List<Zona> zonas;
-            zonas = zonaDao.findByBarrioId(id);
-            for (Zona zona : zonas) {
-                coordenadasDAO.deleteByZonaId(zona.getId());
-                zonaDao.deleteById(zona.getId());
-
-			}
-            barrioDAO.deleteById(id);
-
-            return Response.noContent().build();
-        } catch (Exception e) {
-            return Response.serverError().entity("{\"error\": \"" + e.getMessage() + "\"}").build();
+@DELETE
+@Path("/delete/{id}")
+@Operation(summary = "Eliminar barrio y sus coordenadas")
+public Response delete(@PathParam("id") Long id) {
+    try {
+        if (id == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("{\"error\": \"Se requiere ID del barrio\"}").build();
         }
+        if (!barrioDAO.existsById(id)) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("{\"error\": \"Barrio no encontrado\"}").build();
+        }
+        barrioDAO.deleteById(id);
+        return Response.noContent().build();
+    } catch (Exception e) {
+        return Response.serverError().entity("{\"error\": \"" + e.getMessage() + "\"}").build();
     }
+}
 
     private String serializeBarriosToJson(List<Barrio> barrios) {
         StringBuilder json = new StringBuilder();

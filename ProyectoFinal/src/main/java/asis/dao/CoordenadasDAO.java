@@ -71,9 +71,7 @@ public class CoordenadasDAO implements ICoordenadasDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             Coordenadas existente = em.find(Coordenadas.class, coordenadas.getId());
-            if (existente == null) {
-                throw new Exception("Coordenada no encontrada.");
-            }
+            if (existente == null) throw new Exception("Coordenada no encontrada.");
 
             tx.begin();
             Coordenadas merged = em.merge(coordenadas);
@@ -91,9 +89,7 @@ public class CoordenadasDAO implements ICoordenadasDAO {
         try {
             tx.begin();
             Coordenadas managed = coordenadas;
-            if (!em.contains(coordenadas)) {
-                managed = em.merge(coordenadas);
-            }
+            if (!em.contains(coordenadas)) managed = em.merge(coordenadas);
             em.remove(managed);
             tx.commit();
         } catch (Exception e) {
@@ -107,10 +103,9 @@ public class CoordenadasDAO implements ICoordenadasDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            Coordenadas coordenadas = em.find(Coordenadas.class, id);
-            if (coordenadas != null) {
-                em.remove(coordenadas);
-            }
+            em.createQuery("DELETE FROM Coordenadas c WHERE c.id = :id")
+              .setParameter("id", id)
+              .executeUpdate();
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
@@ -129,8 +124,8 @@ public class CoordenadasDAO implements ICoordenadasDAO {
         try {
             tx.begin();
             em.createQuery("DELETE FROM Coordenadas c WHERE c.barrio.id = :barrioId")
-                .setParameter("barrioId", barrioId)
-                .executeUpdate();
+              .setParameter("barrioId", barrioId)
+              .executeUpdate();
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
@@ -144,8 +139,8 @@ public class CoordenadasDAO implements ICoordenadasDAO {
         try {
             tx.begin();
             em.createQuery("DELETE FROM Coordenadas c WHERE c.zona.id = :zonaId")
-                .setParameter("zonaId", zonaId)
-                .executeUpdate();
+              .setParameter("zonaId", zonaId)
+              .executeUpdate();
             tx.commit();
         } catch (Exception e) {
             if (tx.isActive()) tx.rollback();
